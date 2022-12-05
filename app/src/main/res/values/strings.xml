@@ -15,8 +15,9 @@
     <string name="forget_pass_fragment_sub_heading">To reset your password, you need your email or mobile number that can be authenticated</string>
     <string name="email_fragment_heading">Check Your Email</string>
     <string name="email_fragment_sub_heading">We have sent the reset password to the email address brandonelouis@gmial.com</string>
+    <string name="student_detail_fragment_heading">Add Details</string>
 
-
+    <string name="upload_image">Upload Profile</string>
     <string name="field_username">Username</string>
     <string name="field_email">Email</string>
     <string name="field_password">Password</string>
@@ -26,6 +27,16 @@
     <string name="field_open_email">Open Your Email</string>
     <string name="field_reset_password">Reset Password</string>
     <string name="field_forgot_password">Forgot Password ?</string>
+    <string name="field_tpo_id">TPO ID</string>
+    <string name="field_mobile">Mobile</string>
+    <string name="field_gender">Gender</string>
+    <string name="field_dob">DOB</string>
+    <string name="field_next">Next</string>
+    <string name="field_qualification">Qualification</string>
+    <string name="field_of_study">Stream</string>
+    <string name="field_year_experience">Experience</string>
+    <string name="field_bio">Biography</string>
+    <string name="field_submit">Submit</string>
 
     <string name="login_prompt">Already have an account? Login</string>
     <string name="sign_up_prompt">You don\'t have an account yet? Sign up</string>
@@ -40,6 +51,17 @@
     <string name="reset_pass">Reset Password Send Success</string>
     <string name="reset_fail">Reset Password Failed</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string-array name="gender">
+        <item>Male</item>
+        <item>Female</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="qualification">
+        <item>Bachelor</item>
+        <item>Diploma</item>
+        <item>Masters</item>
+        <item>PhD</item>
+        <item>Professional Certification</item>
+    </string-array>
 </resources>

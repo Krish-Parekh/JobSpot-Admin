@@ -37,6 +37,9 @@
         <argument
             android:name="roleType"
             app:argType="string" />
+        <action
+            android:id="@+id/action_signupFragment_to_userDetailFragment"
+            app:destination="@id/userDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/forgetPassFragment"
@@ -52,4 +55,16 @@
         android:name="com.example.jobspotadmin.auth.fragments.EmailFragment"
         android:label="fragment_email"
         tools:layout="@layout/fragment_email" />
+    <fragment
+        android:id="@+id/userDetailFragment"
+        android:name="com.example.jobspotadmin.auth.fragments.UserDetailFragment"
+        android:label="fragment_user_detail"
+        tools:layout="@layout/fragment_user_detail" >
+        <argument
+            android:name="username"
+            app:argType="string" />
+        <argument
+            android:name="email"
+            app:argType="string" />
+    </fragment>
 </navigation>

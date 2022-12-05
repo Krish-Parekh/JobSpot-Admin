@@ -54,7 +54,8 @@ class SignupFragment : Fragment() {
             val email = binding.etEmail.getInputValue()
             val password = binding.etPassword.getInputValue()
             if (detailVerification(username, email, password)) {
-                authenticateUser(username, email, password)
+//                authenticateUser(username, email, password)
+                navigateToUserDetail(username, email)
                 clearField()
             }
         }
@@ -70,12 +71,20 @@ class SignupFragment : Fragment() {
                 val uid = mAuth.currentUser?.uid
                 Log.d(TAG, "UID : $uid")
                 showToast(requireContext(), getString(R.string.auth_pass))
-//                navigateToUserDetail(username, email)
             }
             .addOnFailureListener { error ->
                 Log.d(TAG, "Exception: ${error.message}")
                 showToast(requireContext(), getString(R.string.auth_fail))
             }
+    }
+
+    private fun navigateToUserDetail(username: String, email: String) {
+        if(args.roleType === "TPO"){
+            val directions = SignupFragmentDirections.actionSignupFragmentToUserDetailFragment(username = username, email =  email)
+            findNavController().navigate(directions)
+        }else{
+            showToast(requireContext(), args.roleType)
+        }
     }
 
     private fun clearField() {

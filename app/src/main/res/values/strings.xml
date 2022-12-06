@@ -48,6 +48,12 @@
     <string name="field_error_username">Enter valid username</string>
     <string name="field_error_email">Enter valid email ID</string>
     <string name="field_error_password">Enter valid password</string>
+    <string name="field_error_mobile">Enter valid Mobile No.</string>
+    <string name="field_error_dob">Enter valid Date</string>
+    <string name="field_error_image">Please Select Image</string>
+    <string name="field_error_year">Enter valid Experience</string>
+    <string name="field_error_bio">Enter valid biography</string>
+    <string name="field_error_stream">Enter valid stream</string>
     <string name="reset_pass">Reset Password Send Success</string>
     <string name="reset_fail">Reset Password Failed</string>
 

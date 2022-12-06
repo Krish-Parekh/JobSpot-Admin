@@ -53,28 +53,6 @@
                 android:textColor="@color/text_color"
                 android:textSize="18sp" />
 
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/etTpoIdContainer"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/field_tpo_id"
-                app:boxStrokeColor="@color/box_stroke_color"
-                app:errorEnabled="true"
-                app:hintTextColor="@color/text_color"
-                app:placeholderText="eg. 53003205035"
-                app:startIconDrawable="@drawable/ic_remember_me">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etTpoId"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/dm_sans_medium"
-                    android:inputType="text" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/etMobileContainer"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -186,7 +164,7 @@
                 app:errorEnabled="true"
                 app:hintTextColor="@color/text_color"
                 app:placeholderText="eg. IT, Marketing"
-                app:startIconDrawable="@drawable/ic_remember_me">
+                app:startIconDrawable="@drawable/ic_stream">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etFieldOfStudy"
@@ -207,7 +185,7 @@
                 app:errorEnabled="true"
                 app:hintTextColor="@color/text_color"
                 app:placeholderText="eg. 5 - 15"
-                app:startIconDrawable="@drawable/ic_remember_me">
+                app:startIconDrawable="@drawable/ic_work_experience">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etYearExperience"
@@ -229,16 +207,17 @@
                 app:errorEnabled="true"
                 app:hintTextColor="@color/text_color"
                 app:placeholderText="Write additional biography here"
-                app:startIconDrawable="@drawable/ic_remember_me">
+                app:startIconDrawable="@drawable/ic_bio">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etBio"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/dm_sans_medium"
-                    android:lines="3"
                     android:gravity="top"
-                    android:inputType="textMultiLine" />
+                    android:inputType="textMultiLine"
+                    android:lines="2"
+                    android:maxLines="3" />
 
             </com.google.android.material.textfield.TextInputLayout>
 

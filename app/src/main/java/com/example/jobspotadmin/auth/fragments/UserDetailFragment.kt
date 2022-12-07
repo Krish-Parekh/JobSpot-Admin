@@ -15,10 +15,11 @@ import androidx.navigation.fragment.navArgs
 import com.example.jobspotadmin.R
 import com.example.jobspotadmin.auth.viewmodel.AuthViewModel
 import com.example.jobspotadmin.databinding.FragmentUserDetailBinding
+import com.example.jobspotadmin.model.User
 import com.example.jobspotadmin.util.*
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.android.material.textfield.TextInputLayout
+import com.google.firebase.auth.FirebaseAuth
 
 
 /*
@@ -34,6 +35,7 @@ class UserDetailFragment : Fragment() {
     private lateinit var binding: FragmentUserDetailBinding
     private val args by navArgs<UserDetailFragmentArgs>()
     private val authViewModel: AuthViewModel by viewModels()
+    private val mAuth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
     private val startForProfileImageResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             handleCapturedImage(result)
@@ -90,9 +92,37 @@ class UserDetailFragment : Fragment() {
                 val experience = etYearExperience.getInputValue()
                 val bio = etBio.getInputValue()
                 val imageUri = authViewModel.getImageUri()
-                if(detailVerification(mobile, dob, gender, imageUri, stream ,qualification, experience, bio)) {
-                    showToast(requireContext(), "Validation Success")
-                    Log.d(TAG, "$mobile, $dob, $gender, ${imageUri}, $stream, $qualification, $experience, $bio")
+                if (detailVerification(
+                        mobile,
+                        dob,
+                        gender,
+                        imageUri,
+                        stream,
+                        qualification,
+                        experience,
+                        bio
+                    )
+                ) {
+                    Log.d(TAG, "Validation Success")
+                    Log.d(
+                        TAG,
+                        "$mobile, $dob, $gender, ${imageUri}, $stream, $qualification, $experience, $bio"
+                    )
+                    val user = User(
+                        uid = mAuth.currentUser?.uid.toString(),
+                        email = args.email,
+                        username = args.username,
+                        mobile = mobile,
+                        dob = dob,
+                        gender = gender,
+                        stream = stream,
+                        qualification = qualification,
+                        experience = experience,
+                        biography = bio,
+                    )
+
+                    authViewModel.uploadData(imageUri = imageUri!!, user = user)
+                    clearField()
                 }
             }
         }
@@ -143,30 +173,42 @@ class UserDetailFragment : Fragment() {
         dob: String,
         gender: String,
         imageUri: Uri?,
-        stream : String,
+        stream: String,
         qualification: String,
         experience: String,
         bio: String,
     ): Boolean {
         binding.apply {
             return when {
-                !checkField(mobile, getString(R.string.field_error_mobile), etMobileContainer) -> false
+                !checkField(
+                    mobile,
+                    getString(R.string.field_error_mobile),
+                    etMobileContainer
+                ) -> false
                 !checkField(dob, getString(R.string.field_error_dob), etDateContainer) -> {
                     etDateContainer.apply {
-                        setErrorIconOnClickListener{
+                        setErrorIconOnClickListener {
                             error = null
                         }
                     }
                     false
                 }
-                !checkField(stream, getString(R.string.field_error_stream), etFieldOfStudyContainer) -> false
-                !checkField(experience, getString(R.string.field_error_year), etYearExperienceContainer) -> false
+                !checkField(
+                    stream,
+                    getString(R.string.field_error_stream),
+                    etFieldOfStudyContainer
+                ) -> false
+                !checkField(
+                    experience,
+                    getString(R.string.field_error_year),
+                    etYearExperienceContainer
+                ) -> false
                 !checkField(bio, getString(R.string.field_error_bio), etBioContainer) -> false
                 !InputValidation.checkNullity(gender) -> {
                     genderSpinner.error = ""
                     false
                 }
-                imageUri != null -> {
+                imageUri == null -> {
                     showToast(requireContext(), getString(R.string.field_error_image))
                     false
                 }
@@ -176,6 +218,19 @@ class UserDetailFragment : Fragment() {
                 }
                 else -> true
             }
+        }
+    }
+
+    private fun clearField() {
+        binding.apply {
+            etMobile.clearText()
+            etDate.clearText()
+            genderSpinner.clearSelectedItem()
+            qualificationSpinner.clearSelectedItem()
+            etFieldOfStudy.clearText()
+            etYearExperience.clearText()
+            etBio.clearText()
+            profileImage.setImageResource(R.drawable.ic_image_picker)
         }
     }
 

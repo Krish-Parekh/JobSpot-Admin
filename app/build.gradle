@@ -5,6 +5,8 @@ plugins {
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
     id 'androidx.navigation.safeargs.kotlin'
+    // hilt plugin
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -53,8 +55,19 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
 
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:${lifecycle_version}"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:${viewmodel_version}"
+    // Lifecycle Dependency
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$viewmodel_version"
+
+    // Coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
+
+    //Dagger-Hilt Dependencies
+    implementation 'com.google.dagger:hilt-android:2.44'
+    kapt 'com.google.dagger:hilt-android-compiler:2.44'
+
+    // Preferences Datastore
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
 
     // SplashScreen API
     implementation "androidx.core:core-splashscreen:$splash_screen_version"
@@ -65,6 +78,7 @@ dependencies {
 
     //Circular ImageView
     implementation "de.hdodenhof:circleimageview:$circular_iv_version"
+
     //Image Picker
     implementation "com.github.dhaval2404:imagepicker:$image_picker_version"
 

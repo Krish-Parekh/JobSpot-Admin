@@ -1,22 +1,25 @@
-package com.example.jobspotadmin.auth.fragments
+package com.example.jobspotadmin.ui.auth.fragments
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.jobspotadmin.R
+import com.example.jobspotadmin.ui.viewmodel.AuthViewModel
 import com.example.jobspotadmin.databinding.FragmentForgetPassBinding
 import com.example.jobspotadmin.util.*
-import com.google.firebase.auth.FirebaseAuth
+import dagger.hilt.android.AndroidEntryPoint
 
 
 private const val TAG = "FORGOT_PASSWORD"
+@AndroidEntryPoint
 class ForgetPassFragment : Fragment() {
-    private val mAuth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
     private lateinit var binding : FragmentForgetPassBinding
+    private val authViewModel : AuthViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -32,21 +35,22 @@ class ForgetPassFragment : Fragment() {
         binding.btnResetPassword.setOnClickListener {
             val email = binding.etEmail.getInputValue()
             if(InputValidation.emailValidation(email)){
-                mAuth.sendPasswordResetEmail(email)
-                    .addOnSuccessListener {
-                        showToast(requireContext(), getString(R.string.reset_pass))
-                        findNavController().navigate(R.id.action_forgetPassFragment_to_emailFragment)
-                    }
-                    .addOnFailureListener { error ->
-                        Log.d(TAG, "Exception: ${error.message}")
-                        showToast(requireContext(), getString(R.string.reset_fail))
-                    }
+                authViewModel.resetPassword(email)
                 clearField()
             }else{
                 binding.etEmailContainer.error = getString(R.string.field_error_email)
             }
         }
 
+        authViewModel.uiState.observe(viewLifecycleOwner, Observer { uiState ->
+            if(uiState.isAuthenticated){
+                showToast(requireContext(), "Email sent success")
+            }else if(uiState.isLoading){
+                showToast(requireContext(), "Loading..")
+            }else if(uiState.error.isNotBlank()){
+                showToast(requireContext(), uiState.error)
+            }
+        })
         return binding.root
     }
     private fun clearField() {

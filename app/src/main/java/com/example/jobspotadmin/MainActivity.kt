@@ -8,9 +8,11 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.UnderlineSpan
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.example.jobspotadmin.auth.AuthActivity
+import com.example.jobspotadmin.ui.auth.AuthActivity
 import com.example.jobspotadmin.databinding.ActivityMainBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding : ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {

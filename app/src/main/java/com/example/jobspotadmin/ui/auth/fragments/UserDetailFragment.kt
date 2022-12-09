@@ -1,9 +1,8 @@
-package com.example.jobspotadmin.auth.fragments
+package com.example.jobspotadmin.ui.auth.fragments
 
 import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,37 +10,30 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.navArgs
+import androidx.lifecycle.Observer
 import com.example.jobspotadmin.R
-import com.example.jobspotadmin.auth.viewmodel.AuthViewModel
+import com.example.jobspotadmin.ui.viewmodel.AuthViewModel
 import com.example.jobspotadmin.databinding.FragmentUserDetailBinding
-import com.example.jobspotadmin.model.User
+import com.example.jobspotadmin.model.TpoDetail
+import com.example.jobspotadmin.ui.viewmodel.UserDetailViewModel
 import com.example.jobspotadmin.util.*
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.firebase.auth.FirebaseAuth
 
 
-/*
-* Note:
-* 4. Implement Test for the validation function
-* 6. Implement SingleTop for fragment
-* 7. Disable the button once clicked
-* 8. Send Data to firebase fire-store
-* */
 private const val TAG = "UserDetailFragment"
 
 class UserDetailFragment : Fragment() {
     private lateinit var binding: FragmentUserDetailBinding
-    private val args by navArgs<UserDetailFragmentArgs>()
-    private val authViewModel: AuthViewModel by viewModels()
-    private val mAuth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
     private val startForProfileImageResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             handleCapturedImage(result)
         }
     private var gender: String = ""
     private var qualification: String = ""
+    private val authViewModel : AuthViewModel by viewModels()
+    private val userDetailViewModel : UserDetailViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -53,11 +45,6 @@ class UserDetailFragment : Fragment() {
 
     private fun setupView() {
         binding.apply {
-
-            if (authViewModel.getImageUri() != null) {
-                profileImage.setImageURI(authViewModel.getImageUri())
-            }
-
             profileImage.setOnClickListener {
                 startCrop()
             }
@@ -85,33 +72,22 @@ class UserDetailFragment : Fragment() {
             etYearExperienceContainer.addTextWatcher()
             etBioContainer.addTextWatcher()
 
+            authViewModel.getUsername()
+            authViewModel.getEmail()
+
             btnSubmit.setOnClickListener {
                 val mobile = etMobile.getInputValue()
                 val dob = etDate.getInputValue()
                 val stream = etFieldOfStudy.getInputValue()
                 val experience = etYearExperience.getInputValue()
                 val bio = etBio.getInputValue()
-                val imageUri = authViewModel.getImageUri()
-                if (detailVerification(
-                        mobile,
-                        dob,
-                        gender,
-                        imageUri,
-                        stream,
-                        qualification,
-                        experience,
-                        bio
-                    )
-                ) {
-                    Log.d(TAG, "Validation Success")
-                    Log.d(
-                        TAG,
-                        "$mobile, $dob, $gender, ${imageUri}, $stream, $qualification, $experience, $bio"
-                    )
-                    val user = User(
-                        uid = mAuth.currentUser?.uid.toString(),
-                        email = args.email,
-                        username = args.username,
+                val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
+                val imageUri = userDetailViewModel.getImageUri()!!
+                if (detailVerification(mobile, dob, gender, imageUri, stream, qualification, experience, bio)) {
+                    val tpoDetail = TpoDetail(
+                        uid = uid,
+                        email = authViewModel.email,
+                        username = authViewModel.username,
                         mobile = mobile,
                         dob = dob,
                         gender = gender,
@@ -120,12 +96,36 @@ class UserDetailFragment : Fragment() {
                         experience = experience,
                         biography = bio,
                     )
+                    val username = tpoDetail.username
+                    val userId = tpoDetail.uid
+                    val fileName = "$username:$userId"
 
-                    authViewModel.uploadData(imageUri = imageUri!!, user = user)
+                    userDetailViewModel.uploadData(
+                        imageUri = imageUri,
+                        imagePath = "tpo/image/${fileName}",
+                        collectionName = "tpo",
+                        documentId = userId,
+                        tpoDetail = tpoDetail
+                    )
+
                     clearField()
                 }
             }
         }
+
+        handleUploadResponse()
+    }
+
+    private fun handleUploadResponse() {
+        userDetailViewModel.uiState.observe(viewLifecycleOwner, Observer { uploadState ->
+            if(uploadState.isUploaded){
+                showToast(requireContext(), "Upload Success")
+            } else if(uploadState.isLoading){
+                showToast(requireContext(), "Loading...")
+            } else if(uploadState.error.isNotBlank()){
+                showToast(requireContext(), uploadState.error)
+            }
+        })
     }
 
     private fun startCrop() {
@@ -145,8 +145,8 @@ class UserDetailFragment : Fragment() {
 
         when (resultCode) {
             Activity.RESULT_OK -> {
-                authViewModel.setImageUri(imageUri = data?.data!!)
-                binding.profileImage.setImageURI(authViewModel.getImageUri())
+                userDetailViewModel.setImageUri(imageUri = data?.data!!)
+                binding.profileImage.setImageURI(userDetailViewModel.getImageUri())
             }
             ImagePicker.RESULT_ERROR -> {
                 showToast(requireContext(), ImagePicker.getError(data))
@@ -168,6 +168,7 @@ class UserDetailFragment : Fragment() {
         datePicker.show(childFragmentManager, "Material DatePicker")
     }
 
+
     private fun detailVerification(
         mobile: String,
         dob: String,
@@ -185,7 +186,11 @@ class UserDetailFragment : Fragment() {
                     getString(R.string.field_error_mobile),
                     etMobileContainer
                 ) -> false
-                !checkField(dob, getString(R.string.field_error_dob), etDateContainer) -> {
+                !checkField(
+                    dob,
+                    getString(R.string.field_error_dob),
+                    etDateContainer
+                ) -> {
                     etDateContainer.apply {
                         setErrorIconOnClickListener {
                             error = null
@@ -203,7 +208,11 @@ class UserDetailFragment : Fragment() {
                     getString(R.string.field_error_year),
                     etYearExperienceContainer
                 ) -> false
-                !checkField(bio, getString(R.string.field_error_bio), etBioContainer) -> false
+                !checkField(
+                    bio,
+                    getString(R.string.field_error_bio),
+                    etBioContainer
+                ) -> false
                 !InputValidation.checkNullity(gender) -> {
                     genderSpinner.error = ""
                     false
@@ -233,6 +242,5 @@ class UserDetailFragment : Fragment() {
             profileImage.setImageResource(R.drawable.ic_image_picker)
         }
     }
-
 
 }

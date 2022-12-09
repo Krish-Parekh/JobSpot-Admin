@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/background_color"
     android:fillViewport="true"
-    tools:context=".auth.fragments.UserDetailFragment">
+    tools:context=".ui.auth.fragments.UserDetailFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

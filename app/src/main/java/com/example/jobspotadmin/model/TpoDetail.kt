@@ -1,6 +1,6 @@
 package com.example.jobspotadmin.model
 
-data class User(
+data class TpoDetail(
     var uid : String = "",
     var email : String = "",
     var username : String = "",

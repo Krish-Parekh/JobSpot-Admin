@@ -1,4 +1,4 @@
-package com.example.jobspotadmin.auth.fragments
+package com.example.jobspotadmin.ui.auth.fragments
 
 import android.content.Intent
 import android.os.Bundle

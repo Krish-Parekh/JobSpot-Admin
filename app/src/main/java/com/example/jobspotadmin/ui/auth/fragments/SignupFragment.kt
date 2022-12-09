@@ -1,4 +1,4 @@
-package com.example.jobspotadmin.auth.fragments
+package com.example.jobspotadmin.ui.auth.fragments
 
 import android.os.Bundle
 import android.text.Spannable
@@ -6,23 +6,28 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.UnderlineSpan
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.jobspotadmin.R
 import com.example.jobspotadmin.databinding.FragmentSignupBinding
+import com.example.jobspotadmin.ui.viewmodel.AuthViewModel
 import com.example.jobspotadmin.util.*
-import com.google.firebase.auth.FirebaseAuth
+import dagger.hilt.android.AndroidEntryPoint
 
 private const val TAG = "SignupFragment"
+
+@AndroidEntryPoint
 class SignupFragment : Fragment() {
     private lateinit var binding: FragmentSignupBinding
     private val args by navArgs<SignupFragmentArgs>()
-    private val mAuth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
+    private val authViewModel: AuthViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -34,7 +39,7 @@ class SignupFragment : Fragment() {
         return binding.root
     }
 
-    private fun setupView(){
+    private fun setupView() {
         val loginText = SpannableString(getString(R.string.login_prompt))
         val color = ContextCompat.getColor(requireActivity(), R.color.on_boarding_span_text_color)
         val loginColor = ForegroundColorSpan(color)
@@ -53,47 +58,28 @@ class SignupFragment : Fragment() {
             val username = binding.etUsername.getInputValue()
             val email = binding.etEmail.getInputValue()
             val password = binding.etPassword.getInputValue()
-            if (detailVerification(username, email, password)) {
-                authenticateUser(username, email, password)
-                clearField()
-            }
+            authViewModel.signUp(username, email, password)
         }
+        handleAuthResponse()
     }
 
-    private fun authenticateUser(
-        username: String,
-        email: String,
-        password: String
-    ) {
-        mAuth.createUserWithEmailAndPassword(email, password)
-            .addOnSuccessListener {
-                val uid = mAuth.currentUser?.uid
-                Log.d(TAG, "UID : $uid")
-                navigateToUserDetail(username, email)
+    private fun handleAuthResponse() {
+        authViewModel.uiState.observe(viewLifecycleOwner, Observer { uiState ->
+            if (uiState.isAuthenticated) {
                 showToast(requireContext(), getString(R.string.auth_pass))
+            } else if (uiState.isLoading) {
+                showToast(requireContext(), "Loading..")
+            } else if (uiState.error.isNotBlank()) {
+                showToast(requireContext(), uiState.error)
             }
-            .addOnFailureListener { error ->
-                Log.d(TAG, "Exception: ${error.message}")
-                showToast(requireContext(), getString(R.string.auth_fail))
-            }
+        })
     }
 
     private fun navigateToUserDetail(username: String, email: String) {
-        if(args.roleType === "TPO"){
-            val directions = SignupFragmentDirections.actionSignupFragmentToUserDetailFragment(username = username, email =  email)
-            findNavController().navigate(directions)
-        }else{
-            showToast(requireContext(), args.roleType)
-        }
+        val direction = SignupFragmentDirections.actionSignupFragmentToUserDetailFragment(username, email)
+        findNavController().navigate(direction)
     }
 
-    private fun clearField() {
-        binding.etUsername.clearText()
-        binding.etEmail.clearText()
-        binding.etPassword.clearText()
-    }
-
-    // Verify user details and show message if error
     private fun detailVerification(
         username: String,
         email: String,
@@ -114,5 +100,4 @@ class SignupFragment : Fragment() {
             }
         }
     }
-
 }

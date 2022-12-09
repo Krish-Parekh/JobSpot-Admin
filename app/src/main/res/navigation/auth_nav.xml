@@ -28,6 +28,9 @@
         <argument
             android:name="roleType"
             app:argType="string" />
+        <action
+            android:id="@+id/action_loginFragment_to_userDetailFragment"
+            app:destination="@id/userDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/signupFragment"

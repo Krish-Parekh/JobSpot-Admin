@@ -103,11 +103,7 @@ class UserDetailFragment : Fragment() {
                         bio
                     )
                 ) {
-                    Log.d(TAG, "Validation Success")
-                    Log.d(
-                        TAG,
-                        "$mobile, $dob, $gender, ${imageUri}, $stream, $qualification, $experience, $bio"
-                    )
+                    Log.d(TAG, "$mobile, $dob, $gender, ${imageUri}, $stream, $qualification, $experience, $bio")
                     val user = User(
                         uid = mAuth.currentUser?.uid.toString(),
                         email = args.email,
@@ -180,11 +176,11 @@ class UserDetailFragment : Fragment() {
     ): Boolean {
         binding.apply {
             return when {
-                !checkField(
-                    mobile,
-                    getString(R.string.field_error_mobile),
-                    etMobileContainer
-                ) -> false
+                imageUri == null -> {
+                    showToast(requireContext(), getString(R.string.field_error_image))
+                    false
+                }
+                !checkField(mobile, getString(R.string.field_error_mobile), etMobileContainer) -> false
                 !checkField(dob, getString(R.string.field_error_dob), etDateContainer) -> {
                     etDateContainer.apply {
                         setErrorIconOnClickListener {
@@ -193,29 +189,18 @@ class UserDetailFragment : Fragment() {
                     }
                     false
                 }
-                !checkField(
-                    stream,
-                    getString(R.string.field_error_stream),
-                    etFieldOfStudyContainer
-                ) -> false
-                !checkField(
-                    experience,
-                    getString(R.string.field_error_year),
-                    etYearExperienceContainer
-                ) -> false
-                !checkField(bio, getString(R.string.field_error_bio), etBioContainer) -> false
                 !InputValidation.checkNullity(gender) -> {
                     genderSpinner.error = ""
-                    false
-                }
-                imageUri == null -> {
-                    showToast(requireContext(), getString(R.string.field_error_image))
                     false
                 }
                 !InputValidation.checkNullity(qualification) -> {
                     qualificationSpinner.error = ""
                     false
                 }
+                !checkField(stream, getString(R.string.field_error_stream), etFieldOfStudyContainer) -> false
+                !checkField(experience, getString(R.string.field_error_year), etYearExperienceContainer) -> false
+                !checkField(bio, getString(R.string.field_error_bio), etBioContainer) -> false
+
                 else -> true
             }
         }

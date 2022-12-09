@@ -17,6 +17,8 @@ import com.example.jobspotadmin.R
 import com.example.jobspotadmin.databinding.FragmentSignupBinding
 import com.example.jobspotadmin.util.*
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.UserProfileChangeRequest
 
 private const val TAG = "SignupFragment"
 class SignupFragment : Fragment() {
@@ -67,13 +69,27 @@ class SignupFragment : Fragment() {
     ) {
         mAuth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener {
-                val uid = mAuth.currentUser?.uid
-                Log.d(TAG, "UID : $uid")
+                val profileUpdates = UserProfileChangeRequest.Builder()
+                    .setDisplayName(username)
+                    .build()
+
+                val user = mAuth.currentUser!!
+                user.updateProfile(profileUpdates)
+                    .addOnSuccessListener {
+                        Log.d(TAG, "Detail upload success")
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.d(TAG, "Exception : ${exception.message}")
+                    }
+
                 navigateToUserDetail(username, email)
                 showToast(requireContext(), getString(R.string.auth_pass))
             }
             .addOnFailureListener { error ->
                 Log.d(TAG, "Exception: ${error.message}")
+                if(error is FirebaseAuthUserCollisionException){
+                    showToast(requireContext(), "Email already exists")
+                }
                 showToast(requireContext(), getString(R.string.auth_fail))
             }
     }

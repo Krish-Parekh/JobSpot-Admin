@@ -105,10 +105,6 @@ class UserDetailFragment : Fragment() {
                         bio
                     )
                 ) {
-                    Log.d(
-                        TAG,
-                        "$mobile, $dob, $gender, ${imageUri}, $stream, $qualification, $experience, $bio"
-                    )
                     val user = User(
                         uid = mAuth.currentUser?.uid.toString(),
                         email = args.email,
@@ -121,7 +117,7 @@ class UserDetailFragment : Fragment() {
                         experience = experience,
                         biography = bio,
                     )
-
+                    Log.d(TAG, "User : $user")
                     authViewModel.uploadData(imageUri = imageUri!!, user = user)
                     handleUploadResponse()
                     clearField()
@@ -135,8 +131,8 @@ class UserDetailFragment : Fragment() {
             if (uiState.loading) {
                 loadingDialog.show()
             } else if (uiState.success) {
-                loadingDialog.changeLoadingText()
                 loadingDialog.dismiss()
+                authViewModel.setImageUri(null)
             } else if (uiState.failed) {
                 loadingDialog.dismiss()
             }
@@ -194,46 +190,37 @@ class UserDetailFragment : Fragment() {
         bio: String,
     ): Boolean {
         binding.apply {
-            return when {
-                imageUri == null -> {
-                    showToast(requireContext(), getString(R.string.field_error_image))
-                    false
-                }
-                !checkField(
-                    mobile,
-                    getString(R.string.field_error_mobile),
-                    etMobileContainer
-                ) -> false
-                !checkField(dob, getString(R.string.field_error_dob), etDateContainer) -> {
-                    etDateContainer.apply {
-                        setErrorIconOnClickListener {
-                            error = null
-                        }
-                    }
-                    false
-                }
-                !InputValidation.checkNullity(gender) -> {
-                    genderSpinner.error = ""
-                    false
-                }
-                !InputValidation.checkNullity(qualification) -> {
-                    qualificationSpinner.error = ""
-                    false
-                }
-                !checkField(
-                    stream,
-                    getString(R.string.field_error_stream),
-                    etFieldOfStudyContainer
-                ) -> false
-                !checkField(
-                    experience,
-                    getString(R.string.field_error_year),
-                    etYearExperienceContainer
-                ) -> false
-                !checkField(bio, getString(R.string.field_error_bio), etBioContainer) -> false
-
-                else -> true
+            if(imageUri == null){
+                showToast(requireContext(), getString(R.string.field_error_image))
+                return false
             }
+            else if (!InputValidation.mobileValidation(mobile)){
+                etMobileContainer.error = getString(R.string.field_error_mobile)
+                return false
+            }
+            else if(!checkField(dob, getString(R.string.field_error_dob), etDateContainer)){
+                etDateContainer.apply {
+                    setErrorIconOnClickListener {
+                        error = null
+                    }
+                }
+                return false
+            }
+            else if(!InputValidation.checkNullity(gender)) {
+                genderSpinner.error = ""
+                return false
+            }
+            else if(!InputValidation.checkNullity(qualification)) {
+                qualificationSpinner.error = ""
+                return false
+            }
+            else if(!checkField(stream, getString(R.string.field_error_stream), etFieldOfStudyContainer)){
+                return false
+            }
+            else if(!checkField(experience, getString(R.string.field_error_stream), etYearExperienceContainer)){
+                return false
+            }
+            else return checkField(bio, getString(R.string.field_error_stream), etBioContainer)
         }
     }
 

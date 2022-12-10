@@ -31,15 +31,14 @@ class ForgetPassFragment : Fragment() {
         binding.etEmailContainer.addTextWatcher()
 
         binding.btnResetPassword.setOnClickListener {
-            loadingDialog.show()
             val email = binding.etEmail.getInputValue()
             if(InputValidation.emailValidation(email)){
+                loadingDialog.show()
                 mAuth.sendPasswordResetEmail(email)
                     .addOnSuccessListener {
+                        loadingDialog.dismiss()
                         showToast(requireContext(), getString(R.string.reset_pass))
                         findNavController().navigate(R.id.action_forgetPassFragment_to_emailFragment)
-                        loadingDialog.changeLoadingText()
-                        loadingDialog.dismiss()
                     }
                     .addOnFailureListener { error ->
                         loadingDialog.dismiss()

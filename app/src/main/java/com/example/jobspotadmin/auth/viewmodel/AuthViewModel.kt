@@ -28,7 +28,7 @@ class AuthViewModel : ViewModel() {
     private val _uploadDataStatus : MutableLiveData<UiState> = MutableLiveData(UiState())
     val uploadDataStatus : LiveData<UiState> = _uploadDataStatus
 
-    fun setImageUri(imageUri : Uri){
+    fun setImageUri(imageUri : Uri?){
         this.imageUri = imageUri
     }
 

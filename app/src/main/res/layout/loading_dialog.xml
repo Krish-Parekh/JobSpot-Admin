@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/background_color"
+    android:background="@color/loading_dialog_background_color"
     android:padding="8dp">
 
     <com.airbnb.lottie.LottieAnimationView
@@ -29,6 +29,7 @@
         android:text="Loading..."
         android:textSize="16sp"
         android:textStyle="bold"
+        android:textColor="@color/loading_dialog_text_color"
         app:layout_constraintBottom_toBottomOf="@+id/progressBarAnim"
         app:layout_constraintLeft_toRightOf="@+id/progressBarAnim"
         app:layout_constraintTop_toTopOf="@+id/progressBarAnim" />

@@ -6,11 +6,11 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.UnderlineSpan
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -19,7 +19,6 @@ import com.example.jobspotadmin.databinding.FragmentSignupBinding
 import com.example.jobspotadmin.util.*
 import com.example.jobspotadmin.util.Constants.Companion.ROLE_TYPE_TPO
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.AdditionalUserInfo
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
@@ -27,12 +26,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 private const val TAG = "SignupFragment"
+
 class SignupFragment : Fragment() {
     private lateinit var binding: FragmentSignupBinding
     private val args by navArgs<SignupFragmentArgs>()
     private val mAuth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
-    private val mFirestore : FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
-    private val loadingDialog : LoadingDialog by lazy { LoadingDialog(requireContext()) }
+    private val mFirestore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
+    private val loadingDialog: LoadingDialog by lazy { LoadingDialog(requireContext()) }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -44,31 +44,32 @@ class SignupFragment : Fragment() {
         return binding.root
     }
 
-    private fun setupView(){
+    private fun setupView() {
 
-        binding.tvLogin.text = createLoginText()
+        binding.apply {
 
-        binding.tvLogin.setOnClickListener {
-            findNavController().popBackStack(R.id.loginFragment, false)
-        }
-        binding.etUsernameContainer.addTextWatcher()
-        binding.etEmailContainer.addTextWatcher()
-        binding.etPasswordContainer.addTextWatcher()
+            tvLogin.text = createLoginText()
+            tvLogin.setOnClickListener {
+                findNavController().popBackStack(R.id.loginFragment, false)
+            }
 
-        binding.btnSignup.setOnClickListener {
-            loadingDialog.show()
-            val username = binding.etUsername.getInputValue()
-            val email = binding.etEmail.getInputValue()
-            val password = binding.etPassword.getInputValue()
-            if (detailVerification(username, email, password)) {
-                authenticateUser(username, email, password)
-                clearField()
-            } else {
-                loadingDialog.dismiss()
+            etUsernameContainer.addTextWatcher()
+            etEmailContainer.addTextWatcher()
+            etPasswordContainer.addTextWatcher()
+
+            btnSignup.setOnClickListener {
+                val username = etUsername.getInputValue()
+                val email = etEmail.getInputValue()
+                val password = etPassword.getInputValue()
+                if (detailVerification(username, email, password)) {
+                    authenticateUser(username, email, password)
+                    clearField()
+                }
             }
         }
     }
-    private fun createLoginText() : SpannableString {
+
+    private fun createLoginText(): SpannableString {
         val loginText = SpannableString(getString(R.string.login_prompt))
         val color = ContextCompat.getColor(requireActivity(), R.color.on_boarding_span_text_color)
         val loginColor = ForegroundColorSpan(color)
@@ -76,25 +77,28 @@ class SignupFragment : Fragment() {
         loginText.setSpan(loginColor, 25, loginText.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
         return loginText
     }
+
     private fun authenticateUser(
         username: String,
         email: String,
         password: String
     ) {
         lifecycleScope.launch {
-            try{
+            try {
+                loadingDialog.show()
                 mAuth.createUserWithEmailAndPassword(email, password).await()
                 val currentUser = mAuth.currentUser!!
-                val profileUpdates = UserProfileChangeRequest.Builder().setDisplayName(username).build()
+                val profileUpdates =
+                    UserProfileChangeRequest.Builder().setDisplayName(username).build()
                 val currentUserRole = hashMapOf("role" to args.roleType)
                 mFirestore.collection("role").document(currentUser.uid).set(currentUserRole).await()
                 currentUser.updateProfile(profileUpdates).await()
-                loadingDialog.changeLoadingText()
+
                 showToast(requireContext(), getString(R.string.auth_pass))
                 navigateToUserDetail(username, email)
-            }catch (error : FirebaseAuthUserCollisionException){
+            } catch (error: FirebaseAuthUserCollisionException) {
                 showToast(requireContext(), "Email already exists")
-            }catch (error : Exception) {
+            } catch (error: Exception) {
                 showToast(requireContext(), getString(R.string.auth_fail))
                 Log.d(TAG, "Exception : ${error.message}")
             } finally {
@@ -104,10 +108,13 @@ class SignupFragment : Fragment() {
     }
 
     private fun navigateToUserDetail(username: String, email: String) {
-        if(args.roleType === ROLE_TYPE_TPO){
-            val directions = SignupFragmentDirections.actionSignupFragmentToUserDetailFragment(username = username, email =  email)
+        if (args.roleType === ROLE_TYPE_TPO) {
+            val directions = SignupFragmentDirections.actionSignupFragmentToUserDetailFragment(
+                username = username,
+                email = email
+            )
             findNavController().navigate(directions)
-        }else {
+        } else {
             showToast(requireContext(), args.roleType)
         }
     }

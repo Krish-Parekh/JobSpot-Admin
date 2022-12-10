@@ -18,5 +18,9 @@ class InputValidation {
         fun passwordValidation(password: String): Boolean {
             return checkNullity(password) && PASSWORD_PATTERN.matcher(password).matches()
         }
+
+        fun mobileValidation(number : String) : Boolean {
+            return checkNullity(number) && number.length == 10
+        }
     }
 }

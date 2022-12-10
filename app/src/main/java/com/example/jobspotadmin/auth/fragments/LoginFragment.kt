@@ -63,9 +63,8 @@ class LoginFragment : Fragment() {
             etEmailContainer.addTextWatcher()
             etPasswordContainer.addTextWatcher()
             btnLogin.setOnClickListener {
-                loadingDialog.show()
-                val email = binding.etEmail.getInputValue()
-                val password = binding.etPassword.getInputValue()
+                val email = etEmail.getInputValue()
+                val password = etPassword.getInputValue()
                 if (detailVerification(email, password)) {
                     authenticateUser(email, password)
                     clearField()
@@ -97,6 +96,7 @@ class LoginFragment : Fragment() {
     ) {
         lifecycleScope.launch {
             try {
+                loadingDialog.show()
                 mAuth.signInWithEmailAndPassword(email, password).await()
                 val currentUserUid = mAuth.currentUser?.uid!!
                 val currentUsername = mAuth.currentUser?.displayName!!
@@ -109,16 +109,19 @@ class LoginFragment : Fragment() {
                 val roleDocument: DocumentSnapshot = currentUserRole.get().await()
                 val roleType: String = roleDocument.get("role") as String
 
-                loadingDialog.changeLoadingText()
-
-                if (!userDocument.exists() && roleType == ROLE_TYPE_TPO) {
-                    // Transfer user to UserDetail Fragment
-                    navigateToUserDetail(username = currentUsername, email = email)
-                } else if (!userDocument.exists() && roleType == ROLE_TYPE_ADMIN) {
-                    Log.d(TAG, "Transfer user to Home Activity")
+                if(roleType == args.roleType){
+                    if (!userDocument.exists() && roleType == ROLE_TYPE_TPO) {
+                        // Transfer user to UserDetail Fragment
+                        navigateToUserDetail(username = currentUsername, email = email)
+                    } else if (!userDocument.exists() && roleType == ROLE_TYPE_ADMIN) {
+                        Log.d(TAG, "Transfer user to Home Activity")
+                    } else if (userDocument.exists() && roleType == ROLE_TYPE_TPO) {
+                        Log.d(TAG, "Transfer user to Home Activity")
+                    }
                 } else {
-                    Log.d(TAG, "Transfer user to Home Activity")
+                    showToast(requireContext(), "Account doesn't exist")
                 }
+
             } catch (e: FirebaseAuthInvalidCredentialsException) {
                 showToast(requireContext(), getString(R.string.invalid_credentials))
             } catch (e: FirebaseAuthInvalidUserException) {
@@ -129,7 +132,6 @@ class LoginFragment : Fragment() {
                 Log.d(TAG, "Error : ${e.message}")
                 showToast(requireContext(), e.message.toString())
             } finally {
-
                 loadingDialog.dismiss()
             }
         }

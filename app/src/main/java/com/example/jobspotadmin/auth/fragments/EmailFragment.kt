@@ -31,17 +31,21 @@ class EmailFragment : Fragment() {
     }
 
     private fun setupView() {
-        binding.tvEmailResend.text = createResendText()
 
-        binding.btnBackToLogin.setOnClickListener {
-            findNavController().popBackStack(R.id.loginFragment, false)
-        }
+        binding.apply {
 
-        binding.btnOpenEmail.setOnClickListener {
-            val mailIntent = Intent(Intent.ACTION_MAIN)
-            mailIntent.addCategory(Intent.CATEGORY_APP_EMAIL)
-            mailIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            activity?.startActivity(mailIntent)
+            tvEmailResend.text = createResendText()
+
+            btnBackToLogin.setOnClickListener {
+                findNavController().popBackStack(R.id.loginFragment, false)
+            }
+
+            btnOpenEmail.setOnClickListener {
+                val mailIntent = Intent(Intent.ACTION_MAIN)
+                mailIntent.addCategory(Intent.CATEGORY_APP_EMAIL)
+                mailIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                activity?.startActivity(mailIntent)
+            }
         }
     }
 

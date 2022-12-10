@@ -31,13 +31,7 @@ class EmailFragment : Fragment() {
     }
 
     private fun setupView() {
-        val resendText = SpannableString(getString(R.string.email_resend_prompt))
-        val color = ContextCompat.getColor(requireActivity(), R.color.on_boarding_span_text_color)
-        val resendColor = ForegroundColorSpan(color)
-
-        resendText.setSpan(UnderlineSpan(), 33, resendText.length, 0)
-        resendText.setSpan(resendColor, 33, resendText.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
-        binding.tvEmailResend.text = resendText
+        binding.tvEmailResend.text = createResendText()
 
         binding.btnBackToLogin.setOnClickListener {
             findNavController().popBackStack(R.id.loginFragment, false)
@@ -49,5 +43,15 @@ class EmailFragment : Fragment() {
             mailIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             activity?.startActivity(mailIntent)
         }
+    }
+
+    private fun createResendText() : SpannableString {
+        val resendText = SpannableString(getString(R.string.email_resend_prompt))
+        val color = ContextCompat.getColor(requireActivity(), R.color.on_boarding_span_text_color)
+        val resendColor = ForegroundColorSpan(color)
+
+        resendText.setSpan(UnderlineSpan(), 33, resendText.length, 0)
+        resendText.setSpan(resendColor, 33, resendText.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+        return resendText
     }
 }

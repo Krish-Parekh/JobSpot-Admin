@@ -17,6 +17,7 @@ private const val TAG = "FORGOT_PASSWORD"
 class ForgetPassFragment : Fragment() {
     private val mAuth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
     private lateinit var binding : FragmentForgetPassBinding
+    private val loadingDialog : LoadingDialog by lazy { LoadingDialog(requireContext()) }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -30,20 +31,25 @@ class ForgetPassFragment : Fragment() {
         binding.etEmailContainer.addTextWatcher()
 
         binding.btnResetPassword.setOnClickListener {
+            loadingDialog.show()
             val email = binding.etEmail.getInputValue()
             if(InputValidation.emailValidation(email)){
                 mAuth.sendPasswordResetEmail(email)
                     .addOnSuccessListener {
                         showToast(requireContext(), getString(R.string.reset_pass))
                         findNavController().navigate(R.id.action_forgetPassFragment_to_emailFragment)
+                        loadingDialog.changeLoadingText()
+                        loadingDialog.dismiss()
                     }
                     .addOnFailureListener { error ->
+                        loadingDialog.dismiss()
                         Log.d(TAG, "Exception: ${error.message}")
                         showToast(requireContext(), getString(R.string.reset_fail))
                     }
                 clearField()
             }else{
                 binding.etEmailContainer.error = getString(R.string.field_error_email)
+                loadingDialog.dismiss()
             }
         }
 

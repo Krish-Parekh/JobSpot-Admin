@@ -16,14 +16,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.jobspotadmin.R
 import com.example.jobspotadmin.databinding.FragmentLoginBinding
+import com.example.jobspotadmin.util.*
 import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_ROLE
 import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_TPO
 import com.example.jobspotadmin.util.Constants.Companion.ROLE_TYPE_ADMIN
 import com.example.jobspotadmin.util.Constants.Companion.ROLE_TYPE_TPO
-import com.example.jobspotadmin.util.InputValidation
-import com.example.jobspotadmin.util.addTextWatcher
-import com.example.jobspotadmin.util.clearText
-import com.example.jobspotadmin.util.getInputValue
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuth
@@ -41,6 +38,7 @@ class LoginFragment : Fragment() {
     private val args by navArgs<LoginFragmentArgs>()
     private val mAuth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
     private val mFirestore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
+    private val loadingDialog : LoadingDialog by lazy { LoadingDialog(requireContext()) }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -65,11 +63,14 @@ class LoginFragment : Fragment() {
             etEmailContainer.addTextWatcher()
             etPasswordContainer.addTextWatcher()
             btnLogin.setOnClickListener {
+                loadingDialog.show()
                 val email = binding.etEmail.getInputValue()
                 val password = binding.etPassword.getInputValue()
                 if (detailVerification(email, password)) {
                     authenticateUser(email, password)
                     clearField()
+                } else {
+                    loadingDialog.dismiss()
                 }
             }
         }
@@ -98,7 +99,7 @@ class LoginFragment : Fragment() {
             try {
                 mAuth.signInWithEmailAndPassword(email, password).await()
                 val currentUserUid = mAuth.currentUser?.uid!!
-
+                val currentUsername = mAuth.currentUser?.displayName!!
                 val currentUserDoc =
                     mFirestore.collection(COLLECTION_PATH_TPO).document(currentUserUid)
                 val userDocument: DocumentSnapshot = currentUserDoc.get().await()
@@ -108,27 +109,31 @@ class LoginFragment : Fragment() {
                 val roleDocument: DocumentSnapshot = currentUserRole.get().await()
                 val roleType: String = roleDocument.get("role") as String
 
+                loadingDialog.changeLoadingText()
+
                 if (!userDocument.exists() && roleType == ROLE_TYPE_TPO) {
-                    Log.d(TAG, "Transfer user to UserDetail Fragment")
+                    // Transfer user to UserDetail Fragment
+                    navigateToUserDetail(username = currentUsername, email = email)
                 } else if (!userDocument.exists() && roleType == ROLE_TYPE_ADMIN) {
                     Log.d(TAG, "Transfer user to Home Activity")
                 } else {
                     Log.d(TAG, "Transfer user to Home Activity")
                 }
             } catch (e: FirebaseAuthInvalidCredentialsException) {
-                Log.d(TAG, "Error : Invalid email or password")
+                showToast(requireContext(), getString(R.string.invalid_credentials))
             } catch (e: FirebaseAuthInvalidUserException) {
-                Log.d(TAG, "Error : The specified user does not exist")
+                showToast(requireContext(), getString(R.string.invalid_user))
             } catch (e: FirebaseNetworkException) {
-                Log.d(TAG, "Error : A network error occurred")
-            } catch (e: FirebaseTooManyRequestsException) {
-                Log.d(TAG, "Error : Too many requests were made to the authentication server")
+                showToast(requireContext(), getString(R.string.network_error))
             } catch (e: Exception) {
                 Log.d(TAG, "Error : ${e.message}")
+                showToast(requireContext(), e.message.toString())
+            } finally {
+
+                loadingDialog.dismiss()
             }
         }
     }
-
 
     private fun navigateToUserDetail(username: String, email: String) {
         val direction =

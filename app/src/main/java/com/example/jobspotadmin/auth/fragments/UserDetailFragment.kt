@@ -11,6 +11,7 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.navArgs
 import com.example.jobspotadmin.R
 import com.example.jobspotadmin.auth.viewmodel.AuthViewModel
@@ -42,6 +43,7 @@ class UserDetailFragment : Fragment() {
         }
     private var gender: String = ""
     private var qualification: String = ""
+    private val loadingDialog: LoadingDialog by lazy { LoadingDialog(requireContext()) }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -103,7 +105,10 @@ class UserDetailFragment : Fragment() {
                         bio
                     )
                 ) {
-                    Log.d(TAG, "$mobile, $dob, $gender, ${imageUri}, $stream, $qualification, $experience, $bio")
+                    Log.d(
+                        TAG,
+                        "$mobile, $dob, $gender, ${imageUri}, $stream, $qualification, $experience, $bio"
+                    )
                     val user = User(
                         uid = mAuth.currentUser?.uid.toString(),
                         email = args.email,
@@ -118,10 +123,24 @@ class UserDetailFragment : Fragment() {
                     )
 
                     authViewModel.uploadData(imageUri = imageUri!!, user = user)
+                    handleUploadResponse()
                     clearField()
                 }
             }
         }
+    }
+
+    private fun handleUploadResponse() {
+        authViewModel.uploadDataStatus.observe(viewLifecycleOwner, Observer { uiState ->
+            if (uiState.loading) {
+                loadingDialog.show()
+            } else if (uiState.success) {
+                loadingDialog.changeLoadingText()
+                loadingDialog.dismiss()
+            } else if (uiState.failed) {
+                loadingDialog.dismiss()
+            }
+        })
     }
 
     private fun startCrop() {
@@ -180,7 +199,11 @@ class UserDetailFragment : Fragment() {
                     showToast(requireContext(), getString(R.string.field_error_image))
                     false
                 }
-                !checkField(mobile, getString(R.string.field_error_mobile), etMobileContainer) -> false
+                !checkField(
+                    mobile,
+                    getString(R.string.field_error_mobile),
+                    etMobileContainer
+                ) -> false
                 !checkField(dob, getString(R.string.field_error_dob), etDateContainer) -> {
                     etDateContainer.apply {
                         setErrorIconOnClickListener {
@@ -197,8 +220,16 @@ class UserDetailFragment : Fragment() {
                     qualificationSpinner.error = ""
                     false
                 }
-                !checkField(stream, getString(R.string.field_error_stream), etFieldOfStudyContainer) -> false
-                !checkField(experience, getString(R.string.field_error_year), etYearExperienceContainer) -> false
+                !checkField(
+                    stream,
+                    getString(R.string.field_error_stream),
+                    etFieldOfStudyContainer
+                ) -> false
+                !checkField(
+                    experience,
+                    getString(R.string.field_error_year),
+                    etYearExperienceContainer
+                ) -> false
                 !checkField(bio, getString(R.string.field_error_bio), etBioContainer) -> false
 
                 else -> true

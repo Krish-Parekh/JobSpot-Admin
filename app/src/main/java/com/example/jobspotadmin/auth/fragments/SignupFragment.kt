@@ -32,6 +32,7 @@ class SignupFragment : Fragment() {
     private val args by navArgs<SignupFragmentArgs>()
     private val mAuth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
     private val mFirestore : FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
+    private val loadingDialog : LoadingDialog by lazy { LoadingDialog(requireContext()) }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -55,12 +56,15 @@ class SignupFragment : Fragment() {
         binding.etPasswordContainer.addTextWatcher()
 
         binding.btnSignup.setOnClickListener {
+            loadingDialog.show()
             val username = binding.etUsername.getInputValue()
             val email = binding.etEmail.getInputValue()
             val password = binding.etPassword.getInputValue()
             if (detailVerification(username, email, password)) {
                 authenticateUser(username, email, password)
                 clearField()
+            } else {
+                loadingDialog.dismiss()
             }
         }
     }
@@ -85,6 +89,7 @@ class SignupFragment : Fragment() {
                 val currentUserRole = hashMapOf("role" to args.roleType)
                 mFirestore.collection("role").document(currentUser.uid).set(currentUserRole).await()
                 currentUser.updateProfile(profileUpdates).await()
+                loadingDialog.changeLoadingText()
                 showToast(requireContext(), getString(R.string.auth_pass))
                 navigateToUserDetail(username, email)
             }catch (error : FirebaseAuthUserCollisionException){
@@ -92,6 +97,8 @@ class SignupFragment : Fragment() {
             }catch (error : Exception) {
                 showToast(requireContext(), getString(R.string.auth_fail))
                 Log.d(TAG, "Exception : ${error.message}")
+            } finally {
+                loadingDialog.dismiss()
             }
         }
     }

@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.example.jobspotadmin.R
 import com.example.jobspotadmin.databinding.FragmentRoleSelectBinding
+import com.example.jobspotadmin.util.Constants.Companion.ROLE_TYPE_ADMIN
+import com.example.jobspotadmin.util.Constants.Companion.ROLE_TYPE_TPO
 
 
 class RoleSelectFragment : Fragment() {
@@ -25,8 +27,12 @@ class RoleSelectFragment : Fragment() {
 
     private fun setupView() {
         binding.apply {
-            ivRoleAdmin.setOnClickListener { navigateToLogin(roleType = "ADMIN") }
-            ivRoleTpo.setOnClickListener { navigateToLogin(roleType = "TPO") }
+            ivRoleAdmin.setOnClickListener {
+                navigateToLogin(roleType = ROLE_TYPE_ADMIN)
+            }
+            ivRoleTpo.setOnClickListener {
+                navigateToLogin(roleType = ROLE_TYPE_TPO)
+            }
         }
     }
 
@@ -34,6 +40,4 @@ class RoleSelectFragment : Fragment() {
         val direction = RoleSelectFragmentDirections.actionRoleSelectFragmentToLoginFragment(roleType = roleType)
         findNavController().navigate(direction)
     }
-
-
 }

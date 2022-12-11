@@ -16,7 +16,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.jobspotadmin.R
 import com.example.jobspotadmin.databinding.FragmentSignupBinding
+import com.example.jobspotadmin.model.Admin
 import com.example.jobspotadmin.util.*
+import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_ADMIN
+import com.example.jobspotadmin.util.Constants.Companion.ROLE_TYPE_ADMIN
 import com.example.jobspotadmin.util.Constants.Companion.ROLE_TYPE_TPO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
@@ -92,12 +95,15 @@ class SignupFragment : Fragment() {
                     UserProfileChangeRequest.Builder().setDisplayName(username).build()
                 val currentUserRole = hashMapOf("role" to args.roleType)
                 mFirestore.collection("role").document(currentUser.uid).set(currentUserRole).await()
+                if(args.roleType == ROLE_TYPE_ADMIN) {
+                    val admin = Admin(uid = currentUser.uid, username = username, email = email)
+                    mFirestore.collection(COLLECTION_PATH_ADMIN).document(currentUser.uid).set(admin).await()
+                }
                 currentUser.updateProfile(profileUpdates).await()
-
                 showToast(requireContext(), getString(R.string.auth_pass))
                 navigateToUserDetail(username, email)
             } catch (error: FirebaseAuthUserCollisionException) {
-                showToast(requireContext(), "Email already exists")
+                showToast(requireContext(), getString(R.string.email_exists))
             } catch (error: Exception) {
                 showToast(requireContext(), getString(R.string.auth_fail))
                 Log.d(TAG, "Exception : ${error.message}")
@@ -108,14 +114,14 @@ class SignupFragment : Fragment() {
     }
 
     private fun navigateToUserDetail(username: String, email: String) {
-        if (args.roleType === ROLE_TYPE_TPO) {
+        if (args.roleType == ROLE_TYPE_TPO) {
             val directions = SignupFragmentDirections.actionSignupFragmentToUserDetailFragment(
                 username = username,
                 email = email
             )
             findNavController().navigate(directions)
         } else {
-            showToast(requireContext(), args.roleType)
+            showToast(requireContext(), getString(R.string.move_to_login))
         }
     }
 

@@ -44,6 +44,7 @@
 
     <string name="auth_pass">Authentication Success</string>
     <string name="auth_fail">Authentication Failed</string>
+    <string name="move_to_login">You can login now</string>
 
     <string name="field_error_username">Enter valid username</string>
     <string name="field_error_email">Enter valid email ID</string>
@@ -57,8 +58,9 @@
     <string name="reset_pass">Reset Password Send Success</string>
     <string name="reset_fail">Reset Password Failed</string>
     <string name="invalid_credentials">Invalid email or password</string>
-    <string name="invalid_user">The specified user does not exist</string>
+    <string name="invalid_user">The specified tpo does not exist</string>
     <string name="network_error">A network error occurred</string>
+    <string name="email_exists">"Email already exists"</string>
 
 
     <string name="loading">Loading</string>

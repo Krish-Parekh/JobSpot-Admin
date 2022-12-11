@@ -1,5 +1,6 @@
 package com.example.jobspotadmin.auth.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
@@ -68,8 +69,6 @@ class LoginFragment : Fragment() {
                 if (detailVerification(email, password)) {
                     authenticateUser(email, password)
                     clearField()
-                } else {
-                    loadingDialog.dismiss()
                 }
             }
         }
@@ -148,7 +147,6 @@ class LoginFragment : Fragment() {
             LoginFragmentDirections.actionLoginFragmentToSignupFragment(roleType = roleType)
         findNavController().navigate(direction)
     }
-
     private fun detailVerification(
         email: String,
         password: String

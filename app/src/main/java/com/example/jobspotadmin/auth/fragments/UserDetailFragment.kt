@@ -16,20 +16,13 @@ import androidx.navigation.fragment.navArgs
 import com.example.jobspotadmin.R
 import com.example.jobspotadmin.auth.viewmodel.AuthViewModel
 import com.example.jobspotadmin.databinding.FragmentUserDetailBinding
-import com.example.jobspotadmin.model.User
+import com.example.jobspotadmin.model.Tpo
 import com.example.jobspotadmin.util.*
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.firebase.auth.FirebaseAuth
 
 
-/*
-* Note:
-* 4. Implement Test for the validation function
-* 6. Implement SingleTop for fragment
-* 7. Disable the button once clicked
-* 8. Send Data to firebase fire-store
-* */
 private const val TAG = "UserDetailFragment"
 
 class UserDetailFragment : Fragment() {
@@ -105,7 +98,7 @@ class UserDetailFragment : Fragment() {
                         bio
                     )
                 ) {
-                    val user = User(
+                    val tpo = Tpo(
                         uid = mAuth.currentUser?.uid.toString(),
                         email = args.email,
                         username = args.username,
@@ -117,8 +110,8 @@ class UserDetailFragment : Fragment() {
                         experience = experience,
                         biography = bio,
                     )
-                    Log.d(TAG, "User : $user")
-                    authViewModel.uploadData(imageUri = imageUri!!, user = user)
+                    Log.d(TAG, "Tpo : $tpo")
+                    authViewModel.uploadData(imageUri = imageUri!!, tpo = tpo)
                     handleUploadResponse()
                     clearField()
                 }
@@ -217,10 +210,10 @@ class UserDetailFragment : Fragment() {
             else if(!checkField(stream, getString(R.string.field_error_stream), etFieldOfStudyContainer)){
                 return false
             }
-            else if(!checkField(experience, getString(R.string.field_error_stream), etYearExperienceContainer)){
+            else if(!checkField(experience, getString(R.string.field_error_year), etYearExperienceContainer)){
                 return false
             }
-            else return checkField(bio, getString(R.string.field_error_stream), etBioContainer)
+            else return checkField(bio, getString(R.string.field_error_bio), etBioContainer)
         }
     }
 

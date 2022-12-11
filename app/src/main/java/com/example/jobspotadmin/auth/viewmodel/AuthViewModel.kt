@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.jobspotadmin.model.User
+import com.example.jobspotadmin.model.Tpo
 import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_TPO
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -36,23 +36,23 @@ class AuthViewModel : ViewModel() {
         return this.imageUri
     }
 
-    fun uploadData(imageUri: Uri, user : User){
+    fun uploadData(imageUri: Uri, tpo : Tpo){
         viewModelScope.launch {
             try {
                 _uploadDataStatus.postValue(
                     UiState(loading = true)
                 )
                 // ImageUpload
-                val userId = user.uid
-                val imageName = user.uid
+                val userId = tpo.uid
+                val imageName = tpo.uid
                 val storageRef = mFireStorage.reference.child("tpo/profileImage/${imageName}")
                 storageRef.putFile(imageUri).await()
                 val imageUrl = storageRef.downloadUrl.await().toString()
-                user.imageUri = imageUrl
+                tpo.imageUri = imageUrl
                 Log.d(TAG, "Image Uploaded Success")
 
                 // UserData Upload
-                mFireStore.collection(COLLECTION_PATH_TPO).document(userId).set(user).await()
+                mFireStore.collection(COLLECTION_PATH_TPO).document(userId).set(tpo).await()
                 Log.d(TAG, "Data Uploaded Success")
 
                 _uploadDataStatus.postValue(

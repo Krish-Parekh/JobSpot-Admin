@@ -16,6 +16,10 @@
     <string name="email_fragment_heading">Check Your Email</string>
     <string name="email_fragment_sub_heading">We have sent the reset password to the email address brandonelouis@gmial.com</string>
     <string name="student_detail_fragment_heading">Add Details</string>
+    <string name="fragment_jobs_heading">Jobs</string>
+    <string name="fragment_jobs_record_heading">Records</string>
+    <string name="fragment_job_detail_heading">Add Job</string>
+
 
     <string name="upload_image">Upload Profile</string>
     <string name="field_username">Username</string>
@@ -37,6 +41,17 @@
     <string name="field_year_experience">Experience</string>
     <string name="field_bio">Biography</string>
     <string name="field_submit">Submit</string>
+    <string name="field_search">Search</string>
+    <string name="field_upload_company_image">Upload Image</string>
+    <string name="field_job_title">Job Title</string>
+    <string name="field_company_name">Company Name</string>
+    <string name="field_city">City</string>
+    <string name="field_salary">Salary</string>
+    <string name="field_job_description">Job Description</string>
+    <string name="field_job_responsibilities">Job Responsibilities</string>
+    <string name="field_skills">Skills</string>
+
+
 
     <string name="login_prompt">Already have an account? Login</string>
     <string name="sign_up_prompt">You don\'t have an account yet? Sign up</string>
@@ -45,6 +60,10 @@
     <string name="auth_pass">Authentication Success</string>
     <string name="auth_fail">Authentication Failed</string>
     <string name="move_to_login">You can login now</string>
+
+
+
+
 
     <string name="field_error_username">Enter valid username</string>
     <string name="field_error_email">Enter valid email ID</string>
@@ -56,11 +75,18 @@
     <string name="field_error_bio">Enter valid biography</string>
     <string name="field_error_stream">Enter valid stream</string>
     <string name="reset_pass">Reset Password Send Success</string>
+    <string name="field_error_job_title">Enter valid Job title</string>
+    <string name="field_error_company_name">Enter valid Company name</string>
+    <string name="field_error_city">Enter valid City</string>
+    <string name="field_error_salary">Enter valid Salary</string>
+    <string name="field_error_description">Enter valid Description</string>
+
     <string name="reset_fail">Reset Password Failed</string>
     <string name="invalid_credentials">Invalid email or password</string>
     <string name="invalid_user">The specified tpo does not exist</string>
     <string name="network_error">A network error occurred</string>
     <string name="email_exists">"Email already exists"</string>
+
 
 
     <string name="loading">Loading</string>

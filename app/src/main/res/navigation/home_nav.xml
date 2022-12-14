@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_nav"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.jobspotadmin.home.fragment.homeFragment.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_jobsFragment"
+            app:destination="@id/jobsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/jobsFragment"
+        android:name="com.example.jobspotadmin.home.fragment.jobsFragment.JobsFragment"
+        android:label="fragment_jobs"
+        tools:layout="@layout/fragment_jobs" >
+        <action
+            android:id="@+id/action_jobsFragment_to_jobDetailFragmentOne"
+            app:destination="@id/jobDetailFragmentOne" />
+    </fragment>
+    <fragment
+        android:id="@+id/jobDetailFragmentOne"
+        android:name="com.example.jobspotadmin.home.fragment.jobsFragment.JobDetailFragmentOne"
+        android:label="fragment_job_detail_one"
+        tools:layout="@layout/fragment_job_detail_one" >
+        <action
+            android:id="@+id/action_jobDetailFragmentOne_to_jobDetailFragmentTwo"
+            app:destination="@id/jobDetailFragmentTwo" />
+    </fragment>
+    <fragment
+        android:id="@+id/jobDetailFragmentTwo"
+        android:name="com.example.jobspotadmin.home.fragment.jobsFragment.JobDetailFragmentTwo"
+        android:label="fragment_job_detail_two"
+        tools:layout="@layout/fragment_job_detail_two" >
+        <argument
+            android:name="job"
+            app:argType="com.example.jobspotadmin.model.Job" />
+    </fragment>
+</navigation>

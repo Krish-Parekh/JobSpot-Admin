@@ -17,6 +17,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.jobspotadmin.R
 import com.example.jobspotadmin.databinding.FragmentLoginBinding
+import com.example.jobspotadmin.home.HomeActivity
 import com.example.jobspotadmin.util.*
 import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_ROLE
 import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_TPO
@@ -64,12 +65,15 @@ class LoginFragment : Fragment() {
             etEmailContainer.addTextWatcher()
             etPasswordContainer.addTextWatcher()
             btnLogin.setOnClickListener {
-                val email = etEmail.getInputValue()
-                val password = etPassword.getInputValue()
-                if (detailVerification(email, password)) {
-                    authenticateUser(email, password)
-                    clearField()
-                }
+                val intent = Intent(requireContext(), HomeActivity::class.java)
+                startActivity(intent)
+                requireActivity().finish()
+//                val email = etEmail.getInputValue()
+//                val password = etPassword.getInputValue()
+//                if (detailVerification(email, password)) {
+//                    authenticateUser(email, password)
+//                    clearField()
+//                }
             }
         }
 

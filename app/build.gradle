@@ -68,9 +68,12 @@ dependencies {
     //Image Picker
     implementation "com.github.dhaval2404:imagepicker:$image_picker_version"
 
+    //Coil Image
+    implementation "io.coil-kt:coil:$coil_version"
+
     //PowerSpinner
     implementation "com.github.skydoves:powerspinner:$power_spinner_version"
 
     //Lottie Library
-    implementation "com.airbnb.android:lottie:$lottieVersion"
+    implementation "com.airbnb.android:lottie:$lottie_version"
 }

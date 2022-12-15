@@ -13,12 +13,15 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.jobspotadmin.R
 import com.example.jobspotadmin.databinding.FragmentJobDetailOneBinding
+import com.example.jobspotadmin.home.fragment.jobsFragment.viewmodel.JobsViewModel
 import com.example.jobspotadmin.model.Job
 import com.example.jobspotadmin.util.InputValidation
 import com.example.jobspotadmin.util.addTextWatcher
 import com.example.jobspotadmin.util.getInputValue
 import com.example.jobspotadmin.util.showToast
 import com.github.dhaval2404.imagepicker.ImagePicker
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
 
 
@@ -68,13 +71,13 @@ class JobDetailFragmentOne : Fragment() {
                 val city = etCityName.getInputValue()
                 val salary = etSalary.getInputValue()
                 val description = etJobDesc.getInputValue()
-                val imageUri = jobsViewModel.getImageUri()
+                val imageUrl = jobsViewModel.getImageUri()
                 val currentUid = mAuth.currentUser?.uid.toString()
 
-                if (detailVerification(imageUri, title, name, city, salary, description)) {
+                if (detailVerification(imageUrl, title, name, city, salary, description)) {
                     val job = Job(
                         authorUid = currentUid,
-                        imageUri = imageUri.toString(),
+                        imageUrl = imageUrl.toString(),
                         title = title,
                         name = name,
                         city = city,
@@ -122,7 +125,7 @@ class JobDetailFragmentOne : Fragment() {
     }
 
     private fun detailVerification(
-        imageUri: Uri?,
+        imageUrl: Uri?,
         title: String,
         company: String,
         city: String,
@@ -130,17 +133,17 @@ class JobDetailFragmentOne : Fragment() {
         description: String
     ): Boolean {
         binding.apply {
-            if (imageUri == null) {
+            if (imageUrl == null) {
                 showToast(requireContext(), getString(R.string.field_error_image))
                 return false
             } else if (!InputValidation.checkNullity(title)) {
                 etJobTitleContainer.error = getString(R.string.field_error_job_title)
                 return false
             } else if (!InputValidation.checkNullity(company)) {
-                etCompanyName.error = getString(R.string.field_error_company_name)
+                etCompanyNameContainer.error = getString(R.string.field_error_company_name)
                 return false
             } else if (!InputValidation.checkNullity(city)) {
-                etCompanyNameContainer.error = getString(R.string.field_error_city)
+                etCityNameContainer.error = getString(R.string.field_error_city)
                 return false
             } else if (!InputValidation.checkNullity(salary)) {
                 etSalaryContainer.error = getString(R.string.field_error_salary)
@@ -153,4 +156,6 @@ class JobDetailFragmentOne : Fragment() {
             }
         }
     }
+
+
 }

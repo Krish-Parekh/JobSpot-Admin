@@ -8,16 +8,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jobspotadmin.model.Tpo
 import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_TPO
+import com.example.jobspotadmin.util.Constants.Companion.TPO_IMAGE_STORAGE_PATH
+import com.example.jobspotadmin.util.UiState
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-data class UiState(
-    var loading : Boolean = false,
-    var success : Boolean = false,
-    val failed : Boolean = false,
-)
+
 
 private const val TAG = "AuthViewModel"
 class AuthViewModel : ViewModel() {
@@ -45,7 +43,7 @@ class AuthViewModel : ViewModel() {
                 // ImageUpload
                 val userId = tpo.uid
                 val imageName = tpo.uid
-                val storageRef = mFireStorage.reference.child("tpo/profileImage/${imageName}")
+                val storageRef = mFireStorage.reference.child(TPO_IMAGE_STORAGE_PATH + imageName)
                 storageRef.putFile(imageUri).await()
                 val imageUrl = storageRef.downloadUrl.await().toString()
                 tpo.imageUri = imageUrl

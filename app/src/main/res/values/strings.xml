@@ -19,7 +19,8 @@
     <string name="fragment_jobs_heading">Jobs</string>
     <string name="fragment_jobs_record_heading">Records</string>
     <string name="fragment_job_detail_heading">Add Job</string>
-
+    <string name="bottom_sheet_heading">Remove Job</string>
+    <string name="bottom_sheet_sub_heading">Are you sure you want to delete this job?</string>
 
     <string name="upload_image">Upload Profile</string>
     <string name="field_username">Username</string>
@@ -50,7 +51,8 @@
     <string name="field_job_description">Job Description</string>
     <string name="field_job_responsibilities">Job Responsibilities</string>
     <string name="field_skills">Skills</string>
-
+    <string name="bottom_sheet_button_text">No</string>
+    <string name="button_submit_text">Yes</string>
 
 
     <string name="login_prompt">Already have an account? Login</string>

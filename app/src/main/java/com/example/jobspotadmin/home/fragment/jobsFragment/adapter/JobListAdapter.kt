@@ -19,11 +19,23 @@ class JobListAdapter(private val listener : JobsFragment) : RecyclerView.Adapter
     private var jobs: MutableList<Job> = mutableListOf()
 
     inner class JobListAdapterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val logo: ImageView = itemView.findViewById(R.id.ivCompanyLogo)
-        val role: TextView = itemView.findViewById(R.id.tvJobRole)
-        val name: TextView = itemView.findViewById(R.id.tvCompanyName)
-        val delete: ImageView = itemView.findViewById(R.id.ivDeleteJob)
+        private val logo: ImageView = itemView.findViewById(R.id.ivCompanyLogo)
+        private val role: TextView = itemView.findViewById(R.id.tvJobRole)
+        private val name: TextView = itemView.findViewById(R.id.tvCompanyName)
+        private val delete: ImageView = itemView.findViewById(R.id.ivDeleteJob)
 
+        fun bind(job: Job){
+            logo.load(job.imageUrl){
+                error(R.drawable.ic_apple_logo)
+                placeholder(R.drawable.ic_jobs)
+                build()
+            }
+            role.text = job.title
+            name.text = job.name
+            delete.setOnClickListener {
+                listener.showDeleteDialog(job)
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): JobListAdapterViewHolder {
@@ -33,19 +45,7 @@ class JobListAdapter(private val listener : JobsFragment) : RecyclerView.Adapter
     }
 
     override fun onBindViewHolder(holder: JobListAdapterViewHolder, position: Int) {
-        val job = jobs[position]
-        holder.apply {
-            logo.load(job.imageUrl){
-                error(R.drawable.ic_apple_logo)
-                placeholder(R.drawable.ic_jobs)
-                build()
-            }
-            role.text = job.title
-            name.text = job.name
-            delete.setOnClickListener {
-                listener.showDeleteDialog()
-            }
-        }
+        holder.bind(jobs[position])
     }
 
     override fun getItemCount(): Int = jobs.size

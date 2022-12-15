@@ -26,6 +26,8 @@ class JobsViewModel : ViewModel() {
     private val _uploadDataStatus: MutableLiveData<UiState> = MutableLiveData(UiState())
     val uploadDataStatus: LiveData<UiState> = _uploadDataStatus
 
+    private val _deleteDataStatus: MutableLiveData<UiState> = MutableLiveData(UiState())
+    val deleteDataStatus: LiveData<UiState> = _deleteDataStatus
 
     fun setImageUri(imageUri: Uri?) {
         this@JobsViewModel.imageUri = imageUri
@@ -57,6 +59,32 @@ class JobsViewModel : ViewModel() {
             } catch (error: Exception) {
                 Log.d(TAG, "Exception : ${error.message}")
                 _uploadDataStatus.postValue(
+                    UiState(
+                        failed = true
+                    )
+                )
+            }
+        }
+    }
+
+    fun deleteData(job: Job) {
+        viewModelScope.launch {
+            try {
+                _uploadDataStatus.postValue(
+                    UiState(loading = true)
+                )
+                val uid = job.uid
+                mFireStorage.reference.child(COMPANY_IMAGE_STORAGE_PATH + uid).delete()
+                Log.d(TAG, "Company image delete success")
+                mFireStore.collection(COLLECTION_PATH_COMPANY).document(uid).delete().await()
+                Log.d(TAG, "Company data delete success")
+
+                _uploadDataStatus.postValue(
+                    UiState(success = true)
+                )
+            } catch (error: Exception) {
+                Log.d(TAG, "Exception : ${error.message}")
+                _deleteDataStatus.postValue(
                     UiState(
                         failed = true
                     )

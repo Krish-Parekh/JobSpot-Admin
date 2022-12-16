@@ -1,6 +1,5 @@
 package com.example.jobspotadmin.home.fragment.jobsFragment.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,36 +10,39 @@ import coil.load
 import com.example.jobspotadmin.R
 import com.example.jobspotadmin.home.fragment.jobsFragment.JobsFragment
 import com.example.jobspotadmin.model.Job
+import com.google.android.material.card.MaterialCardView
 
-private const val TAG = "JobAdapterTAG"
-
-class JobListAdapter(private val listener : JobsFragment) : RecyclerView.Adapter<JobListAdapter.JobListAdapterViewHolder>() {
+class JobListAdapter(private val listener: JobsFragment) :
+    RecyclerView.Adapter<JobListAdapter.JobListAdapterViewHolder>() {
 
     private var jobs: MutableList<Job> = mutableListOf()
 
     inner class JobListAdapterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val logo: ImageView = itemView.findViewById(R.id.ivCompanyLogo)
-        private val role: TextView = itemView.findViewById(R.id.tvJobRole)
-        private val name: TextView = itemView.findViewById(R.id.tvCompanyName)
-        private val delete: ImageView = itemView.findViewById(R.id.ivDeleteJob)
+        private val companyLogo: ImageView = itemView.findViewById(R.id.ivCompanyLogo)
+        private val jobRole: TextView = itemView.findViewById(R.id.tvJobRole)
+        private val companyName: TextView = itemView.findViewById(R.id.tvCompanyName)
+        private val deleteBtn: ImageView = itemView.findViewById(R.id.ivDeleteJob)
+        private val jobCardView: MaterialCardView = itemView.findViewById(R.id.cvJob)
 
-        fun bind(job: Job){
-            logo.load(job.imageUrl){
+        fun bind(job: Job) {
+            companyLogo.load(job.imageUrl) {
                 error(R.drawable.ic_apple_logo)
                 placeholder(R.drawable.ic_jobs)
                 build()
             }
-            role.text = job.title
-            name.text = job.name
-            delete.setOnClickListener {
-                listener.showDeleteDialog(job)
+            jobRole.text = job.role
+            companyName.text = job.name
+            deleteBtn.setOnClickListener {
+                listener.showDeleteDialog(job = job)
+            }
+            jobCardView.setOnClickListener {
+                listener.navigateToJobViewFragment(job = job)
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): JobListAdapterViewHolder {
-        val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.job_card_layout, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.job_card_layout, parent, false)
         return JobListAdapterViewHolder(view)
     }
 

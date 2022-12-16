@@ -121,13 +121,18 @@ class UserDetailFragment : Fragment() {
 
     private fun handleUploadResponse() {
         authViewModel.uploadDataStatus.observe(viewLifecycleOwner, Observer { uiState ->
-            if (uiState.loading) {
-                loadingDialog.show()
-            } else if (uiState.success) {
-                loadingDialog.dismiss()
-                authViewModel.setImageUri(null)
-            } else if (uiState.failed) {
-                loadingDialog.dismiss()
+            when (uiState) {
+                UiState.LOADING -> {
+                    loadingDialog.show()
+                }
+                UiState.SUCCESS -> {
+                    loadingDialog.dismiss()
+                    authViewModel.setImageUri(null)
+                }
+                UiState.FAILURE -> {
+                    loadingDialog.dismiss()
+                }
+                else -> Unit
             }
         })
     }
@@ -183,37 +188,40 @@ class UserDetailFragment : Fragment() {
         bio: String,
     ): Boolean {
         binding.apply {
-            if(imageUri == null){
+            if (imageUri == null) {
                 showToast(requireContext(), getString(R.string.field_error_image))
                 return false
-            }
-            else if (!InputValidation.mobileValidation(mobile)){
+            } else if (!InputValidation.mobileValidation(mobile)) {
                 etMobileContainer.error = getString(R.string.field_error_mobile)
                 return false
-            }
-            else if(!checkField(dob, getString(R.string.field_error_dob), etDateContainer)){
+            } else if (!checkField(dob, getString(R.string.field_error_dob), etDateContainer)) {
                 etDateContainer.apply {
                     setErrorIconOnClickListener {
                         error = null
                     }
                 }
                 return false
-            }
-            else if(!InputValidation.checkNullity(gender)) {
+            } else if (!InputValidation.checkNullity(gender)) {
                 genderSpinner.error = ""
                 return false
-            }
-            else if(!InputValidation.checkNullity(qualification)) {
+            } else if (!InputValidation.checkNullity(qualification)) {
                 qualificationSpinner.error = ""
                 return false
-            }
-            else if(!checkField(stream, getString(R.string.field_error_stream), etFieldOfStudyContainer)){
+            } else if (!checkField(
+                    stream,
+                    getString(R.string.field_error_stream),
+                    etFieldOfStudyContainer
+                )
+            ) {
                 return false
-            }
-            else if(!checkField(experience, getString(R.string.field_error_year), etYearExperienceContainer)){
+            } else if (!checkField(
+                    experience,
+                    getString(R.string.field_error_year),
+                    etYearExperienceContainer
+                )
+            ) {
                 return false
-            }
-            else return checkField(bio, getString(R.string.field_error_bio), etBioContainer)
+            } else return checkField(bio, getString(R.string.field_error_bio), etBioContainer)
         }
     }
 

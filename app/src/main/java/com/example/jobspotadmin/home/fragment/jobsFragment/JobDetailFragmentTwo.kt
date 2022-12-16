@@ -22,8 +22,8 @@ class JobDetailFragmentTwo : Fragment() {
     private lateinit var binding: FragmentJobDetailTwoBinding
     private val args by navArgs<JobDetailFragmentTwoArgs>()
     private val job by lazy { args.job }
-    private val loadingDialog : LoadingDialog by lazy { LoadingDialog(requireContext()) }
-    private val skillList: MutableList<String> = mutableListOf()
+    private val loadingDialog: LoadingDialog by lazy { LoadingDialog(requireContext()) }
+    private val skills: MutableList<String> = mutableListOf()
     private val jobsViewModel: JobsViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,50 +40,57 @@ class JobDetailFragmentTwo : Fragment() {
         binding.apply {
 
             ivPopOut.setOnClickListener {
-                findNavController().popBackStack(R.id.jobDetailFragmentOne, inclusive = true)
+                findNavController().popBackStack()
             }
-
-            etSkills.getSkillList(requireContext(), skillChipGroup) { skillName ->
-                skillList.add(skillName)
-            }
+            etSkills.getSkillList(requireContext(), skillChipGroup, ::addSkillsToList, ::removeSkillsFromList)
 
             etJobRespContainer.addTextWatcher()
 
             btnSave.setOnClickListener {
                 val responsibility = etJobResp.getInputValue()
-                if (detailVerification(responsibility, skillList)) {
+                if (detailVerification(responsibility, skills)) {
                     job.responsibility = responsibility
-                    job.skillSet = skillList
-                    val imageUri : Uri = Uri.parse(job.imageUrl)
+                    job.skillSet = skills
+                    val imageUri: Uri = Uri.parse(job.imageUrl)
                     jobsViewModel.uploadData(imageUri, job)
                     handleUploadResponse()
                 }
             }
         }
     }
-
+    private fun removeSkillsFromList(skill : String){
+        skills.remove(skill)
+    }
+    private fun addSkillsToList(skill : String){
+        skills.add(skill)
+    }
     private fun handleUploadResponse() {
-        jobsViewModel.uploadDataStatus.observe(viewLifecycleOwner, Observer { uiState ->
-            if (uiState.loading) {
-                loadingDialog.show()
-            } else if (uiState.success) {
-                loadingDialog.dismiss()
-                findNavController().popBackStack(R.id.jobDetailFragmentOne, inclusive = true)
-            } else if (uiState.failed) {
-                loadingDialog.dismiss()
+        jobsViewModel.operationStatus.observe(viewLifecycleOwner, Observer { uiState ->
+            when (uiState) {
+                UiState.LOADING -> {
+                    loadingDialog.show()
+                }
+                UiState.SUCCESS -> {
+                    loadingDialog.dismiss()
+                    findNavController().popBackStack(R.id.jobDetailFragmentOne, inclusive = true)
+                }
+                UiState.FAILURE -> {
+                    loadingDialog.dismiss()
+                }
+                else -> Unit
             }
         })
     }
 
     private fun detailVerification(
         responsibility: String,
-        skillList: MutableList<String>
+        skills: MutableList<String>
     ): Boolean {
         binding.apply {
             if (!InputValidation.checkNullity(responsibility)) {
                 etJobRespContainer.error = "Enter valid responsibility"
                 return false
-            } else if (skillList.isEmpty()) {
+            } else if (skills.isEmpty()) {
                 showToast(requireContext(), "Enter skills")
                 return false
             } else {

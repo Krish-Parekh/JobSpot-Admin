@@ -20,8 +20,6 @@ import com.example.jobspotadmin.util.addTextWatcher
 import com.example.jobspotadmin.util.getInputValue
 import com.example.jobspotadmin.util.showToast
 import com.github.dhaval2404.imagepicker.ImagePicker
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
 
 
@@ -66,23 +64,23 @@ class JobDetailFragmentOne : Fragment() {
             etJobDescContainer.addTextWatcher()
 
             btnNext.setOnClickListener {
-                val title = etJobTitle.getInputValue()
-                val name = etCompanyName.getInputValue()
+                val jobRole = etJobTitle.getInputValue()
+                val companyName = etCompanyName.getInputValue()
                 val city = etCityName.getInputValue()
                 val salary = etSalary.getInputValue()
-                val description = etJobDesc.getInputValue()
+                val jobDescription = etJobDesc.getInputValue()
                 val imageUrl = jobsViewModel.getImageUri()
                 val currentUid = mAuth.currentUser?.uid.toString()
 
-                if (detailVerification(imageUrl, title, name, city, salary, description)) {
+                if (detailVerification(imageUrl, jobRole, companyName, city, salary, jobDescription)) {
                     val job = Job(
                         authorUid = currentUid,
                         imageUrl = imageUrl.toString(),
-                        title = title,
-                        name = name,
+                        role = jobRole,
+                        name = companyName,
                         city = city,
                         salary = salary,
-                        description = description
+                        description = jobDescription
                     )
                     navigateToDetailFragmentTwo(job = job)
                 }
@@ -145,7 +143,7 @@ class JobDetailFragmentOne : Fragment() {
             } else if (!InputValidation.checkNullity(city)) {
                 etCityNameContainer.error = getString(R.string.field_error_city)
                 return false
-            } else if (!InputValidation.checkNullity(salary)) {
+            } else if (!InputValidation.salaryValidation(salary)) {
                 etSalaryContainer.error = getString(R.string.field_error_salary)
                 return false
             } else if (!InputValidation.checkNullity(description)) {

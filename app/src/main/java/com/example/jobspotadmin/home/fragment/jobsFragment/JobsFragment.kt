@@ -2,7 +2,6 @@ package com.example.jobspotadmin.home.fragment.jobsFragment
 
 import android.os.Bundle
 import android.text.Editable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +9,6 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.jobspotadmin.R
@@ -18,19 +16,16 @@ import com.example.jobspotadmin.databinding.FragmentJobsBinding
 import com.example.jobspotadmin.home.fragment.jobsFragment.adapter.JobListAdapter
 import com.example.jobspotadmin.home.fragment.jobsFragment.viewmodel.JobsViewModel
 import com.example.jobspotadmin.model.Job
-import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_COMPANY
 import com.example.jobspotadmin.util.LoadingDialog
+import com.example.jobspotadmin.util.UiState
 import com.example.jobspotadmin.util.showToast
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
-import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.launch
 
 private const val TAG = "JobsFragment"
 
 class JobsFragment : Fragment() {
     private lateinit var binding: FragmentJobsBinding
-    private val mFireStore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
     private val loadingDialog: LoadingDialog by lazy { LoadingDialog(requireContext()) }
     private val jobListAdapter: JobListAdapter by lazy { JobListAdapter(this@JobsFragment) }
     private val jobs: MutableList<Job> by lazy { mutableListOf() }
@@ -49,6 +44,8 @@ class JobsFragment : Fragment() {
 
     private fun setupView() {
         binding.apply {
+            jobsViewModel.fetchJobs()
+
             ivPopOut.setOnClickListener {
                 findNavController().popBackStack()
             }
@@ -65,39 +62,24 @@ class JobsFragment : Fragment() {
                 layoutManager = LinearLayoutManager(requireContext())
             }
 
-            fetchJobs()
+            jobsViewModel.jobs.observe(viewLifecycleOwner, Observer { jobs ->
+                jobListAdapter.setJobListData(newJobs = jobs)
+                this@JobsFragment.jobs.clear()
+                this@JobsFragment.jobs.addAll(jobs)
+            })
         }
     }
 
     private fun filterJobs(text: Editable?) {
         if (!text.isNullOrEmpty()) {
             val filteredJobList = jobs.filter { job ->
-                val title = job.title.lowercase()
+                val title = job.role.lowercase()
                 val inputText = text.toString().lowercase()
                 title.contains(inputText)
             }
             jobListAdapter.setJobListData(newJobs = filteredJobList)
         } else {
             jobListAdapter.setJobListData(newJobs = jobs)
-        }
-    }
-
-    private fun fetchJobs() {
-        lifecycleScope.launch {
-            mFireStore.collection(COLLECTION_PATH_COMPANY)
-                .addSnapshotListener { value, error ->
-                    if (error != null) {
-                        Log.d(TAG, "Error fetching jobs : ${error.message} ")
-                        return@addSnapshotListener
-                    }
-                    jobs.clear()
-                    val documents = value!!.documents
-                    val jobList = documents.map { document ->
-                        document.toObject(Job::class.java)!!
-                    }
-                    jobs.addAll(jobList)
-                    jobListAdapter.setJobListData(newJobs = jobs)
-                }
         }
     }
 
@@ -118,16 +100,26 @@ class JobsFragment : Fragment() {
         dialog.show()
     }
 
+    fun navigateToJobViewFragment(job: Job) {
+        val direction = JobsFragmentDirections.actionJobsFragmentToJobViewFragment(job = job)
+        findNavController().navigate(direction)
+    }
+
     private fun handleDeleteResponse() {
-        jobsViewModel.deleteDataStatus.observe(viewLifecycleOwner, Observer { uiState ->
-            if (uiState.loading) {
-                Log.d(TAG, "Loading....")
-                loadingDialog.show()
-            } else if (uiState.success) {
-                showToast(requireContext(), "Job delete success")
-                loadingDialog.dismiss()
-            } else if (uiState.failed) {
-                loadingDialog.dismiss()
+        jobsViewModel.operationStatus.observe(viewLifecycleOwner, Observer { uiState ->
+            when (uiState) {
+                UiState.LOADING -> {
+                    loadingDialog.show()
+                }
+                UiState.SUCCESS -> {
+                    showToast(requireContext(), "Job delete success")
+                    loadingDialog.dismiss()
+                }
+                UiState.FAILURE -> {
+                    showToast(requireContext(), "Error while deleting job")
+                    loadingDialog.dismiss()
+                }
+                else -> Unit
             }
         })
     }

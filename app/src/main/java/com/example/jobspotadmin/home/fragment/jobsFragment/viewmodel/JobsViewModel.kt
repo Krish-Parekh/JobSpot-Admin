@@ -23,11 +23,11 @@ class JobsViewModel : ViewModel() {
     private val mFireStore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
     private val mFireStorage: FirebaseStorage by lazy { FirebaseStorage.getInstance() }
 
-    private val _uploadDataStatus: MutableLiveData<UiState> = MutableLiveData(UiState())
-    val uploadDataStatus: LiveData<UiState> = _uploadDataStatus
+    private val _operationStatus: MutableLiveData<UiState> = MutableLiveData(UiState.LOADING)
+    val operationStatus: LiveData<UiState> = _operationStatus
 
-    private val _deleteDataStatus: MutableLiveData<UiState> = MutableLiveData(UiState())
-    val deleteDataStatus: LiveData<UiState> = _deleteDataStatus
+    private val _jobs: MutableLiveData<MutableList<Job>> = MutableLiveData(mutableListOf())
+    val jobs: LiveData<MutableList<Job>> = _jobs
 
     fun setImageUri(imageUri: Uri?) {
         this@JobsViewModel.imageUri = imageUri
@@ -37,12 +37,11 @@ class JobsViewModel : ViewModel() {
         return this@JobsViewModel.imageUri
     }
 
+
     fun uploadData(imageUri: Uri, job: Job) {
         viewModelScope.launch {
             try {
-                _uploadDataStatus.postValue(
-                    UiState(loading = true)
-                )
+                _operationStatus.postValue(UiState.LOADING)
                 val uid = job.uid
                 val storageRef = mFireStorage.reference.child(COMPANY_IMAGE_STORAGE_PATH + uid)
                 storageRef.putFile(imageUri).await()
@@ -53,42 +52,44 @@ class JobsViewModel : ViewModel() {
                 mFireStore.collection(COLLECTION_PATH_COMPANY).document(uid).set(job).await()
                 Log.d(TAG, "Company data upload success")
 
-                _uploadDataStatus.postValue(
-                    UiState(success = true)
-                )
+                _operationStatus.postValue(UiState.SUCCESS)
             } catch (error: Exception) {
                 Log.d(TAG, "Exception : ${error.message}")
-                _uploadDataStatus.postValue(
-                    UiState(
-                        failed = true
-                    )
-                )
+                _operationStatus.postValue(UiState.FAILURE)
             }
+        }
+    }
+
+    fun fetchJobs() {
+        viewModelScope.launch {
+            mFireStore.collection(COLLECTION_PATH_COMPANY)
+                .addSnapshotListener { value, error ->
+                    if (error != null) {
+                        return@addSnapshotListener
+                    }
+                    _jobs.value?.clear()
+                    val documents = value!!.documents
+                    val jobList = documents.map { document ->
+                        document.toObject(Job::class.java)!!
+                    }
+                    _jobs.postValue(jobList.toMutableList())
+                }
         }
     }
 
     fun deleteData(job: Job) {
         viewModelScope.launch {
             try {
-                _uploadDataStatus.postValue(
-                    UiState(loading = true)
-                )
+                _operationStatus.postValue(UiState.LOADING)
                 val uid = job.uid
                 mFireStorage.reference.child(COMPANY_IMAGE_STORAGE_PATH + uid).delete()
                 Log.d(TAG, "Company image delete success")
                 mFireStore.collection(COLLECTION_PATH_COMPANY).document(uid).delete().await()
                 Log.d(TAG, "Company data delete success")
-
-                _uploadDataStatus.postValue(
-                    UiState(success = true)
-                )
+                _operationStatus.postValue(UiState.SUCCESS)
             } catch (error: Exception) {
                 Log.d(TAG, "Exception : ${error.message}")
-                _deleteDataStatus.postValue(
-                    UiState(
-                        failed = true
-                    )
-                )
+                _operationStatus.postValue(UiState.FAILURE)
             }
         }
     }

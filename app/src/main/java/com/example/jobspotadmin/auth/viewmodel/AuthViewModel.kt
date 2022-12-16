@@ -23,7 +23,7 @@ class AuthViewModel : ViewModel() {
     private val mFireStorage: FirebaseStorage by lazy { FirebaseStorage.getInstance() }
     private val mFireStore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
 
-    private val _uploadDataStatus : MutableLiveData<UiState> = MutableLiveData(UiState())
+    private val _uploadDataStatus : MutableLiveData<UiState> = MutableLiveData(UiState.LOADING)
     val uploadDataStatus : LiveData<UiState> = _uploadDataStatus
 
     fun setImageUri(imageUri : Uri?){
@@ -37,9 +37,7 @@ class AuthViewModel : ViewModel() {
     fun uploadData(imageUri: Uri, tpo : Tpo){
         viewModelScope.launch {
             try {
-                _uploadDataStatus.postValue(
-                    UiState(loading = true)
-                )
+                _uploadDataStatus.postValue(UiState.LOADING)
                 // ImageUpload
                 val userId = tpo.uid
                 val imageName = tpo.uid
@@ -53,16 +51,10 @@ class AuthViewModel : ViewModel() {
                 mFireStore.collection(COLLECTION_PATH_TPO).document(userId).set(tpo).await()
                 Log.d(TAG, "Data Uploaded Success")
 
-                _uploadDataStatus.postValue(
-                    UiState(success = true)
-                )
+                _uploadDataStatus.postValue(UiState.SUCCESS)
             }catch (error : Exception){
                 Log.d(TAG, "Exception : ${error.message}")
-                _uploadDataStatus.postValue(
-                    UiState(
-                        failed = true
-                    )
-                )
+                _uploadDataStatus.postValue(UiState.FAILURE)
             }
         }
     }

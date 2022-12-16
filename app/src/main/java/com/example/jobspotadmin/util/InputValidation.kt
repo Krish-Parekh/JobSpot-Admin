@@ -6,7 +6,7 @@ class InputValidation {
     companion object {
         private val EMAIL_ADDRESS_PATTERN = Pattern.compile("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+\$")
         private val PASSWORD_PATTERN = Pattern.compile("^.*(?=.{4,})(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!&\$%&? \"]).*\$")
-
+        private val SALARY_PATTERN = Pattern.compile("^[0-9]+(\\.[0-9]{1,2})?\$")
         fun checkNullity(input: String): Boolean {
             return input.isNotEmpty();
         }
@@ -21,6 +21,10 @@ class InputValidation {
 
         fun mobileValidation(number : String) : Boolean {
             return checkNullity(number) && number.length == 10
+        }
+
+        fun salaryValidation(salary : String) : Boolean{
+            return checkNullity(salary) && SALARY_PATTERN.matcher(salary).matches()
         }
     }
 }

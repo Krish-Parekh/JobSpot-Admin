@@ -4,6 +4,8 @@ import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.Toast
+import androidx.appcompat.content.res.AppCompatResources
+import com.example.jobspotadmin.R
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
@@ -19,19 +21,30 @@ fun TextInputLayout.addTextWatcher(){
     })
 }
 
-fun TextInputEditText.getSkillList(context: Context, chipGroup: ChipGroup, onSkillRegister : (String) -> Unit) {
+fun TextInputEditText.getSkillList(context: Context, chipGroup: ChipGroup, onSkillAdded : (String) -> Unit, onSkillRemove : (String) -> Unit) {
 
     addTextChangedListener(object : TextWatcher{
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-        override fun onTextChanged(skillName: CharSequence?, start: Int, before: Int, count: Int) {
-            if(!skillName.isNullOrEmpty()){
-                if (skillName.last() == ',' && skillName.length > 1){
-                    val skill = skillName.substring(0, skillName.length - 1)
+        override fun onTextChanged(value: CharSequence?, start: Int, before: Int, count: Int) {
+            if(!value.isNullOrEmpty()){
+                if (value.last() == ',' && value.length > 1){
+                    val skill = value.substring(0, value.length - 1)
                     val skillChip = Chip(context)
-                    skillChip.text = skill
-                    chipGroup.addView(skillChip)
-                    onSkillRegister(skill)
+                    skillChip.apply {
+                        text = skill
+                        chipIconSize = 24F
+                        closeIcon = AppCompatResources.getDrawable(context, R.drawable.ic_cross)
+                        isCloseIconVisible = true
+
+                        setOnCloseIconClickListener {
+                            onSkillRemove(skillChip.text.toString())
+                            chipGroup.removeView(skillChip)
+                        }
+                        chipGroup.addView(skillChip)
+
+                        onSkillAdded(skill)
+                    }
                     text?.clear()
                 }
             }

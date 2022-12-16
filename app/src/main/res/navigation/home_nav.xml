@@ -22,6 +22,9 @@
         <action
             android:id="@+id/action_jobsFragment_to_jobDetailFragmentOne"
             app:destination="@id/jobDetailFragmentOne" />
+        <action
+            android:id="@+id/action_jobsFragment_to_jobViewFragment"
+            app:destination="@id/jobViewFragment" />
     </fragment>
     <fragment
         android:id="@+id/jobDetailFragmentOne"
@@ -37,6 +40,15 @@
         android:name="com.example.jobspotadmin.home.fragment.jobsFragment.JobDetailFragmentTwo"
         android:label="fragment_job_detail_two"
         tools:layout="@layout/fragment_job_detail_two" >
+        <argument
+            android:name="job"
+            app:argType="com.example.jobspotadmin.model.Job" />
+    </fragment>
+    <fragment
+        android:id="@+id/jobViewFragment"
+        android:name="com.example.jobspotadmin.home.fragment.jobsFragment.JobViewFragment"
+        android:label="fragment_job_view"
+        tools:layout="@layout/fragment_job_view" >
         <argument
             android:name="job"
             app:argType="com.example.jobspotadmin.model.Job" />

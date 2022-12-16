@@ -7,7 +7,7 @@ import kotlinx.parcelize.Parcelize
 data class Job(
     var authorUid: String = "",
     var imageUrl: String = "",
-    var title: String = "",
+    var role: String = "",
     var name: String = "",
     var city: String = "",
     var salary: String = "",

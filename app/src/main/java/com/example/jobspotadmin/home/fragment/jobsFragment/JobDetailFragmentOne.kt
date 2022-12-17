@@ -30,6 +30,7 @@ class JobDetailFragmentOne : Fragment() {
             handleCapturedImage(result)
         }
     private val jobsViewModel: JobsViewModel by viewModels()
+    private var workType: String = ""
     private val mAuth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -63,6 +64,12 @@ class JobDetailFragmentOne : Fragment() {
             etSalaryContainer.addTextWatcher()
             etJobDescContainer.addTextWatcher()
 
+            workTypeSpinner.dismissWhenNotifiedItemSelected = true
+            workTypeSpinner.setOnSpinnerItemSelectedListener<String> { _, _, _, selectedWorkType ->
+                workTypeSpinner.error = null
+                workType = selectedWorkType
+            }
+
             btnNext.setOnClickListener {
                 val jobRole = etJobTitle.getInputValue()
                 val companyName = etCompanyName.getInputValue()
@@ -72,7 +79,16 @@ class JobDetailFragmentOne : Fragment() {
                 val imageUrl = jobsViewModel.getImageUri()
                 val currentUid = mAuth.currentUser?.uid.toString()
 
-                if (detailVerification(imageUrl, jobRole, companyName, city, salary, jobDescription)) {
+                if (detailVerification(
+                        imageUrl,
+                        jobRole,
+                        companyName,
+                        city,
+                        salary,
+                        workType,
+                        jobDescription
+                    )
+                ) {
                     val job = Job(
                         authorUid = currentUid,
                         imageUrl = imageUrl.toString(),
@@ -80,6 +96,7 @@ class JobDetailFragmentOne : Fragment() {
                         name = companyName,
                         city = city,
                         salary = salary,
+                        workType = workType,
                         description = jobDescription
                     )
                     navigateToDetailFragmentTwo(job = job)
@@ -89,7 +106,8 @@ class JobDetailFragmentOne : Fragment() {
     }
 
     private fun navigateToDetailFragmentTwo(job: Job) {
-        val direction = JobDetailFragmentOneDirections.actionJobDetailFragmentOneToJobDetailFragmentTwo(job = job)
+        val direction =
+            JobDetailFragmentOneDirections.actionJobDetailFragmentOneToJobDetailFragmentTwo(job = job)
         findNavController().navigate(direction)
     }
 
@@ -128,6 +146,7 @@ class JobDetailFragmentOne : Fragment() {
         company: String,
         city: String,
         salary: String,
+        workType: String,
         description: String
     ): Boolean {
         binding.apply {
@@ -145,6 +164,9 @@ class JobDetailFragmentOne : Fragment() {
                 return false
             } else if (!InputValidation.salaryValidation(salary)) {
                 etSalaryContainer.error = getString(R.string.field_error_salary)
+                return false
+            } else if (!InputValidation.checkNullity(workType)) {
+                workTypeSpinner.error = ""
                 return false
             } else if (!InputValidation.checkNullity(description)) {
                 etJobDescContainer.error = getString(R.string.field_error_description)

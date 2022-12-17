@@ -135,6 +135,7 @@
                 android:hint="@string/field_salary"
                 app:boxStrokeColor="@color/box_stroke_color"
                 app:errorEnabled="true"
+                app:prefixText="₹"
                 app:hintTextColor="@color/text_color"
                 app:placeholderText="eg. 25000">
 
@@ -147,6 +148,25 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <com.skydoves.powerspinner.PowerSpinnerView
+                android:id="@+id/workTypeSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="top|start"
+                android:layout_marginVertical="@dimen/medium_margin"
+                android:layout_weight="1"
+                android:background="@drawable/spinner_background"
+                android:fontFamily="@font/dm_sans_medium"
+                android:hint="@string/field_work_type"
+                android:padding="15dp"
+                android:textColor="@color/text_color"
+                app:spinner_arrow_gravity="end"
+                app:spinner_arrow_padding="@dimen/small_padding"
+                app:spinner_arrow_tint="@color/power_spinner_arrow_tint"
+                app:spinner_divider_color="@color/power_spinner_arrow_tint"
+                app:spinner_item_array="@array/workType"
+                app:spinner_item_height="46dp"
+                app:spinner_popup_background="@drawable/spinner_background" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/etJobDescContainer"

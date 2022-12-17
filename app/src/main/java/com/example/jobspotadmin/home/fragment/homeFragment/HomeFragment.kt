@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.LinearInterpolator
 import android.widget.TextView
 import androidx.navigation.fragment.findNavController
 import com.example.jobspotadmin.R
@@ -36,8 +37,8 @@ class HomeFragment : Fragment() {
 
     private fun counterAnimation(start : Int, end : Int, textView : TextView){
         val animator = ValueAnimator.ofInt(start, end)
-        animator.duration = 5000
-        animator.interpolator = AccelerateDecelerateInterpolator()
+        animator.duration = 3000
+        animator.interpolator = LinearInterpolator()
         animator.addUpdateListener {
             val counter = it.animatedValue as Int
             textView.text = counter.toString()

@@ -67,7 +67,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/medium_margin"
             android:fontFamily="@font/dm_sans_bold"
-            android:text="Administer"
+            android:text="@string/field_administer_heading"
             android:textColor="@color/text_color"
             android:textSize="22sp"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -127,9 +127,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/small_margin"
                         android:fontFamily="@font/dm_sans_medium"
-                        android:text="Students"
+                        android:text="@string/field_student_card_title"
                         android:textAlignment="center"
                         android:textColor="@color/text_color"
                         android:textSize="16sp" />
@@ -182,9 +181,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/small_margin"
                         android:fontFamily="@font/dm_sans_medium"
-                        android:text="Jobs"
+                        android:text="@string/field_jobs_card_title"
                         android:textAlignment="center"
                         android:textColor="@color/text_color"
                         android:textSize="16sp" />
@@ -237,9 +235,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/small_margin"
                         android:fontFamily="@font/dm_sans_medium"
-                        android:text="Mock Test"
+                        android:text="@string/field_mock_test_card_title"
                         android:textAlignment="center"
                         android:textColor="@color/text_color"
                         android:textSize="16sp" />
@@ -292,9 +289,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/small_margin"
                         android:fontFamily="@font/dm_sans_medium"
-                        android:text="Alert"
+                        android:text="@string/field_alert_card_title"
                         android:textAlignment="center"
                         android:textColor="@color/text_color"
                         android:textSize="16sp" />

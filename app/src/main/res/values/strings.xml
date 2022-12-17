@@ -48,14 +48,21 @@
     <string name="field_company_name">Company Name</string>
     <string name="field_city">City</string>
     <string name="field_salary">Salary</string>
+    <string name="field_work_type">Work Type</string>
     <string name="field_job_description">Job Description</string>
     <string name="field_job_responsibilities">Job Responsibilities</string>
     <string name="field_skills">Skills</string>
     <string name="bottom_sheet_button_text">No</string>
     <string name="button_submit_text">Yes</string>
-<!--   From Here -->
     <string name="field_role">%s</string>
     <string name="field_company_and_location">\u2022 %s \u2022 %s \u2022</string>
+    <string name="field_welcome_heading">Hello \n%s</string>
+    <string name="field_administer_heading">Administer</string>
+    <string name="field_student_card_title">Students</string>
+    <string name="field_jobs_card_title">Jobs</string>
+    <string name="field_mock_test_card_title">Mock Test</string>
+    <string name="field_alert_card_title">Alert</string>
+
     <string name="heading_student_applied">Student Applied</string>
     <string name="student_count"> %s </string>
     <string name="header_job_description">Job Description</string>
@@ -109,6 +116,12 @@
         <item>Masters</item>
         <item>PhD</item>
         <item>Professional Certification</item>
+    </string-array>
+
+    <string-array name="workType">
+        <item>Internship</item>
+        <item>Part Time</item>
+        <item>Full Time</item>
     </string-array>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -56,6 +57,9 @@ class JobViewFragment : Fragment() {
             job.skillSet.forEach { job ->
                 val chip = Chip(requireContext())
                 chip.text = job
+                chip.chipBackgroundColor = ContextCompat.getColorStateList(requireContext(), R.color.chip_background_color)
+                chip.setTextColor(requireContext().getColor(R.color.chip_text_color))
+                chip.chipCornerRadius = 8f
                 requiredSkillSetChipGroup.addView(chip)
             }
         }

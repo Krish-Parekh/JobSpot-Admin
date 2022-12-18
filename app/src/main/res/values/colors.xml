@@ -20,6 +20,9 @@
     <color name="light_lavender">#E6E1FF</color>
     <color name="off_white">#F9F9F9</color>
 
+    <color name="baby_blue">#EAF5FE</color>
+    <color name="dark_purple">#514B6B</color>
+
     <!-- Component Colors-->
     <color name="splash_screen_background">@color/dark_blue</color>
     <color name="background_color">@color/off_white</color>
@@ -53,4 +56,8 @@
 
     <color name="floating_button_background_color">@color/dark_blue</color>
     <color name="floating_button_icon_tint">@color/off_white</color>
+
+    <color name="chip_text_color">@color/dark_purple</color>
+    <color name="chip_background_color">@color/baby_blue</color>
+
 </resources>

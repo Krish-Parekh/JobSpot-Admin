@@ -5,6 +5,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
 import com.example.jobspotadmin.R
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -33,6 +34,9 @@ fun createChip(
         chipIconSize = 24F
         closeIcon = AppCompatResources.getDrawable(context, R.drawable.ic_cross)
         isCloseIconVisible = true
+        chip.chipBackgroundColor = ContextCompat.getColorStateList(context, R.color.chip_background_color)
+        chip.setTextColor(context.getColor(R.color.chip_text_color))
+        chip.chipCornerRadius = 8f
         setOnCloseIconClickListener {
             onChipRemove(value)
             chipGroup.removeView(chip)

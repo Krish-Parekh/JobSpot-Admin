@@ -33,4 +33,7 @@
 
     <color name="floating_button_background_color">@color/off_white</color>
     <color name="floating_button_icon_tint">@color/dark_blue</color>
+
+    <color name="chip_text_color">@color/off_white</color>
+    <color name="chip_background_color">@color/blue</color>
 </resources>

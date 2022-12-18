@@ -5,9 +5,9 @@
     android:id="@+id/cvJob"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="@dimen/small_margin"
+    android:layout_marginHorizontal="@dimen/medium_padding"
     android:layout_marginVertical="@dimen/small_margin"
-    app:cardCornerRadius="12dp"
+    app:cardCornerRadius="8dp"
     app:cardElevation="6dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -32,6 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/medium_margin"
             android:layout_marginTop="@dimen/small_margin"
+            android:maxLines="1"
             android:ellipsize="end"
             android:fontFamily="@font/dm_sans_bold"
             android:textColor="@color/text_color"

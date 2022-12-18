@@ -21,38 +21,24 @@ fun TextInputLayout.addTextWatcher(){
     })
 }
 
-fun TextInputEditText.getSkillList(context: Context, chipGroup: ChipGroup, onSkillAdded : (String) -> Unit, onSkillRemove : (String) -> Unit) {
-
-    addTextChangedListener(object : TextWatcher{
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-        override fun onTextChanged(value: CharSequence?, start: Int, before: Int, count: Int) {
-            if(!value.isNullOrEmpty()){
-                if (value.last() == ',' && value.length > 1){
-                    val skill = value.substring(0, value.length - 1)
-                    val skillChip = Chip(context)
-                    skillChip.apply {
-                        text = skill
-                        chipIconSize = 24F
-                        closeIcon = AppCompatResources.getDrawable(context, R.drawable.ic_cross)
-                        isCloseIconVisible = true
-
-                        setOnCloseIconClickListener {
-                            onSkillRemove(skillChip.text.toString())
-                            chipGroup.removeView(skillChip)
-                        }
-                        chipGroup.addView(skillChip)
-
-                        onSkillAdded(skill)
-                    }
-                    text?.clear()
-                }
-            }
+fun createChip(
+    value: String,
+    context: Context,
+    chipGroup: ChipGroup,
+    onChipRemove: (String) -> Unit
+) {
+    val chip = Chip(context)
+    chip.apply {
+        text = value
+        chipIconSize = 24F
+        closeIcon = AppCompatResources.getDrawable(context, R.drawable.ic_cross)
+        isCloseIconVisible = true
+        setOnCloseIconClickListener {
+            onChipRemove(value)
+            chipGroup.removeView(chip)
         }
-
-        override fun afterTextChanged(s: Editable?) {}
-
-    })
+        chipGroup.addView(chip)
+    }
 }
 
 fun checkField(

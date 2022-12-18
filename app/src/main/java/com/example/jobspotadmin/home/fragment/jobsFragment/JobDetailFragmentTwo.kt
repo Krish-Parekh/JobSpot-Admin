@@ -2,10 +2,12 @@ package com.example.jobspotadmin.home.fragment.jobsFragment
 
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -13,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.jobspotadmin.R
 import com.example.jobspotadmin.databinding.FragmentJobDetailTwoBinding
+import com.example.jobspotadmin.home.fragment.jobsFragment.viewmodel.ChipsViewModel
 import com.example.jobspotadmin.home.fragment.jobsFragment.viewmodel.JobsViewModel
 import com.example.jobspotadmin.util.*
 
@@ -23,8 +26,8 @@ class JobDetailFragmentTwo : Fragment() {
     private val args by navArgs<JobDetailFragmentTwoArgs>()
     private val job by lazy { args.job }
     private val loadingDialog: LoadingDialog by lazy { LoadingDialog(requireContext()) }
-    private val skills: MutableList<String> = mutableListOf()
     private val jobsViewModel: JobsViewModel by viewModels()
+    private val chipsViewModel : ChipsViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -42,12 +45,33 @@ class JobDetailFragmentTwo : Fragment() {
             ivPopOut.setOnClickListener {
                 findNavController().popBackStack()
             }
-            etSkills.getSkillList(requireContext(), skillChipGroup, ::addSkillsToList, ::removeSkillsFromList)
 
             etJobRespContainer.addTextWatcher()
 
+            etSkills.addTextChangedListener { text: Editable? ->
+                val value = text.toString()
+                if (value.isNotEmpty()) {
+                    if (value.last() == ',' && value.length > 1) {
+                        val skill = value.replace(",", "")
+                        chipsViewModel.addChip(skill)
+                        text?.clear()
+                    }
+                }
+            }
+
+            chipsViewModel.chips.observe(viewLifecycleOwner, Observer { chips ->
+                if (chips.isNotEmpty()) {
+                    skillChipGroup.removeAllViews()
+                    chips.forEach { chip ->
+                        createChip(chip, requireContext(), skillChipGroup, chipsViewModel::removeChip)
+                    }
+                }
+            })
+
+
             btnSave.setOnClickListener {
                 val responsibility = etJobResp.getInputValue()
+                val skills = chipsViewModel.chips.value?.toMutableList() ?: mutableListOf()
                 if (detailVerification(responsibility, skills)) {
                     job.responsibility = responsibility
                     job.skillSet = skills
@@ -58,12 +82,7 @@ class JobDetailFragmentTwo : Fragment() {
             }
         }
     }
-    private fun removeSkillsFromList(skill : String){
-        skills.remove(skill)
-    }
-    private fun addSkillsToList(skill : String){
-        skills.add(skill)
-    }
+
     private fun handleUploadResponse() {
         jobsViewModel.operationStatus.observe(viewLifecycleOwner, Observer { uiState ->
             when (uiState) {

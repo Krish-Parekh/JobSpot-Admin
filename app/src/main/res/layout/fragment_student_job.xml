@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_color"
+    android:fillViewport="true"
+    tools:context=".home.fragment.jobsFragment.StudentJobFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/ivPopOut"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/medium_margin"
+            android:contentDescription="@null"
+            android:paddingVertical="@dimen/small_padding"
+            android:src="@drawable/ic_arrow_left"
+            app:layout_constraintDimensionRatio="3:4"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/icon_tint" />
+
+        <TextView
+            android:id="@+id/tvStudentAppliedHeading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/medium_margin"
+            android:fontFamily="@font/dm_sans_bold"
+            android:paddingVertical="@dimen/small_padding"
+            android:text="@string/heading_student_applied"
+            android:textColor="@color/text_color"
+            android:textSize="26sp"
+            app:layout_constraintLeft_toLeftOf="@id/ivPopOut"
+            app:layout_constraintTop_toBottomOf="@+id/ivPopOut" />
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/etSearchContainer"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/medium_margin"
+            android:hint="@string/field_search"
+            app:boxStrokeColor="@color/box_stroke_color"
+            app:errorEnabled="true"
+            app:hintTextColor="@color/text_color"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvStudentAppliedHeading"
+            app:placeholderText="eg. Product Designer"
+            app:startIconDrawable="@drawable/ic_search">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etSearch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/dm_sans_medium"
+                android:inputType="text" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/tvApplicants"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/medium_margin"
+            android:fontFamily="@font/dm_sans_bold"
+            android:paddingVertical="@dimen/small_padding"
+            android:text="Applicants"
+            android:textColor="@color/text_color"
+            android:textSize="20sp"
+            app:layout_constraintLeft_toLeftOf="@id/etSearchContainer"
+            app:layout_constraintTop_toBottomOf="@+id/etSearchContainer" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvApplicants"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/small_margin"
+            app:layout_constraintDimensionRatio="3:2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/tvRecords"
+            app:layout_constraintTop_toBottomOf="@+id/tvApplicants"
+            tools:listitem="@layout/pending_students_card_layout" />
+
+        <TextView
+            android:id="@+id/tvRecords"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/medium_margin"
+            android:layout_marginHorizontal="@dimen/medium_margin"
+            android:fontFamily="@font/dm_sans_bold"
+            android:paddingVertical="@dimen/small_padding"
+            android:text="Records"
+            android:textColor="@color/text_color"
+            android:textSize="20sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rvApplicants" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvRecorded"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/small_margin"
+            android:paddingVertical="@dimen/small_padding"
+            app:layout_constraintDimensionRatio="3:2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvRecords"
+            tools:listitem="@layout/evaluated_student_card_layout" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

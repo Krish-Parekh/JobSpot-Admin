@@ -77,7 +77,7 @@ class JobsViewModel : ViewModel() {
         }
     }
 
-    fun deleteData(job: Job) {
+    fun deleteJob(job: Job) {
         viewModelScope.launch {
             try {
                 _operationStatus.postValue(UiState.LOADING)

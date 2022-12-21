@@ -52,5 +52,17 @@
         <argument
             android:name="job"
             app:argType="com.example.jobspotadmin.model.Job" />
+        <action
+            android:id="@+id/action_jobViewFragment_to_studentJobFragment"
+            app:destination="@id/studentJobFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/studentJobFragment"
+        android:name="com.example.jobspotadmin.home.fragment.jobsFragment.StudentJobFragment"
+        android:label="fragment_student_job"
+        tools:layout="@layout/fragment_student_job" >
+        <argument
+            android:name="jobId"
+            app:argType="string" />
     </fragment>
 </navigation>

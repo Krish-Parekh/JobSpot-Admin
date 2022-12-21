@@ -19,6 +19,7 @@ import com.example.jobspotadmin.databinding.FragmentSignupBinding
 import com.example.jobspotadmin.model.Admin
 import com.example.jobspotadmin.util.*
 import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_ADMIN
+import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_ROLE
 import com.example.jobspotadmin.util.Constants.Companion.ROLE_TYPE_ADMIN
 import com.example.jobspotadmin.util.Constants.Companion.ROLE_TYPE_TPO
 import com.google.firebase.auth.FirebaseAuth
@@ -94,7 +95,7 @@ class SignupFragment : Fragment() {
                 val profileUpdates =
                     UserProfileChangeRequest.Builder().setDisplayName(username).build()
                 val currentUserRole = hashMapOf("role" to args.roleType)
-                mFirestore.collection("role").document(currentUser.uid).set(currentUserRole).await()
+                mFirestore.collection(COLLECTION_PATH_ROLE).document(currentUser.uid).set(currentUserRole).await()
                 if(args.roleType == ROLE_TYPE_ADMIN) {
                     val admin = Admin(uid = currentUser.uid, username = username, email = email)
                     mFirestore.collection(COLLECTION_PATH_ADMIN).document(currentUser.uid).set(admin).await()

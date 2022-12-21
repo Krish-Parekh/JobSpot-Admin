@@ -92,7 +92,7 @@ class JobsFragment : Fragment() {
             dialog.dismiss()
         }
         btnRemove.setOnClickListener {
-            jobsViewModel.deleteData(job = job)
+            jobsViewModel.deleteJob(job = job)
             handleDeleteResponse()
             dialog.dismiss()
         }

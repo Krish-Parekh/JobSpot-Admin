@@ -69,3 +69,15 @@ fun TextInputEditText.getInputValue() : String{
 fun showToast(context : Context, message : String){
     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }
+
+fun convertToShortString(value: Long): String {
+    if (value < 1000) {
+        return value.toString()
+    } else if (value < 100000) {
+        return "${value / 1000}K"
+    } else if (value < 10000000) {
+        return "${value / 100000}Lac"
+    } else {
+        return "${value / 10000000}Cr"
+    }
+}

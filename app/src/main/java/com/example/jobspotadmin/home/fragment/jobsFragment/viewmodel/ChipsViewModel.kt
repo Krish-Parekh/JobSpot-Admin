@@ -15,6 +15,9 @@ class ChipsViewModel : ViewModel() {
         _chips.postValue(newChips)
     }
 
+    fun addChipsList(chips : List<String>){
+        _chips.postValue(chips)
+    }
     fun removeChip(chip: String) {
         val newChips = _chips.value?.filter { it != chip }
         _chips.postValue(newChips?.toMutableList())

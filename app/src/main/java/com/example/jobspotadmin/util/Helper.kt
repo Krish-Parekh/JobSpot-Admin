@@ -74,9 +74,9 @@ fun convertToShortString(value: Long): String {
     if (value < 1000) {
         return value.toString()
     } else if (value < 100000) {
-        return "${value / 1000}K"
+        return "%.1f K".format(value / 1000.0)
     } else if (value < 10000000) {
-        return "${value / 100000}Lac"
+        return "%.1f Lac".format(value / 100000.0)
     } else {
         return "${value / 10000000}Cr"
     }

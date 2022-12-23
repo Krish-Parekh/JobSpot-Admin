@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_color"
+    android:fillViewport="true"
+    tools:context=".home.fragment.jobsFragment.JobEditFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/ivPopOut"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/medium_margin"
+            android:contentDescription="@null"
+            android:paddingVertical="@dimen/small_padding"
+            android:src="@drawable/ic_arrow_left"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/icon_tint" />
+
+        <TextView
+            android:id="@+id/tvEditJobs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/medium_margin"
+            android:fontFamily="@font/dm_sans_bold"
+            android:paddingVertical="@dimen/small_padding"
+            android:text="Edit Jobs"
+            android:textColor="@color/text_color"
+            android:textSize="26sp"
+            app:layout_constraintLeft_toLeftOf="@id/ivPopOut"
+            app:layout_constraintTop_toBottomOf="@+id/ivPopOut" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/companyImage"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/small_margin"
+            android:src="@drawable/ic_jobs"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvEditJobs" />
+
+        <TextView
+            android:id="@+id/tvImagePicker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginVertical="@dimen/small_margin"
+            android:fontFamily="@font/dm_sans_medium"
+            android:text="@string/upload_image"
+            android:textAlignment="center"
+            android:textColor="@color/text_color"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/companyImage" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/medium_margin"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvImagePicker">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/etJobTitleContainer"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/field_job_title"
+                app:boxStrokeColor="@color/box_stroke_color"
+                app:errorEnabled="true"
+                app:hintTextColor="@color/text_color"
+                app:placeholderText="eg. Product Designer">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etJobTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/dm_sans_medium"
+                    android:inputType="text" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/etCompanyNameContainer"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/field_company_name"
+                app:boxStrokeColor="@color/box_stroke_color"
+                app:errorEnabled="true"
+                app:hintTextColor="@color/text_color"
+                app:placeholderText="eg. Google, Amazon">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etCompanyName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/dm_sans_medium"
+                    android:inputType="text" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/etCityNameContainer"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/field_city"
+                app:boxStrokeColor="@color/box_stroke_color"
+                app:errorEnabled="true"
+                app:hintTextColor="@color/text_color"
+                app:placeholderText="eg. Mumbai">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etCityName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/dm_sans_medium"
+                    android:inputType="text" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/etSalaryContainer"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/field_salary"
+                app:boxStrokeColor="@color/box_stroke_color"
+                app:errorEnabled="true"
+                app:hintTextColor="@color/text_color"
+                app:placeholderText="eg. 25000"
+                app:prefixText="₹">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etSalary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/dm_sans_medium"
+                    android:inputType="number" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/etJobDescContainer"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/field_job_description"
+                app:boxStrokeColor="@color/box_stroke_color"
+                app:errorEnabled="true"
+                app:hintTextColor="@color/text_color"
+                app:placeholderText="Job Description">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etJobDesc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/dm_sans_medium"
+                    android:gravity="start"
+                    android:inputType="textMultiLine"
+                    android:lines="5" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/etJobRespContainer"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/field_job_responsibilities"
+                app:boxStrokeColor="@color/box_stroke_color"
+                app:errorEnabled="true"
+                app:hintTextColor="@color/text_color"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvAddJobHeading"
+                app:placeholderText="eg. developing wireframe, management">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etJobResp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/dm_sans_medium"
+                    android:gravity="start"
+                    android:inputType="textMultiLine"
+                    android:lines="6" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/etSkillsContainer"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/small_margin"
+                android:hint="@string/field_skills"
+                app:boxStrokeColor="@color/box_stroke_color"
+                app:errorEnabled="true"
+                app:hintTextColor="@color/text_color"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/etJobRespContainer"
+                app:placeholderText="eg. Kotlin, Android">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etSkills"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/dm_sans_medium"
+                    android:inputType="text" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/skillChipGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/small_margin"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/etSkillsContainer">
+
+            </com.google.android.material.chip.ChipGroup>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSave"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/medium_margin"
+                android:layout_marginVertical="@dimen/medium_margin"
+                android:backgroundTint="@color/button_color"
+                android:fontFamily="@font/dm_sans_medium"
+                android:padding="@dimen/button_padding"
+                android:text="@string/field_submit"
+                android:textColor="@color/button_text_color"
+                android:textSize="16sp"
+                app:cornerRadius="6dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

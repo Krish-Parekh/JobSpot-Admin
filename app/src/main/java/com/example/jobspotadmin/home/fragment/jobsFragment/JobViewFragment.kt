@@ -58,7 +58,12 @@ class JobViewFragment : Fragment() {
                 showDeleteDialog(job = job)
             }
 
-            ivStudentApplied.setOnClickListener {
+            ivEditJob.setOnClickListener {
+                val direction = JobViewFragmentDirections.actionJobViewFragmentToJobEditFragment(job = job)
+                findNavController().navigate(direction)
+            }
+
+            cvStudentApplied.setOnClickListener {
                 val direction = JobViewFragmentDirections.actionJobViewFragmentToStudentJobFragment(jobId = job.uid)
                 findNavController().navigate(direction)
             }
@@ -72,14 +77,18 @@ class JobViewFragment : Fragment() {
             tvSalary.text = createSalaryText(job.salary)
 
             job.skillSet.forEach { job ->
-                val chip = Chip(requireContext())
-                chip.text = job
-                chip.chipBackgroundColor = ContextCompat.getColorStateList(requireContext(), R.color.chip_background_color)
-                chip.setTextColor(requireContext().getColor(R.color.chip_text_color))
-                chip.chipCornerRadius = 8f
-                requiredSkillSetChipGroup.addView(chip)
+                createSkillSetChip(job)
             }
         }
+    }
+
+    private fun createSkillSetChip(job: String) {
+        val chip = Chip(requireContext())
+        chip.text = job
+        chip.chipBackgroundColor = ContextCompat.getColorStateList(requireContext(), R.color.chip_background_color)
+        chip.setTextColor(requireContext().getColor(R.color.chip_text_color))
+        chip.chipCornerRadius = 8f
+        binding.requiredSkillSetChipGroup.addView(chip)
     }
 
     private fun createSalaryText(salary: String): SpannableString {

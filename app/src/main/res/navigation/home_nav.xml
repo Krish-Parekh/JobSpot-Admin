@@ -55,6 +55,9 @@
         <action
             android:id="@+id/action_jobViewFragment_to_studentJobFragment"
             app:destination="@id/studentJobFragment" />
+        <action
+            android:id="@+id/action_jobViewFragment_to_jobEditFragment"
+            app:destination="@id/jobEditFragment" />
     </fragment>
     <fragment
         android:id="@+id/studentJobFragment"
@@ -64,5 +67,14 @@
         <argument
             android:name="jobId"
             app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/jobEditFragment"
+        android:name="com.example.jobspotadmin.home.fragment.jobsFragment.JobEditFragment"
+        android:label="fragment_job_edit"
+        tools:layout="@layout/fragment_job_edit" >
+        <argument
+            android:name="job"
+            app:argType="com.example.jobspotadmin.model.Job" />
     </fragment>
 </navigation>

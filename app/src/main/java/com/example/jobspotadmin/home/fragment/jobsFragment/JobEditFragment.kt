@@ -39,6 +39,7 @@ class JobEditFragment : Fragment() {
     private lateinit var binding: FragmentJobEditBinding
     private val args by navArgs<JobViewFragmentArgs>()
     private val job by lazy { args.job }
+    private val loadingDialog : LoadingDialog by lazy { LoadingDialog(requireContext()) }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -167,13 +168,15 @@ class JobEditFragment : Fragment() {
         jobEditViewModel.editOperationStatus.observe(viewLifecycleOwner, Observer { uiState ->
             when (uiState) {
                 LOADING -> {
-                    showToast(requireContext(), "Loading...")
+                    loadingDialog.show()
                 }
                 SUCCESS -> {
-                    showToast(requireContext(), "Success...")
+                    loadingDialog.dismiss()
+                    showToast(requireContext(), "Success")
                 }
                 FAILURE -> {
-                    showToast(requireContext(), "Failure...")
+                    loadingDialog.dismiss()
+                    showToast(requireContext(), "Error")
                 }
                 else -> Unit
             }

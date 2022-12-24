@@ -8,9 +8,11 @@
     android:fillViewport="true"
     tools:context=".home.fragment.jobsFragment.StudentJobFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.constraintlayout.motion.widget.MotionLayout
+        android:id="@+id/constraintLayout2"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:layoutDescription="@xml/fragment_student_job_xml_constraintlayout2_scene">
 
         <ImageView
             android:id="@+id/ivPopOut"
@@ -80,12 +82,11 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvApplicants"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="350dp"
             android:layout_marginTop="@dimen/small_margin"
-            app:layout_constraintDimensionRatio="3:2"
+            app:layout_constraintBottom_toTopOf="@id/tvRecords"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/tvRecords"
             app:layout_constraintTop_toBottomOf="@+id/tvApplicants"
             tools:listitem="@layout/pending_students_card_layout" />
 
@@ -93,8 +94,8 @@
             android:id="@+id/tvRecords"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/medium_margin"
             android:layout_marginHorizontal="@dimen/medium_margin"
+            android:layout_marginTop="@dimen/medium_margin"
             android:fontFamily="@font/dm_sans_bold"
             android:paddingVertical="@dimen/small_padding"
             android:text="Records"
@@ -109,11 +110,11 @@
             android:layout_height="0dp"
             android:layout_marginTop="@dimen/small_margin"
             android:paddingVertical="@dimen/small_padding"
-            app:layout_constraintDimensionRatio="3:2"
+            app:layout_constraintDimensionRatio="3:3"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvRecords"
             tools:listitem="@layout/evaluated_student_card_layout" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.motion.widget.MotionLayout>
 
 </ScrollView>

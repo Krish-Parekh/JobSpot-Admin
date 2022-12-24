@@ -40,7 +40,7 @@ class EvaluationStudentAdapter : RecyclerView.Adapter<EvaluationStudentAdapter.E
 
     override fun getItemCount(): Int = evaluatedStudent.size
 
-    fun setEvaluatedStudent(newEvaluatedStudents : MutableList<JobStatus>){
+    fun setEvaluatedStudent(newEvaluatedStudents : List<JobStatus>){
         evaluatedStudent.clear()
         evaluatedStudent.addAll(newEvaluatedStudents)
         notifyDataSetChanged()

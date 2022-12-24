@@ -1,10 +1,12 @@
 package com.example.jobspotadmin.home.fragment.jobsFragment
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -15,14 +17,17 @@ import com.example.jobspotadmin.home.fragment.jobsFragment.adapter.EvaluationStu
 import com.example.jobspotadmin.home.fragment.jobsFragment.adapter.PendingStudentAdapter
 import com.example.jobspotadmin.home.fragment.jobsFragment.viewmodel.StudentJobViewModel
 import com.example.jobspotadmin.model.JobApplication
+import com.example.jobspotadmin.model.JobStatus
 
 private const val TAG = "StudentJobFragment"
 class StudentJobFragment : Fragment() {
     private lateinit var binding: FragmentStudentJobBinding
     private val args by navArgs<StudentJobFragmentArgs>()
-    private val studentJobViewModel : StudentJobViewModel by viewModels()
-    private val pendingStudentAdapter : PendingStudentAdapter by lazy { PendingStudentAdapter(::setJobStatus) }
-    private val evaluationStudentAdapter : EvaluationStudentAdapter by lazy { EvaluationStudentAdapter() }
+    private val studentJobViewModel: StudentJobViewModel by viewModels()
+    private val pendingStudentAdapter: PendingStudentAdapter by lazy { PendingStudentAdapter(::setJobStatus) }
+    private val evaluationStudentAdapter: EvaluationStudentAdapter by lazy { EvaluationStudentAdapter() }
+    private val pendingStudents: MutableList<JobStatus> by lazy { mutableListOf() }
+    private val evaluatedStudents: MutableList<JobStatus> by lazy { mutableListOf() }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -47,22 +52,57 @@ class StudentJobFragment : Fragment() {
             rvApplicants.hasFixedSize()
             rvApplicants.setItemViewCacheSize(20)
 
+
             rvRecorded.adapter = evaluationStudentAdapter
             rvRecorded.layoutManager = LinearLayoutManager(requireContext())
             rvRecorded.hasFixedSize()
             rvRecorded.setItemViewCacheSize(20)
 
-            studentJobViewModel.pendingApplications.observe(viewLifecycleOwner, Observer { pendingStudents ->
-                pendingStudentAdapter.setPendingStudent(pendingStudents)
-            })
+            etSearch.addTextChangedListener { text: Editable? ->
+                filterStudents(text)
+            }
 
-            studentJobViewModel.evaluatedApplication.observe(viewLifecycleOwner, Observer { evaluatedStudents ->
-                evaluationStudentAdapter.setEvaluatedStudent(evaluatedStudents)
-            })
+            studentJobViewModel.pendingApplications.observe(
+                viewLifecycleOwner,
+                Observer { pendingStudents ->
+                    pendingStudentAdapter.setPendingStudent(pendingStudents)
+                    this@StudentJobFragment.pendingStudents.addAll(pendingStudents)
+                })
+
+            studentJobViewModel.evaluatedApplication.observe(
+                viewLifecycleOwner,
+                Observer { evaluatedStudents ->
+                    evaluationStudentAdapter.setEvaluatedStudent(evaluatedStudents)
+                    this@StudentJobFragment.evaluatedStudents.addAll(evaluatedStudents)
+                })
         }
     }
 
-    private fun setJobStatus(jobApplication: JobApplication){
+    private fun filterStudents(text: Editable?) {
+        if (!text.isNullOrEmpty()) {
+            if (pendingStudents.isNotEmpty()) {
+                val filteredPendingStudents = pendingStudents.filter { jobStatus ->
+                    val name = jobStatus.student.details?.username?.lowercase() ?: ""
+                    val inputText = text.toString().lowercase()
+                    name.contains(inputText)
+                }
+                pendingStudentAdapter.setPendingStudent(filteredPendingStudents)
+            }
+            if (evaluatedStudents.isNotEmpty()) {
+                val filteredEvaluatedStudents = evaluatedStudents.filter { jobStatus ->
+                    val name = jobStatus.student.details?.username?.lowercase() ?: ""
+                    val inputText = text.toString().lowercase()
+                    name.contains(inputText)
+                }
+                evaluationStudentAdapter.setEvaluatedStudent(filteredEvaluatedStudents)
+            }
+        } else {
+            pendingStudentAdapter.setPendingStudent(pendingStudents)
+            evaluationStudentAdapter.setEvaluatedStudent(evaluatedStudents)
+        }
+    }
+
+    private fun setJobStatus(jobApplication: JobApplication) {
         studentJobViewModel.setSelectionStatus(jobApplication)
     }
 

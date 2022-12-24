@@ -56,7 +56,7 @@ class PendingStudentAdapter(private val setJobStatus: (JobApplication) -> Unit) 
 
     override fun getItemCount(): Int = pendingStudents.size
 
-    fun setPendingStudent(newPendingStudent : MutableList<JobStatus>){
+    fun setPendingStudent(newPendingStudent : List<JobStatus>){
         pendingStudents.clear()
         pendingStudents.addAll(newPendingStudent)
         notifyDataSetChanged()

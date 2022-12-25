@@ -32,6 +32,10 @@ class HomeFragment : Fragment() {
             findNavController().navigate(R.id.action_homeFragment_to_jobsFragment)
         }
 
+        binding.cvMockTest.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_quizFragment)
+        }
+
         return binding.root
     }
 

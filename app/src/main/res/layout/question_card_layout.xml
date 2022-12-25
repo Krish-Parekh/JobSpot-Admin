@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/background_color">
+
+    <TextView
+        android:id="@+id/tvQuestionCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/dm_sans_bold"
+        android:paddingVertical="@dimen/small_padding"
+        android:textColor="@color/text_color"
+        android:textSize="26sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Question 1" />
+
+    <ImageView
+        android:id="@+id/ivDeleteQuestion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/small_margin"
+        android:contentDescription="@null"
+        android:padding="@dimen/small_padding"
+        android:src="@drawable/ic_delete_quiz"
+        app:layout_constraintBottom_toTopOf="@+id/llQuestionContainer"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/llQuestionContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvQuestionCount">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/etQuestionContainer"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Question"
+            app:boxStrokeColor="@color/box_stroke_color"
+            app:errorEnabled="true"
+            app:hintTextColor="@color/text_color"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvMockTestHeading">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etQuestion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/dm_sans_medium"
+                android:inputType="text" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/etOptionOneContainer"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Option 1"
+            app:boxStrokeColor="@color/box_stroke_color"
+            app:errorEnabled="true"
+            app:hintTextColor="@color/text_color"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvMockTestHeading"
+            app:placeholderText="Option 1"
+            app:startIconDrawable="@drawable/ic_option_one">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etOptionOne"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/dm_sans_medium"
+                android:inputType="text" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/etOptionTwoContainer"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Option 2"
+            app:boxStrokeColor="@color/box_stroke_color"
+            app:errorEnabled="true"
+            app:hintTextColor="@color/text_color"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvMockTestHeading"
+            app:placeholderText="Option 2"
+            app:startIconDrawable="@drawable/ic_option_two">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etOptionTwo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/dm_sans_medium"
+                android:inputType="text" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/etOptionThreeContainer"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Option 3"
+            app:boxStrokeColor="@color/box_stroke_color"
+            app:errorEnabled="true"
+            app:hintTextColor="@color/text_color"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvMockTestHeading"
+            app:placeholderText="Option 3"
+            app:startIconDrawable="@drawable/ic_option_three">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etOptionThree"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/dm_sans_medium"
+                android:inputType="text" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/etOptionFourContainer"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Option 4"
+            app:boxStrokeColor="@color/box_stroke_color"
+            app:errorEnabled="true"
+            app:hintTextColor="@color/text_color"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvMockTestHeading"
+            app:placeholderText="Option 4"
+            app:startIconDrawable="@drawable/ic_option_four">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etOptionFour"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/dm_sans_medium"
+                android:inputType="text" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.skydoves.powerspinner.PowerSpinnerView
+            android:id="@+id/correctAnsSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="top|start"
+            android:layout_weight="1"
+            android:background="@drawable/spinner_background"
+            android:fontFamily="@font/dm_sans_medium"
+            android:hint="Correct Answer"
+            android:padding="15dp"
+            android:textColor="@color/text_color"
+            app:spinner_arrow_padding="@dimen/small_padding"
+            app:spinner_arrow_tint="@color/power_spinner_arrow_tint"
+            app:spinner_divider_color="@color/power_spinner_arrow_tint"
+            app:spinner_item_array="@array/correctAns"
+            app:spinner_item_height="46dp"
+            app:spinner_popup_background="@drawable/spinner_background" />
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/etFeedBackContainer"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/small_margin"
+            android:hint="Feedback"
+            app:boxStrokeColor="@color/box_stroke_color"
+            app:errorEnabled="true"
+            app:hintTextColor="@color/text_color"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvMockTestHeading"
+            app:placeholderText="Feedback"
+            app:startIconDrawable="@drawable/ic_feedback">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etFeedBack"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/dm_sans_medium"
+                android:inputType="text" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

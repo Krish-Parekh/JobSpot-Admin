@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_homeFragment_to_jobsFragment"
             app:destination="@id/jobsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_quizFragment"
+            app:destination="@id/quizFragment" />
     </fragment>
     <fragment
         android:id="@+id/jobsFragment"
@@ -77,4 +80,18 @@
             android:name="job"
             app:argType="com.example.jobspotadmin.model.Job" />
     </fragment>
+    <fragment
+        android:id="@+id/quizFragment"
+        android:name="com.example.jobspotadmin.home.fragment.quizFragment.QuizFragment"
+        android:label="fragment_quiz"
+        tools:layout="@layout/fragment_quiz" >
+        <action
+            android:id="@+id/action_quizFragment_to_createQuizFragment"
+            app:destination="@id/createQuizFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/createQuizFragment"
+        android:name="com.example.jobspotadmin.home.fragment.quizFragment.CreateQuizFragment"
+        android:label="fragment_create_quiz"
+        tools:layout="@layout/fragment_create_quiz" />
 </navigation>

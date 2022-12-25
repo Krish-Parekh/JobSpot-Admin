@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="@color/background_color"
     android:fillViewport="true"
     tools:context=".home.fragment.quizFragment.CreateQuizFragment">
@@ -58,7 +58,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="@dimen/medium_padding"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvCreateMockTestHeading">
@@ -117,7 +116,9 @@
                 android:id="@+id/questionContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:animateLayoutChanges="true"
+                android:orientation="vertical"
+                android:scrollbars="vertical">
 
             </LinearLayout>
 

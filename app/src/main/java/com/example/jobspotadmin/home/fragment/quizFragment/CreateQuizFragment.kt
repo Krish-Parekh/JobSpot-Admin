@@ -1,5 +1,6 @@
 package com.example.jobspotadmin.home.fragment.quizFragment
 
+import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -52,10 +53,12 @@ class CreateQuizFragment : Fragment() {
         val questionTextView: TextView = questionCard.findViewById(R.id.tvQuestionCount)
         val deleteBtn: ImageView = questionCard.findViewById(R.id.ivDeleteQuestion)
         val childCount = binding.questionContainer.childCount
+        questionCard.setTag(childCount)
         questionTextView.text = getString(R.string.question_count, childCount + 1)
         binding.questionContainer.addView(questionCard)
         deleteBtn.setOnClickListener {
-            deleteQuestion(childCount)
+            val index = questionCard.tag as Int
+            deleteQuestion(index)
             updateView()
         }
     }
@@ -93,6 +96,7 @@ class CreateQuizFragment : Fragment() {
         newCount.forEachIndexed { index, value ->
             val questionCard = binding.questionContainer.getChildAt(index)
             val questionCount: TextView = questionCard.findViewById(R.id.tvQuestionCount)
+            questionCard.setTag(index)
             questionCount.text = getString(R.string.question_count, index + 1)
         }
     }
@@ -142,5 +146,13 @@ class CreateQuizFragment : Fragment() {
             }
         }
         return true
+    }
+
+    private fun showDeleteDialog() {
+        val dialog = Dialog(requireContext())
+        dialog.setTitle("Hello World")
+        dialog.setContentView(R.layout.loading_dialog)
+        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+        dialog.show()
     }
 }

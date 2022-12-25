@@ -10,10 +10,18 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import com.example.jobspotadmin.R
 import com.example.jobspotadmin.databinding.FragmentCreateQuizBinding
+import com.example.jobspotadmin.home.fragment.quizFragment.viewmodel.QuizViewModel
 import com.example.jobspotadmin.model.Question
+import com.example.jobspotadmin.model.Quiz
+import com.example.jobspotadmin.util.InputValidation
+import com.example.jobspotadmin.util.LoadingDialog
+import com.example.jobspotadmin.util.UiState.*
 import com.example.jobspotadmin.util.getInputValue
+import com.example.jobspotadmin.util.showToast
 import com.google.android.material.textfield.TextInputEditText
 import com.skydoves.powerspinner.PowerSpinnerView
 
@@ -23,6 +31,8 @@ class CreateQuizFragment : Fragment() {
     private lateinit var binding: FragmentCreateQuizBinding
     private val options = listOf("A", "B", "C", "D")
     private val quizQuestions: MutableList<Question> = mutableListOf()
+    private val quizViewModel: QuizViewModel by viewModels()
+    private val loadingDialog: LoadingDialog by lazy { LoadingDialog(requireContext()) }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -48,8 +58,7 @@ class CreateQuizFragment : Fragment() {
     }
 
     private fun addQuestionView() {
-        val questionCard =
-            layoutInflater.inflate(R.layout.question_card_layout, binding.questionContainer, false)
+        val questionCard = layoutInflater.inflate(R.layout.question_card_layout, binding.questionContainer, false)
         val questionTextView: TextView = questionCard.findViewById(R.id.tvQuestionCount)
         val deleteBtn: ImageView = questionCard.findViewById(R.id.ivDeleteQuestion)
         val childCount = binding.questionContainer.childCount
@@ -64,16 +73,25 @@ class CreateQuizFragment : Fragment() {
     }
 
     private fun submitQuestions(questions: MutableList<Question>) {
-        Log.d(TAG, "Questions : ${questions}")
         questions.forEachIndexed { index, question ->
             if (verifyQuestion(question)) {
-                Log.d(TAG, "Submit Questions")
+                if (index == questions.lastIndex) {
+                    val title = binding.etQuizTitle.getInputValue()
+                    val duration = binding.etDuration.getInputValue()
+                    if (InputValidation.checkNullity(title) && InputValidation.quizDuration(duration)) {
+                        val quiz = Quiz(
+                            title = title,
+                            duration = duration,
+                            question = questions
+                        )
+                        quizViewModel.uploadQuiz(quiz)
+                        handleQuizUpload()
+                    }
+                }
             } else {
                 val questionCard = binding.questionContainer.getChildAt(index)
                 val locationX = questionCard.x
                 val locationY = questionCard.y
-                Log.d(TAG, "Index : ${index}, Question : ${question}")
-                Log.d(TAG, "LocationX : ${locationX}, LocationY: ${locationY}")
                 Toast.makeText(requireContext(), "Question ${index + 1}", Toast.LENGTH_SHORT).show()
                 binding.root.smoothScrollTo(locationX.toInt(), locationY.toInt())
                 return
@@ -81,9 +99,24 @@ class CreateQuizFragment : Fragment() {
         }
     }
 
+    private fun handleQuizUpload() {
+        quizViewModel.quizUploadStatus.observe(viewLifecycleOwner, Observer { uiState ->
+            when (uiState) {
+                LOADING -> {
+                    loadingDialog.show()
+                }
+                SUCCESS -> {
+                    loadingDialog.dismiss()
+                    showToast(requireContext(), "Quiz Uploaded")
+                }
+                FAILURE -> {
+                    loadingDialog.dismiss()
+                }
+            }
+        })
+    }
+
     private fun deleteQuestion(index: Int) {
-        Log.d(TAG, "Delete Card Index : ${index}")
-        Log.d(TAG, "Questions Size : ${quizQuestions.size}")
         val questionCard = binding.questionContainer.getChildAt(index)
         binding.questionContainer.removeView(questionCard)
         if (quizQuestions.size > index) {
@@ -131,7 +164,6 @@ class CreateQuizFragment : Fragment() {
                 feedback = feedBack.getInputValue()
             )
             quizQuestions.add(index, quizQuestion)
-            Log.d(TAG, "Index : ${index}, Quiz Questions : ${quizQuestion}")
         }
         return quizQuestions
     }

@@ -9,6 +9,7 @@ class Constants {
         const val COLLECTION_PATH_ROLE = "roles"
         const val COLLECTION_PATH_ADMIN = "admin"
         const val COLLECTION_PATH_COMPANY = "companies"
+        const val COLLECTION_PATH_QUIZ = "quiz"
 
         const val TPO_IMAGE_STORAGE_PATH = "tpo/profileImage/"
         const val COMPANY_IMAGE_STORAGE_PATH = "company/image/"

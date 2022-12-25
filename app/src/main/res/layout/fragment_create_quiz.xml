@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/background_color"
     android:fillViewport="true"
+    android:isScrollContainer="true"
     tools:context=".home.fragment.quizFragment.CreateQuizFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -64,7 +65,7 @@
 
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/etSearchContainer"
+                android:id="@+id/etQuizTitleContainer"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -79,7 +80,7 @@
                 app:startIconDrawable="@drawable/ic_title">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etSearch"
+                    android:id="@+id/etQuizTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/dm_sans_medium"
@@ -101,14 +102,14 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvMockTestHeading"
                 app:placeholderText="Test duration"
-                app:startIconDrawable="@drawable/ic_search">
+                app:startIconDrawable="@drawable/ic_duration">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etDuration"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/dm_sans_medium"
-                    android:inputType="text" />
+                    android:inputType="number" />
 
             </com.google.android.material.textfield.TextInputLayout>
 

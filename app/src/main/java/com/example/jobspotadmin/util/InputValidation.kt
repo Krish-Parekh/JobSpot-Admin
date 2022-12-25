@@ -26,5 +26,9 @@ class InputValidation {
         fun salaryValidation(salary : String) : Boolean{
             return checkNullity(salary) && SALARY_PATTERN.matcher(salary).matches()
         }
+
+        fun quizDuration(duration : String) : Boolean{
+            return checkNullity(duration) && (duration.toInt() in 10..60)
+        }
     }
 }

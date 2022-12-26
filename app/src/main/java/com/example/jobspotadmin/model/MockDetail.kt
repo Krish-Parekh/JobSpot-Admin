@@ -1,6 +1,6 @@
 package com.example.jobspotadmin.model
 
-data class QuizDetail(
+data class MockDetail(
     var quizId : String = "",
     var studentCount: String = "0",
     var quizName: String = "",

@@ -14,9 +14,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.jobspotadmin.R
 import com.example.jobspotadmin.databinding.FragmentQuizBinding
-import com.example.jobspotadmin.home.fragment.quizFragment.adapter.QuizAdapter
-import com.example.jobspotadmin.home.fragment.quizFragment.viewmodel.QuizViewModel
-import com.example.jobspotadmin.model.QuizDetail
+import com.example.jobspotadmin.home.fragment.quizFragment.adapter.MockTestAdapter
+import com.example.jobspotadmin.home.fragment.quizFragment.viewmodel.MockViewModel
+import com.example.jobspotadmin.model.MockDetail
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 
@@ -24,9 +24,9 @@ private const val TAG = "QuizFragment"
 class QuizFragment : Fragment() {
 
     private lateinit var binding: FragmentQuizBinding
-    private val quizViewModel: QuizViewModel by viewModels()
-    private val quizAdapter: QuizAdapter by lazy { QuizAdapter(this@QuizFragment) }
-    private val quizDetails : MutableList<QuizDetail> by lazy { mutableListOf() }
+    private val mockViewModel: MockViewModel by viewModels()
+    private val mockTestAdapter: MockTestAdapter by lazy { MockTestAdapter(this@QuizFragment) }
+    private val mockDetails : MutableList<MockDetail> by lazy { mutableListOf() }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -41,15 +41,15 @@ class QuizFragment : Fragment() {
     private fun setupViews() {
         binding.apply {
 
-            quizViewModel.fetchQuiz()
+            mockViewModel.fetchMockTest()
 
-            rvQuiz.adapter = quizAdapter
+            rvQuiz.adapter = mockTestAdapter
             rvQuiz.layoutManager = LinearLayoutManager(requireContext())
 
-            quizViewModel.quizDetails.observe(viewLifecycleOwner, Observer { quizDetails ->
-                quizAdapter.setQuizData(quizDetails.toMutableList())
-                this@QuizFragment.quizDetails.clear()
-                this@QuizFragment.quizDetails.addAll(quizDetails)
+            mockViewModel.mockDetails.observe(viewLifecycleOwner, Observer { quizDetails ->
+                mockTestAdapter.setQuizData(quizDetails.toMutableList())
+                this@QuizFragment.mockDetails.clear()
+                this@QuizFragment.mockDetails.addAll(quizDetails)
             })
 
             ivPopOut.setOnClickListener {
@@ -69,18 +69,18 @@ class QuizFragment : Fragment() {
 
     private fun filterQuiz(text: Editable?) {
         if (!text.isNullOrEmpty()) {
-            val filteredQuizList = quizDetails.filter { quizDetail ->
+            val filteredQuizList = mockDetails.filter { quizDetail ->
                 val title = quizDetail.quizName.lowercase()
                 val inputText = text.toString().lowercase()
                 title.contains(inputText)
             }
-            quizAdapter.setQuizData(newQuizDetail = filteredQuizList)
+            mockTestAdapter.setQuizData(newMockDetail = filteredQuizList)
         } else {
-            quizAdapter.setQuizData(newQuizDetail = quizDetails)
+            mockTestAdapter.setQuizData(newMockDetail = mockDetails)
         }
     }
 
-    fun showDeleteDialog(quizDetail: QuizDetail) {
+    fun showDeleteDialog(mockDetail: MockDetail) {
         val dialog = BottomSheetDialog(requireContext())
         val bottomSheet = layoutInflater.inflate(R.layout.bottom_sheet_delete_quiz, null)
         val btnNot: MaterialButton = bottomSheet.findViewById(R.id.btnNo)
@@ -89,7 +89,7 @@ class QuizFragment : Fragment() {
             dialog.dismiss()
         }
         btnRemove.setOnClickListener {
-            Log.d(TAG, "Quiz Detail : ${quizDetail}")
+            Log.d(TAG, "Mock Detail : ${mockDetail}")
             dialog.dismiss()
         }
         dialog.setContentView(bottomSheet)

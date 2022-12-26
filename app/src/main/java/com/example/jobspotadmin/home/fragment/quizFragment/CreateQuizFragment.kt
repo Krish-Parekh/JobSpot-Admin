@@ -14,9 +14,9 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.jobspotadmin.R
 import com.example.jobspotadmin.databinding.FragmentCreateQuizBinding
-import com.example.jobspotadmin.home.fragment.quizFragment.viewmodel.QuizViewModel
-import com.example.jobspotadmin.model.Question
-import com.example.jobspotadmin.model.Quiz
+import com.example.jobspotadmin.home.fragment.quizFragment.viewmodel.MockViewModel
+import com.example.jobspotadmin.model.MockQuestion
+import com.example.jobspotadmin.model.Mock
 import com.example.jobspotadmin.util.InputValidation
 import com.example.jobspotadmin.util.LoadingDialog
 import com.example.jobspotadmin.util.UiState.*
@@ -30,8 +30,8 @@ private const val TAG = "CreateQuizFragmentTAG"
 class CreateQuizFragment : Fragment() {
     private lateinit var binding: FragmentCreateQuizBinding
     private val options = listOf("A", "B", "C", "D")
-    private val quizQuestions: MutableList<Question> = mutableListOf()
-    private val quizViewModel: QuizViewModel by viewModels()
+    private val mockTestQuestions: MutableList<MockQuestion> = mutableListOf()
+    private val mockViewModel: MockViewModel by viewModels()
     private val loadingDialog: LoadingDialog by lazy { LoadingDialog(requireContext()) }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,16 +52,16 @@ class CreateQuizFragment : Fragment() {
             }
 
             btnAddQuestion.setOnClickListener {
-                if (quizViewModel.quizCounter <= 10) {
+                if (mockViewModel.mockQuestionCounter <= 10) {
                     addQuestionView()
-                    quizViewModel.increment()
+                    mockViewModel.increment()
                 } else {
                     showToast(requireContext(), "Can't add more than 10")
                 }
             }
             tvSubmitQuiz.setOnClickListener {
-                val questions = getQuizQuestions()
-                submitQuizQuestions(questions)
+                val questions = getMockTestQuestions()
+                submitMockTestQuestions(questions)
             }
         }
     }
@@ -82,30 +82,28 @@ class CreateQuizFragment : Fragment() {
         }
     }
 
-    private fun submitQuizQuestions(questions: MutableList<Question>) {
-        questions.forEachIndexed { index, question ->
+    private fun submitMockTestQuestions(mockQuestions: MutableList<MockQuestion>) {
+        mockQuestions.forEachIndexed { index, question ->
             if (isQuestionValid(question)) {
-                // If this is the last question in the list, validate the quiz details and submit the quiz
-                if (index == questions.lastIndex) {
+                if (index == mockQuestions.lastIndex) {
                     val title = binding.etQuizTitle.getInputValue()
                     val duration = binding.etDuration.getInputValue()
-                    if (areQuizDetailValid(title, duration)) {
-                        val quiz = Quiz(
+                    if (areMockTestDetailValid(title, duration)) {
+                        val mock = Mock(
                             title = title,
                             duration = duration,
-                            question = questions
+                            mockQuestion = mockQuestions
                         )
-                        Log.d(TAG, "Quiz : ${quiz}")
-//                        quizViewModel.uploadQuiz(quiz)
-//                        handleQuizUpload()
+                        Log.d(TAG, "Mock : $mock")
+                        mockViewModel.uploadMockTest(mock)
+                        handleMockTestUpload()
                     }
                 }
             } else {
-                // If the question is invalid, show a toast message and scroll to the question card
                 val questionCard = binding.questionContainer.getChildAt(index)
                 val locationX = questionCard.x
                 val locationY = questionCard.y
-                showToast(requireContext(), "Question ${index + 1}")
+                showToast(requireContext(), "MockQuestion ${index + 1}")
                 binding.root.smoothScrollTo(locationX.toInt(), locationY.toInt())
                 return
             }
@@ -115,13 +113,13 @@ class CreateQuizFragment : Fragment() {
     private fun deleteQuestion(index: Int) {
         val questionCard = binding.questionContainer.getChildAt(index)
         binding.questionContainer.removeView(questionCard)
-        quizViewModel.decrement()
-        if (quizQuestions.size > index) {
-            quizQuestions.removeAt(index)
+        mockViewModel.decrement()
+        if (mockTestQuestions.size > index) {
+            mockTestQuestions.removeAt(index)
         }
     }
 
-    //Once a view is deleted we need to update the question count
+    //Once a view is deleted we need to update the mockQuestion count
     private fun updateView() {
         val newCount = (0 until binding.questionContainer.childCount)
         newCount.forEachIndexed { index, _ ->
@@ -132,9 +130,9 @@ class CreateQuizFragment : Fragment() {
         }
     }
 
-    private fun getQuizQuestions(): MutableList<Question> {
+    private fun getMockTestQuestions(): MutableList<MockQuestion> {
         val childCount = (0 until binding.questionContainer.childCount)
-        quizQuestions.clear()
+        mockTestQuestions.clear()
         childCount.forEach { index ->
             val questionCard = binding.questionContainer.getChildAt(index)
             val question: TextInputEditText = questionCard.findViewById(R.id.etQuestion)
@@ -155,28 +153,28 @@ class CreateQuizFragment : Fragment() {
                 optionThree.getInputValue(),
                 optionFour.getInputValue()
             )
-            val quizQuestion = Question(
+            val quizMockQuestion = MockQuestion(
                 question = question.getInputValue(),
                 options = questionOptions,
                 correctOption = correctOption,
                 feedback = feedBack.getInputValue()
             )
-            quizQuestions.add(index, quizQuestion)
+            mockTestQuestions.add(index, quizMockQuestion)
         }
-        return quizQuestions
+        return mockTestQuestions
     }
 
-    private fun handleQuizUpload() {
-        quizViewModel.quizUploadStatus.observe(viewLifecycleOwner, Observer { uiState ->
+    private fun handleMockTestUpload() {
+        mockViewModel.mockTestUploadStatus.observe(viewLifecycleOwner, Observer { uiState ->
             when (uiState) {
                 LOADING -> {
                     loadingDialog.show()
                 }
                 SUCCESS -> {
                     loadingDialog.dismiss()
-                    quizQuestions.clear()
+                    mockTestQuestions.clear()
                     findNavController().popBackStack()
-                    showToast(requireContext(), "Quiz Uploaded")
+                    showToast(requireContext(), "Mock Uploaded")
                 }
                 FAILURE -> {
                     loadingDialog.dismiss()
@@ -186,26 +184,26 @@ class CreateQuizFragment : Fragment() {
         })
     }
 
-    private fun isQuestionValid(question: Question): Boolean {
-        if (!InputValidation.checkNullity(question.question)) {
+    private fun isQuestionValid(mockQuestion: MockQuestion): Boolean {
+        if (!InputValidation.checkNullity(mockQuestion.question)) {
             return false
-        } else if (!InputValidation.checkNullity(question.feedback)) {
+        } else if (!InputValidation.checkNullity(mockQuestion.feedback)) {
             return false
-        } else if (!InputValidation.checkNullity(question.correctOption)) {
+        } else if (!InputValidation.checkNullity(mockQuestion.correctOption)) {
             return false
-        } else if (!InputValidation.optionListValidation(question.options)) {
+        } else if (!InputValidation.optionListValidation(mockQuestion.options)) {
             return false
         } else {
             return true
         }
     }
 
-    private fun areQuizDetailValid(title: String, duration: String): Boolean {
+    private fun areMockTestDetailValid(title: String, duration: String): Boolean {
         binding.apply {
             if (!InputValidation.checkNullity(title)) {
                 binding.etQuizTitleContainer.error = "Enter valid title"
                 return false
-            } else if (!InputValidation.quizDuration(duration)) {
+            } else if (!InputValidation.mockDurationValidation(duration)) {
                 binding.etDurationContainer.error = "Enter valid duration"
                 return false
             } else {

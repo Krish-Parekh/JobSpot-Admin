@@ -69,7 +69,7 @@
     <string name="field_quiz_title">Quiz Title</string>
     <string name="question_count">Question %d</string>
     <string name="field_remove_quiz_heading">Remove Quiz</string>
-    <string name="field_remove_quiz_sub_heading">Are you sure you want to delete this quiz</string>
+    <string name="field_remove_quiz_sub_heading">Are you sure you want to delete this mock</string>
     <string name="field_remove_quiz_btn">Remove Quiz</string>
     <string name="field_quiz_student_count"> %d  students attendant</string>
 

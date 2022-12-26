@@ -2,6 +2,7 @@ package com.example.jobspotadmin.home.fragment.quizFragment
 
 import android.app.Dialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,6 +25,7 @@ import com.example.jobspotadmin.util.showToast
 import com.google.android.material.textfield.TextInputEditText
 import com.skydoves.powerspinner.PowerSpinnerView
 
+private const val TAG = "CreateQuizFragmentTAG"
 
 class CreateQuizFragment : Fragment() {
     private lateinit var binding: FragmentCreateQuizBinding
@@ -93,8 +95,9 @@ class CreateQuizFragment : Fragment() {
                             duration = duration,
                             question = questions
                         )
-                        quizViewModel.uploadQuiz(quiz)
-                        handleQuizUpload()
+                        Log.d(TAG, "Quiz : ${quiz}")
+//                        quizViewModel.uploadQuiz(quiz)
+//                        handleQuizUpload()
                     }
                 }
             } else {
@@ -184,15 +187,17 @@ class CreateQuizFragment : Fragment() {
     }
 
     private fun isQuestionValid(question: Question): Boolean {
-        val fields = question::class.java.declaredFields
-        for (field in fields) {
-            field.isAccessible = true
-            when (val value = field.get(question)) {
-                "" -> return false
-                is List<*> -> if (value.isEmpty()) return false
-            }
+        if (!InputValidation.checkNullity(question.question)) {
+            return false
+        } else if (!InputValidation.checkNullity(question.feedback)) {
+            return false
+        } else if (!InputValidation.checkNullity(question.correctOption)) {
+            return false
+        } else if (!InputValidation.optionListValidation(question.options)) {
+            return false
+        } else {
+            return true
         }
-        return true
     }
 
     private fun areQuizDetailValid(title: String, duration: String): Boolean {

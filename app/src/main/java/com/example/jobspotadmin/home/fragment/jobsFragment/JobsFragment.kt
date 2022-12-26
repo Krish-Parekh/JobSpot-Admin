@@ -22,7 +22,6 @@ import com.example.jobspotadmin.util.showToast
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 
-private const val TAG = "JobsFragment"
 
 class JobsFragment : Fragment() {
     private lateinit var binding: FragmentJobsBinding
@@ -85,7 +84,7 @@ class JobsFragment : Fragment() {
 
     fun showDeleteDialog(job: Job) {
         val dialog = BottomSheetDialog(requireContext())
-        val bottomSheet = layoutInflater.inflate(R.layout.bottom_sheet_delete_file, null)
+        val bottomSheet = layoutInflater.inflate(R.layout.bottom_sheet_delete_job, null)
         val btnNot: MaterialButton = bottomSheet.findViewById(R.id.btnNo)
         val btnRemove: MaterialButton = bottomSheet.findViewById(R.id.btnRemoveFile)
         btnNot.setOnClickListener {

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cvQuiz"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -34,11 +35,11 @@
             android:ellipsize="end"
             android:fontFamily="@font/dm_sans_bold"
             android:maxLines="1"
-            android:text="Test 1"
+            tools:text="Test 1"
             android:textColor="@color/text_color"
             android:textSize="18sp"
             app:layout_constraintLeft_toRightOf="@+id/ivQuizLogo"
-            app:layout_constraintRight_toLeftOf="@id/ivDeleteJob"
+            app:layout_constraintRight_toLeftOf="@id/ivDeleteQuiz"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -48,15 +49,15 @@
             android:layout_marginEnd="@dimen/medium_margin"
             android:ellipsize="end"
             android:fontFamily="@font/dm_sans_regular"
-            android:text="0 students attended"
+            tools:text="0 students attended"
             android:textColor="@color/subheading_color"
             android:textSize="14sp"
             app:layout_constraintLeft_toLeftOf="@+id/tvQuizName"
-            app:layout_constraintRight_toLeftOf="@id/ivDeleteJob"
+            app:layout_constraintRight_toLeftOf="@id/ivDeleteQuiz"
             app:layout_constraintTop_toBottomOf="@+id/tvQuizName" />
 
         <ImageView
-            android:id="@+id/ivDeleteJob"
+            android:id="@+id/ivDeleteQuiz"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/small_margin"

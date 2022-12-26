@@ -4,12 +4,10 @@ import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -105,7 +103,7 @@ class JobViewFragment : Fragment() {
 
     private fun showDeleteDialog(job: Job) {
         val dialog = BottomSheetDialog(requireContext())
-        val bottomSheet = layoutInflater.inflate(R.layout.bottom_sheet_delete_file, null)
+        val bottomSheet = layoutInflater.inflate(R.layout.bottom_sheet_delete_job, null)
         val btnNot: MaterialButton = bottomSheet.findViewById(R.id.btnNo)
         val btnRemove: MaterialButton = bottomSheet.findViewById(R.id.btnRemoveFile)
         btnNot.setOnClickListener {

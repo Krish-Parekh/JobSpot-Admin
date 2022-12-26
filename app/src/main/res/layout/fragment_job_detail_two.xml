@@ -88,6 +88,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/medium_margin"
         android:layout_marginTop="@dimen/small_margin"
+        android:animateLayoutChanges="true"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

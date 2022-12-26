@@ -2,16 +2,15 @@ package com.example.jobspotadmin.home.fragment.quizFragment
 
 import android.app.Dialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.example.jobspotadmin.R
 import com.example.jobspotadmin.databinding.FragmentCreateQuizBinding
 import com.example.jobspotadmin.home.fragment.quizFragment.viewmodel.QuizViewModel
@@ -25,7 +24,6 @@ import com.example.jobspotadmin.util.showToast
 import com.google.android.material.textfield.TextInputEditText
 import com.skydoves.powerspinner.PowerSpinnerView
 
-private const val TAG = "CreateQuizFragmentTAG"
 
 class CreateQuizFragment : Fragment() {
     private lateinit var binding: FragmentCreateQuizBinding
@@ -47,18 +45,28 @@ class CreateQuizFragment : Fragment() {
     private fun setupViews() {
         binding.apply {
 
+            ivPopOut.setOnClickListener {
+                findNavController().popBackStack()
+            }
+
             btnAddQuestion.setOnClickListener {
-                addQuestionView()
+                if (quizViewModel.quizCounter <= 10) {
+                    addQuestionView()
+                    quizViewModel.increment()
+                } else {
+                    showToast(requireContext(), "Can't add more than 10")
+                }
             }
             tvSubmitQuiz.setOnClickListener {
                 val questions = getQuizQuestions()
-                submitQuestions(questions)
+                submitQuizQuestions(questions)
             }
         }
     }
 
     private fun addQuestionView() {
-        val questionCard = layoutInflater.inflate(R.layout.question_card_layout, binding.questionContainer, false)
+        val questionCard =
+            layoutInflater.inflate(R.layout.question_card_layout, binding.questionContainer, false)
         val questionTextView: TextView = questionCard.findViewById(R.id.tvQuestionCount)
         val deleteBtn: ImageView = questionCard.findViewById(R.id.ivDeleteQuestion)
         val childCount = binding.questionContainer.childCount
@@ -72,13 +80,14 @@ class CreateQuizFragment : Fragment() {
         }
     }
 
-    private fun submitQuestions(questions: MutableList<Question>) {
+    private fun submitQuizQuestions(questions: MutableList<Question>) {
         questions.forEachIndexed { index, question ->
-            if (verifyQuestion(question)) {
+            if (isQuestionValid(question)) {
+                // If this is the last question in the list, validate the quiz details and submit the quiz
                 if (index == questions.lastIndex) {
                     val title = binding.etQuizTitle.getInputValue()
                     val duration = binding.etDuration.getInputValue()
-                    if (InputValidation.checkNullity(title) && InputValidation.quizDuration(duration)) {
+                    if (areQuizDetailValid(title, duration)) {
                         val quiz = Quiz(
                             title = title,
                             duration = duration,
@@ -89,44 +98,30 @@ class CreateQuizFragment : Fragment() {
                     }
                 }
             } else {
+                // If the question is invalid, show a toast message and scroll to the question card
                 val questionCard = binding.questionContainer.getChildAt(index)
                 val locationX = questionCard.x
                 val locationY = questionCard.y
-                Toast.makeText(requireContext(), "Question ${index + 1}", Toast.LENGTH_SHORT).show()
+                showToast(requireContext(), "Question ${index + 1}")
                 binding.root.smoothScrollTo(locationX.toInt(), locationY.toInt())
                 return
             }
         }
     }
 
-    private fun handleQuizUpload() {
-        quizViewModel.quizUploadStatus.observe(viewLifecycleOwner, Observer { uiState ->
-            when (uiState) {
-                LOADING -> {
-                    loadingDialog.show()
-                }
-                SUCCESS -> {
-                    loadingDialog.dismiss()
-                    showToast(requireContext(), "Quiz Uploaded")
-                }
-                FAILURE -> {
-                    loadingDialog.dismiss()
-                }
-            }
-        })
-    }
-
     private fun deleteQuestion(index: Int) {
         val questionCard = binding.questionContainer.getChildAt(index)
         binding.questionContainer.removeView(questionCard)
+        quizViewModel.decrement()
         if (quizQuestions.size > index) {
             quizQuestions.removeAt(index)
         }
     }
 
+    //Once a view is deleted we need to update the question count
     private fun updateView() {
         val newCount = (0 until binding.questionContainer.childCount)
-        newCount.forEachIndexed { index, value ->
+        newCount.forEachIndexed { index, _ ->
             val questionCard = binding.questionContainer.getChildAt(index)
             val questionCount: TextView = questionCard.findViewById(R.id.tvQuestionCount)
             questionCard.setTag(index)
@@ -168,7 +163,27 @@ class CreateQuizFragment : Fragment() {
         return quizQuestions
     }
 
-    private fun verifyQuestion(question: Question): Boolean {
+    private fun handleQuizUpload() {
+        quizViewModel.quizUploadStatus.observe(viewLifecycleOwner, Observer { uiState ->
+            when (uiState) {
+                LOADING -> {
+                    loadingDialog.show()
+                }
+                SUCCESS -> {
+                    loadingDialog.dismiss()
+                    quizQuestions.clear()
+                    findNavController().popBackStack()
+                    showToast(requireContext(), "Quiz Uploaded")
+                }
+                FAILURE -> {
+                    loadingDialog.dismiss()
+                }
+                else -> Unit
+            }
+        })
+    }
+
+    private fun isQuestionValid(question: Question): Boolean {
         val fields = question::class.java.declaredFields
         for (field in fields) {
             field.isAccessible = true
@@ -178,6 +193,20 @@ class CreateQuizFragment : Fragment() {
             }
         }
         return true
+    }
+
+    private fun areQuizDetailValid(title: String, duration: String): Boolean {
+        binding.apply {
+            if (!InputValidation.checkNullity(title)) {
+                binding.etQuizTitleContainer.error = "Enter valid title"
+                return false
+            } else if (!InputValidation.quizDuration(duration)) {
+                binding.etDurationContainer.error = "Enter valid duration"
+                return false
+            } else {
+                return true
+            }
+        }
     }
 
     private fun showDeleteDialog() {

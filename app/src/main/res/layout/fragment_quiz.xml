@@ -25,7 +25,7 @@
         android:layout_marginTop="@dimen/medium_margin"
         android:fontFamily="@font/dm_sans_bold"
         android:paddingVertical="@dimen/small_padding"
-        android:text="Mock Tests"
+        android:text="@string/fragment_mock_test_sub_heading"
         android:textColor="@color/text_color"
         android:textSize="26sp"
         app:layout_constraintLeft_toLeftOf="@id/ivPopOut"
@@ -64,14 +64,14 @@
         android:layout_marginTop="@dimen/small_margin"
         android:fontFamily="@font/dm_sans_bold"
         android:paddingVertical="@dimen/small_padding"
-        android:text="Text Conducted"
+        android:text="@string/field_test_conducted"
         android:textColor="@color/text_color"
         android:textSize="18sp"
         app:layout_constraintLeft_toLeftOf="@id/etSearchContainer"
         app:layout_constraintTop_toBottomOf="@+id/etSearchContainer" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvConductedQuiz"
+        android:id="@+id/rvQuiz"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginVertical="@dimen/small_margin"

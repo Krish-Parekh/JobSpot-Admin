@@ -39,7 +39,7 @@ class JobEditFragment : Fragment() {
     private lateinit var binding: FragmentJobEditBinding
     private val args by navArgs<JobViewFragmentArgs>()
     private val job by lazy { args.job }
-    private val loadingDialog : LoadingDialog by lazy { LoadingDialog(requireContext()) }
+    private val loadingDialog: LoadingDialog by lazy { LoadingDialog(requireContext()) }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -222,7 +222,7 @@ class JobEditFragment : Fragment() {
         skills: MutableList<String>
     ): Boolean {
         binding.apply {
-            return if (!InputValidation.checkNullity(title)) {
+            if (!InputValidation.checkNullity(title)) {
                 etJobTitleContainer.error = getString(R.string.field_error_job_title)
                 return false
             } else if (!InputValidation.checkNullity(company)) {
@@ -248,4 +248,5 @@ class JobEditFragment : Fragment() {
             }
         }
     }
+
 }

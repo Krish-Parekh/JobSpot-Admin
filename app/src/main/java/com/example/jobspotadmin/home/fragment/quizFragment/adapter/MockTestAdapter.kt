@@ -19,7 +19,7 @@ class MockTestAdapter(private val listener : QuizFragment) : RecyclerView.Adapte
         private val tvStudentCount: TextView = itemView.findViewById(R.id.tvQuizStudentCount)
         private val ivDeleteQuiz : ImageView = itemView.findViewById(R.id.ivDeleteQuiz)
         fun bind(mockDetail: MockDetail) {
-            tvQuizName.text = mockDetail.quizName
+            tvQuizName.text = mockDetail.mockName
             tvStudentCount.text = itemView.context.getString(R.string.field_quiz_student_count, mockDetail.studentIds.size)
             ivDeleteQuiz.setOnClickListener {
                 listener.showDeleteDialog(mockDetail = mockDetail)

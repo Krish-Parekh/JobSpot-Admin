@@ -70,7 +70,7 @@ class QuizFragment : Fragment() {
     private fun filterQuiz(text: Editable?) {
         if (!text.isNullOrEmpty()) {
             val filteredQuizList = mockDetails.filter { quizDetail ->
-                val title = quizDetail.quizName.lowercase()
+                val title = quizDetail.mockName.lowercase()
                 val inputText = text.toString().lowercase()
                 title.contains(inputText)
             }
@@ -90,6 +90,7 @@ class QuizFragment : Fragment() {
         }
         btnRemove.setOnClickListener {
             Log.d(TAG, "Mock Detail : ${mockDetail}")
+            mockViewModel.deleteMockTest(mockDetail)
             dialog.dismiss()
         }
         dialog.setContentView(bottomSheet)

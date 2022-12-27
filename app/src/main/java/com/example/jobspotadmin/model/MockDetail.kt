@@ -1,8 +1,8 @@
 package com.example.jobspotadmin.model
 
 data class MockDetail(
-    var quizId : String = "",
+    var mockId : String = "",
     var studentCount: String = "0",
-    var quizName: String = "",
-    var studentIds: List<String> = emptyList()
+    var mockName: String = "",
+    var studentIds: MutableList<String> = mutableListOf<String>()
 )

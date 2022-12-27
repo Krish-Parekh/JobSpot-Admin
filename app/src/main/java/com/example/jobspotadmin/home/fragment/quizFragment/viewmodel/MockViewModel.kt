@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.jobspotadmin.model.Mock
 import com.example.jobspotadmin.model.MockDetail
 import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_MOCK
+import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_STUDENT
 import com.example.jobspotadmin.util.UiState
 import com.google.firebase.database.*
 import com.google.firebase.firestore.FirebaseFirestore
@@ -44,7 +45,7 @@ class MockViewModel : ViewModel() {
                 _mockTestUploadStatus.postValue(UiState.LOADING)
                 val uid = mock.uid
                 mFirestore.collection(COLLECTION_PATH_MOCK).document(uid).set(mock).await()
-                val mockDetail = MockDetail(quizId = uid, quizName = mock.title)
+                val mockDetail = MockDetail(mockId = uid, mockName = mock.title)
                 mRealtimeDb.child(COLLECTION_PATH_MOCK).child(uid).setValue(mockDetail)
                 _mockTestUploadStatus.postValue(UiState.SUCCESS)
             } catch (e: Exception) {
@@ -68,5 +69,30 @@ class MockViewModel : ViewModel() {
                     Log.d(TAG, "Error : ${error.message}")
                 }
             })
+    }
+
+    fun deleteMockTest(mockDetail: MockDetail) {
+        viewModelScope.launch {
+            Log.d(TAG, "MockId : ${mockDetail}")
+            // delete from firestore
+            mFirestore.collection(COLLECTION_PATH_MOCK).document(mockDetail.mockId).delete().await()
+            Log.d(TAG, "Deleted From Firebase")
+            // delete from realtime db
+            val mockDetailRef =
+                mRealtimeDb.child(COLLECTION_PATH_MOCK).child(mockDetail.mockId).get().await()
+            val mockDetail = mockDetailRef.getValue(MockDetail::class.java)!!
+            mockDetail.studentIds.forEach { studentId ->
+                mRealtimeDb
+                    .child(COLLECTION_PATH_STUDENT)
+                    .child(studentId)
+                    .child(COLLECTION_PATH_MOCK)
+                    .child(mockDetail.mockId)
+                    .removeValue()
+                    .await()
+                Log.d(TAG, "Delete from studentCollection : $studentId")
+            }
+            mRealtimeDb.child(COLLECTION_PATH_MOCK).child(mockDetail.mockId).removeValue().await()
+            Log.d(TAG, "Deleted Mock Collection")
+        }
     }
 }

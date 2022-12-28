@@ -15,13 +15,10 @@ import androidx.navigation.fragment.findNavController
 import com.example.jobspotadmin.R
 import com.example.jobspotadmin.databinding.FragmentCreateQuizBinding
 import com.example.jobspotadmin.home.fragment.quizFragment.viewmodel.MockViewModel
-import com.example.jobspotadmin.model.MockQuestion
 import com.example.jobspotadmin.model.Mock
-import com.example.jobspotadmin.util.InputValidation
-import com.example.jobspotadmin.util.LoadingDialog
+import com.example.jobspotadmin.model.MockQuestion
+import com.example.jobspotadmin.util.*
 import com.example.jobspotadmin.util.UiState.*
-import com.example.jobspotadmin.util.getInputValue
-import com.example.jobspotadmin.util.showToast
 import com.google.android.material.textfield.TextInputEditText
 import com.skydoves.powerspinner.PowerSpinnerView
 
@@ -51,6 +48,9 @@ class CreateQuizFragment : Fragment() {
                 findNavController().popBackStack()
             }
 
+            etQuizTitleContainer.addTextWatcher()
+            etDurationContainer.addTextWatcher()
+
             btnAddQuestion.setOnClickListener {
                 if (mockViewModel.mockQuestionCounter <= 10) {
                     addQuestionView()
@@ -77,8 +77,7 @@ class CreateQuizFragment : Fragment() {
         binding.questionContainer.addView(questionCard)
         deleteBtn.setOnClickListener {
             val index = questionCard.tag as Int
-            deleteQuestion(index)
-            updateView()
+            showDeleteDialog(index)
         }
     }
 
@@ -104,7 +103,7 @@ class CreateQuizFragment : Fragment() {
                 val locationX = questionCard.x
                 val locationY = questionCard.y
                 showToast(requireContext(), "MockQuestion ${index + 1}")
-                binding.root.smoothScrollTo(locationX.toInt(), locationY.toInt())
+                binding.questionScrollContainer.smoothScrollTo(locationX.toInt(), locationY.toInt())
                 return
             }
         }
@@ -212,10 +211,22 @@ class CreateQuizFragment : Fragment() {
         }
     }
 
-    private fun showDeleteDialog() {
+    private fun showDeleteDialog(index: Int) {
         val dialog = Dialog(requireContext())
-        dialog.setTitle("Hello World")
-        dialog.setContentView(R.layout.loading_dialog)
+        val deleteDialog = layoutInflater.inflate(R.layout.delete_dialog, null)
+        deleteDialog.apply {
+            val deleteBtn: TextView = findViewById(R.id.tvDelete)
+            val noBtn: TextView = findViewById(R.id.tvNo)
+            deleteBtn.setOnClickListener {
+                deleteQuestion(index)
+                updateView()
+                dialog.dismiss()
+            }
+            noBtn.setOnClickListener {
+                dialog.dismiss()
+            }
+        }
+        dialog.setContentView(deleteDialog)
         dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
         dialog.show()
     }

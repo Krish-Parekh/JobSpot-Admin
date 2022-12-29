@@ -22,7 +22,9 @@ import com.example.jobspotadmin.util.*
 private const val TAG = "JobDetailFragmentTwo"
 
 class JobDetailFragmentTwo : Fragment() {
-    private lateinit var binding: FragmentJobDetailTwoBinding
+    private var _binding: FragmentJobDetailTwoBinding? = null
+    private val binding get() = _binding!!
+
     private val args by navArgs<JobDetailFragmentTwoArgs>()
     private val job by lazy { args.job }
     private val loadingDialog: LoadingDialog by lazy { LoadingDialog(requireContext()) }
@@ -32,7 +34,7 @@ class JobDetailFragmentTwo : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentJobDetailTwoBinding.inflate(inflater, container, false)
+        _binding = FragmentJobDetailTwoBinding.inflate(inflater, container, false)
 
         setupView()
 
@@ -116,5 +118,10 @@ class JobDetailFragmentTwo : Fragment() {
                 return true
             }
         }
+    }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
     }
 }

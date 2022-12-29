@@ -16,13 +16,20 @@ import com.example.jobspotadmin.databinding.FragmentHomeBinding
 
 
 class HomeFragment : Fragment() {
-    private lateinit var binding : FragmentHomeBinding
+    private var _binding : FragmentHomeBinding? = null
+    private val binding get() = _binding!!
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentHomeBinding.inflate(inflater, container, false)
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
+        setupViews()
+
+        return binding.root
+    }
+
+    private fun setupViews() {
         counterAnimation(0, 50, binding.tvStudentCount)
         counterAnimation(0, 50, binding.tvJobCount)
         counterAnimation(0, 50, binding.tvMockTestCount)
@@ -35,8 +42,6 @@ class HomeFragment : Fragment() {
         binding.cvMockTest.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_quizFragment)
         }
-
-        return binding.root
     }
 
     private fun counterAnimation(start : Int, end : Int, textView : TextView){
@@ -48,6 +53,11 @@ class HomeFragment : Fragment() {
             textView.text = counter.toString()
         }
         animator.start()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

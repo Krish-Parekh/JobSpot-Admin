@@ -18,12 +18,13 @@ import com.example.jobspotadmin.databinding.FragmentEmailBinding
 
 class EmailFragment : Fragment() {
 
-    private lateinit var binding : FragmentEmailBinding
+    private var _binding: FragmentEmailBinding? = null
+    private val binding get() = _binding!!
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentEmailBinding.inflate(inflater, container, false)
+        _binding = FragmentEmailBinding.inflate(inflater, container, false)
 
         setupView()
 
@@ -57,5 +58,10 @@ class EmailFragment : Fragment() {
         resendText.setSpan(UnderlineSpan(), 33, resendText.length, 0)
         resendText.setSpan(resendColor, 33, resendText.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
         return resendText
+    }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
     }
 }

@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/background_color"
     android:fillViewport="true"
+    android:isScrollContainer="true"
     tools:context=".home.fragment.jobsFragment.StudentJobFragment">
 
     <androidx.constraintlayout.motion.widget.MotionLayout

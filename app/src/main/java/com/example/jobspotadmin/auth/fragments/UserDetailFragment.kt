@@ -26,7 +26,8 @@ import com.google.firebase.auth.FirebaseAuth
 private const val TAG = "UserDetailFragment"
 
 class UserDetailFragment : Fragment() {
-    private lateinit var binding: FragmentUserDetailBinding
+    private var _binding: FragmentUserDetailBinding? = null
+    private val binding get() = _binding!!
     private val args by navArgs<UserDetailFragmentArgs>()
     private val authViewModel: AuthViewModel by viewModels()
     private val mAuth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
@@ -41,7 +42,7 @@ class UserDetailFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentUserDetailBinding.inflate(inflater, container, false)
+        _binding = FragmentUserDetailBinding.inflate(inflater, container, false)
         setupView()
         return binding.root
     }
@@ -238,5 +239,8 @@ class UserDetailFragment : Fragment() {
         }
     }
 
-
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
+    }
 }

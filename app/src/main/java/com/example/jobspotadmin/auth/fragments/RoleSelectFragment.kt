@@ -13,12 +13,13 @@ import com.example.jobspotadmin.util.Constants.Companion.ROLE_TYPE_TPO
 
 
 class RoleSelectFragment : Fragment() {
-    private lateinit var binding: FragmentRoleSelectBinding
+    private var _binding: FragmentRoleSelectBinding? = null
+    private val binding get() = _binding!!
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentRoleSelectBinding.inflate(inflater, container, false)
+        _binding = FragmentRoleSelectBinding.inflate(inflater, container, false)
 
         setupView()
 
@@ -39,5 +40,10 @@ class RoleSelectFragment : Fragment() {
     private fun navigateToLogin(roleType : String) {
         val direction = RoleSelectFragmentDirections.actionRoleSelectFragmentToLoginFragment(roleType = roleType)
         findNavController().navigate(direction)
+    }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
     }
 }

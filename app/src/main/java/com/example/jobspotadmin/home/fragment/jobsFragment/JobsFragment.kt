@@ -24,9 +24,11 @@ import com.google.android.material.button.MaterialButton
 
 
 class JobsFragment : Fragment() {
-    private lateinit var binding: FragmentJobsBinding
+    private var _binding: FragmentJobsBinding? = null
+    private val binding get() = _binding!!
     private val loadingDialog: LoadingDialog by lazy { LoadingDialog(requireContext()) }
-    private val jobListAdapter: JobListAdapter by lazy { JobListAdapter(this@JobsFragment) }
+    private var _jobListAdapter: JobListAdapter? = null
+    private val jobListAdapter get() = _jobListAdapter!!
     private val jobs: MutableList<Job> by lazy { mutableListOf() }
     private val jobsViewModel: JobsViewModel by viewModels()
     override fun onCreateView(
@@ -34,8 +36,8 @@ class JobsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        binding = FragmentJobsBinding.inflate(inflater, container, false)
-
+        _binding = FragmentJobsBinding.inflate(inflater, container, false)
+        _jobListAdapter = JobListAdapter(this@JobsFragment)
         setupView()
 
         return binding.root
@@ -121,5 +123,11 @@ class JobsFragment : Fragment() {
                 else -> Unit
             }
         })
+    }
+
+    override fun onDestroyView() {
+        _jobListAdapter = null
+        _binding = null
+        super.onDestroyView()
     }
 }

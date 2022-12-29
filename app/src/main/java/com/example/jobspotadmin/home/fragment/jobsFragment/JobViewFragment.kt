@@ -29,7 +29,9 @@ import com.google.android.material.chip.Chip
 private const val TAG = "JobViewFragment"
 
 class JobViewFragment : Fragment() {
-    private lateinit var binding: FragmentJobViewBinding
+    private var _binding: FragmentJobViewBinding? = null
+    private val binding get() = _binding!!
+
     private val args by navArgs<JobViewFragmentArgs>()
     private val jobsViewModel : JobsViewModel by viewModels()
     private val loadingDialog : LoadingDialog by lazy { LoadingDialog(requireContext()) }
@@ -39,7 +41,7 @@ class JobViewFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        binding = FragmentJobViewBinding.inflate(inflater, container, false)
+        _binding = FragmentJobViewBinding.inflate(inflater, container, false)
 
         setupView()
 
@@ -138,4 +140,8 @@ class JobViewFragment : Fragment() {
         })
     }
 
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
+    }
 }

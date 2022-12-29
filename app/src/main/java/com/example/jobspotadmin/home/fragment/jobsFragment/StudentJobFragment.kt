@@ -21,26 +21,30 @@ import com.example.jobspotadmin.model.JobStatus
 
 private const val TAG = "StudentJobFragment"
 class StudentJobFragment : Fragment() {
-    private lateinit var binding: FragmentStudentJobBinding
+    private var _binding: FragmentStudentJobBinding? = null
+    private val binding get() = _binding!!
     private val args by navArgs<StudentJobFragmentArgs>()
     private val studentJobViewModel: StudentJobViewModel by viewModels()
-    private val pendingStudentAdapter: PendingStudentAdapter by lazy { PendingStudentAdapter(::setJobStatus) }
-    private val evaluationStudentAdapter: EvaluationStudentAdapter by lazy { EvaluationStudentAdapter() }
+    private var _pendingStudentAdapter: PendingStudentAdapter ?= null
+    private val pendingStudentAdapter get() = _pendingStudentAdapter!!
+
+    private var _evaluationStudentAdapter: EvaluationStudentAdapter ?= null
+    private val evaluationStudentAdapter get() = _evaluationStudentAdapter!!
     private val pendingStudents: MutableList<JobStatus> by lazy { mutableListOf() }
     private val evaluatedStudents: MutableList<JobStatus> by lazy { mutableListOf() }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentStudentJobBinding.inflate(layoutInflater)
-        studentJobViewModel.fetchStudents(args.jobId)
-
+        _binding = FragmentStudentJobBinding.inflate(layoutInflater)
+        _pendingStudentAdapter = PendingStudentAdapter(::setJobStatus)
+        _evaluationStudentAdapter = EvaluationStudentAdapter()
         setupViews()
-
         return binding.root
     }
 
     private fun setupViews() {
+        studentJobViewModel.fetchStudents(args.jobId)
         binding.apply {
 
             ivPopOut.setOnClickListener {
@@ -106,6 +110,12 @@ class StudentJobFragment : Fragment() {
         studentJobViewModel.setSelectionStatus(jobApplication)
     }
 
+    override fun onDestroyView() {
+        _pendingStudentAdapter = null
+        _evaluationStudentAdapter = null
+        _binding = null
+        super.onDestroyView()
+    }
 }
 
 

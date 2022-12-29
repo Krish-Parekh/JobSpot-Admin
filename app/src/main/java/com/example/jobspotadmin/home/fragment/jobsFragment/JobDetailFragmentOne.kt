@@ -24,7 +24,8 @@ import com.google.firebase.auth.FirebaseAuth
 
 
 class JobDetailFragmentOne : Fragment() {
-    private lateinit var binding: FragmentJobDetailOneBinding
+    private var _binding: FragmentJobDetailOneBinding? = null
+    private val binding get() = _binding!!
     private val startForProfileImageResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             handleCapturedImage(result)
@@ -36,7 +37,7 @@ class JobDetailFragmentOne : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentJobDetailOneBinding.inflate(inflater, container, false)
+        _binding = FragmentJobDetailOneBinding.inflate(inflater, container, false)
 
         setupView()
 
@@ -177,5 +178,9 @@ class JobDetailFragmentOne : Fragment() {
         }
     }
 
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
+    }
 
 }

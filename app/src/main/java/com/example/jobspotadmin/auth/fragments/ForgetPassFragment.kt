@@ -16,13 +16,14 @@ import com.google.firebase.auth.FirebaseAuth
 private const val TAG = "FORGOT_PASSWORD"
 class ForgetPassFragment : Fragment() {
     private val mAuth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
-    private lateinit var binding : FragmentForgetPassBinding
+    private var _binding: FragmentForgetPassBinding? = null
+    private val binding get() = _binding!!
     private val loadingDialog : LoadingDialog by lazy { LoadingDialog(requireContext()) }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentForgetPassBinding.inflate(inflater, container, false)
+        _binding = FragmentForgetPassBinding.inflate(inflater, container, false)
 
         binding.btnBackToLogin.setOnClickListener {
             findNavController().popBackStack()
@@ -56,5 +57,10 @@ class ForgetPassFragment : Fragment() {
     }
     private fun clearField() {
         binding.etEmail.clearText()
+    }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
     }
 }

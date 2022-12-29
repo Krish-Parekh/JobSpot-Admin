@@ -21,6 +21,7 @@ class MockViewModel : ViewModel() {
 
     private val mFirestore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
     private val mRealtimeDb: DatabaseReference by lazy { FirebaseDatabase.getInstance().reference }
+    private var listener: ValueEventListener? = null
 
     private val _mockTestUploadStatus: MutableLiveData<UiState> = MutableLiveData(UiState.LOADING)
     val mockTestUploadStatus: LiveData<UiState> = _mockTestUploadStatus
@@ -56,7 +57,7 @@ class MockViewModel : ViewModel() {
     }
 
     fun fetchMockTest() {
-        mRealtimeDb.child(COLLECTION_PATH_MOCK)
+        listener = mRealtimeDb.child(COLLECTION_PATH_MOCK)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val mockDetailList = snapshot.children.map { quizDetail ->
@@ -94,5 +95,13 @@ class MockViewModel : ViewModel() {
             mRealtimeDb.child(COLLECTION_PATH_MOCK).child(mockDetail.mockId).removeValue().await()
             Log.d(TAG, "Deleted Mock Collection")
         }
+    }
+
+    override fun onCleared() {
+        if (listener != null) {
+            mRealtimeDb.removeEventListener(listener!!)
+            listener = null
+        }
+        super.onCleared()
     }
 }

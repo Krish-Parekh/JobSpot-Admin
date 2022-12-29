@@ -36,15 +36,17 @@ class JobEditFragment : Fragment() {
     private val jobsViewModel: JobsViewModel by viewModels()
     private val chipsViewModel: ChipsViewModel by viewModels()
     private val jobEditViewModel: JobEditViewModel by viewModels()
-    private lateinit var binding: FragmentJobEditBinding
+    private var _binding: FragmentJobEditBinding? = null
+    private val binding get() = _binding!!
     private val args by navArgs<JobViewFragmentArgs>()
     private val job by lazy { args.job }
     private val loadingDialog: LoadingDialog by lazy { LoadingDialog(requireContext()) }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentJobEditBinding.inflate(inflater, container, false)
+        _binding = FragmentJobEditBinding.inflate(inflater, container, false)
 
         setupViews()
 
@@ -249,4 +251,8 @@ class JobEditFragment : Fragment() {
         }
     }
 
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
+    }
 }

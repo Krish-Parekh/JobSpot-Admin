@@ -21,18 +21,21 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 
 private const val TAG = "QuizFragment"
+
 class QuizFragment : Fragment() {
 
-    private lateinit var binding: FragmentQuizBinding
-    private val mockViewModel: MockViewModel by viewModels()
-    private val mockTestAdapter: MockTestAdapter by lazy { MockTestAdapter(this@QuizFragment) }
-    private val mockDetails : MutableList<MockDetail> by lazy { mutableListOf() }
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentQuizBinding.inflate(inflater, container, false)
+    private var _binding: FragmentQuizBinding? = null
+    private val binding get() = _binding!!
+    private var _mockTestAdapter: MockTestAdapter? = null
+    private val mockTestAdapter get() = _mockTestAdapter!!
 
+    private val mockViewModel: MockViewModel by viewModels()
+    private val mockDetails: MutableList<MockDetail> by lazy { mutableListOf() }
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentQuizBinding.inflate(inflater, container, false)
+        _mockTestAdapter = MockTestAdapter(this@QuizFragment)
         setupViews()
 
         return binding.root
@@ -46,10 +49,10 @@ class QuizFragment : Fragment() {
             rvQuiz.adapter = mockTestAdapter
             rvQuiz.layoutManager = LinearLayoutManager(requireContext())
 
-            mockViewModel.mockDetails.observe(viewLifecycleOwner, Observer { quizDetails ->
-                mockTestAdapter.setQuizData(quizDetails.toMutableList())
-                this@QuizFragment.mockDetails.clear()
-                this@QuizFragment.mockDetails.addAll(quizDetails)
+            mockViewModel.mockDetails.observe(viewLifecycleOwner, Observer { mockDetailList ->
+                mockDetails.clear()
+                mockDetails.addAll(mockDetailList)
+                mockTestAdapter.setQuizData(mockDetails)
             })
 
             ivPopOut.setOnClickListener {
@@ -95,5 +98,12 @@ class QuizFragment : Fragment() {
         }
         dialog.setContentView(bottomSheet)
         dialog.show()
+    }
+
+    override fun onDestroyView() {
+        mockDetails.clear()
+        _mockTestAdapter = null
+        _binding = null
+        super.onDestroyView()
     }
 }

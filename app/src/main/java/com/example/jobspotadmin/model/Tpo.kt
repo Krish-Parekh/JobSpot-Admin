@@ -1,5 +1,7 @@
 package com.example.jobspotadmin.model
 
+import com.example.jobspotadmin.util.Constants.Companion.ROLE_TYPE_TPO
+
 data class Tpo(
     var uid : String = "",
     var email : String = "",
@@ -12,4 +14,5 @@ data class Tpo(
     var qualification : String = "",
     var experience : String = "",
     var biography : String = "",
+    val roleType : String = ROLE_TYPE_TPO
 )

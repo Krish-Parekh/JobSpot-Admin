@@ -24,7 +24,6 @@ import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_TPO
 import com.example.jobspotadmin.util.Constants.Companion.ROLE_TYPE_ADMIN
 import com.example.jobspotadmin.util.Constants.Companion.ROLE_TYPE_TPO
 import com.google.firebase.FirebaseNetworkException
-import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
@@ -42,7 +41,7 @@ class LoginFragment : Fragment() {
     private val args by navArgs<LoginFragmentArgs>()
     private val mAuth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
     private val mFirestore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
-    private val loadingDialog : LoadingDialog by lazy { LoadingDialog(requireContext()) }
+    private val loadingDialog: LoadingDialog by lazy { LoadingDialog(requireContext()) }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -67,15 +66,12 @@ class LoginFragment : Fragment() {
             etEmailContainer.addTextWatcher()
             etPasswordContainer.addTextWatcher()
             btnLogin.setOnClickListener {
-                val intent = Intent(requireContext(), HomeActivity::class.java)
-                startActivity(intent)
-                requireActivity().finish()
-//                val email = etEmail.getInputValue()
-//                val password = etPassword.getInputValue()
-//                if (detailVerification(email, password)) {
-//                    authenticateUser(email, password)
-//                    clearField()
-//                }
+                val email = etEmail.getInputValue()
+                val password = etPassword.getInputValue()
+                if (detailVerification(email, password)) {
+                    authenticateUser(email, password)
+                    clearField()
+                }
             }
         }
 
@@ -105,23 +101,29 @@ class LoginFragment : Fragment() {
                 mAuth.signInWithEmailAndPassword(email, password).await()
                 val currentUserUid = mAuth.currentUser?.uid!!
                 val currentUsername = mAuth.currentUser?.displayName!!
-                val currentUserDoc =
-                    mFirestore.collection(COLLECTION_PATH_TPO).document(currentUserUid)
-                val userDocument: DocumentSnapshot = currentUserDoc.get().await()
 
-                val currentUserRole =
-                    mFirestore.collection(COLLECTION_PATH_ROLE).document(currentUserUid)
+                val currentUserRole = mFirestore.collection(COLLECTION_PATH_ROLE).document(currentUserUid)
                 val roleDocument: DocumentSnapshot = currentUserRole.get().await()
+                if (!roleDocument.exists()){
+                    showToast(requireContext(), getString(R.string.invalid_credentials))
+                    return@launch
+                }
                 val roleType: String = roleDocument.get("role") as String
 
-                if(roleType == args.roleType){
+                /*
+                * We are fetching TPO documents because we want to check
+                * if TPO has filled all the details.
+                * */
+                val currentUserDoc = mFirestore.collection(COLLECTION_PATH_TPO).document(currentUserUid)
+                val userDocument: DocumentSnapshot = currentUserDoc.get().await()
+
+                if (roleType == args.roleType) {
                     if (!userDocument.exists() && roleType == ROLE_TYPE_TPO) {
-                        // Transfer user to UserDetail Fragment
                         navigateToUserDetail(username = currentUsername, email = email)
-                    } else if (!userDocument.exists() && roleType == ROLE_TYPE_ADMIN) {
-                        Log.d(TAG, "Transfer user to Home Activity")
                     } else if (userDocument.exists() && roleType == ROLE_TYPE_TPO) {
-                        Log.d(TAG, "Transfer user to Home Activity")
+                        navigateToHomeActivity(roleType, currentUsername)
+                    } else if (roleType == ROLE_TYPE_ADMIN) {
+                        navigateToHomeActivity(roleType, currentUsername)
                     }
                 } else {
                     showToast(requireContext(), "Account doesn't exist")
@@ -142,6 +144,15 @@ class LoginFragment : Fragment() {
         }
     }
 
+    private fun navigateToHomeActivity(roleType: String, username: String) {
+        Log.d(TAG, "RoleType = $roleType")
+        val homeActivity = Intent(requireContext(), HomeActivity::class.java )
+        homeActivity.putExtra("ROLE_TYPE", roleType)
+        homeActivity.putExtra("USERNAME", username)
+        requireActivity().startActivity(homeActivity)
+        requireActivity().finish()
+    }
+
     private fun navigateToUserDetail(username: String, email: String) {
         val direction =
             LoginFragmentDirections.actionLoginFragmentToUserDetailFragment(username, email)
@@ -153,6 +164,7 @@ class LoginFragment : Fragment() {
             LoginFragmentDirections.actionLoginFragmentToSignupFragment(roleType = roleType)
         findNavController().navigate(direction)
     }
+
     private fun detailVerification(
         email: String,
         password: String

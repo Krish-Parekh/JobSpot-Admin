@@ -12,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.jobspotadmin.R
 import com.example.jobspotadmin.auth.viewmodel.AuthViewModel
@@ -128,6 +129,7 @@ class UserDetailFragment : Fragment() {
                 }
                 UiState.SUCCESS -> {
                     loadingDialog.dismiss()
+                    findNavController().popBackStack(R.id.signupFragment, true)
                     authViewModel.setImageUri(null)
                 }
                 UiState.FAILURE -> {

@@ -93,8 +93,7 @@ class SignupFragment : Fragment() {
                 loadingDialog.show()
                 mAuth.createUserWithEmailAndPassword(email, password).await()
                 val currentUser = mAuth.currentUser!!
-                val profileUpdates =
-                    UserProfileChangeRequest.Builder().setDisplayName(username).build()
+                val profileUpdates = UserProfileChangeRequest.Builder().setDisplayName(username).build()
                 val currentUserRole = hashMapOf("role" to args.roleType)
                 mFirestore.collection(COLLECTION_PATH_ROLE).document(currentUser.uid).set(currentUserRole).await()
                 if(args.roleType == ROLE_TYPE_ADMIN) {

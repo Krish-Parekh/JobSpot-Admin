@@ -11,6 +11,7 @@ class Constants {
         const val COLLECTION_PATH_COMPANY = "companies"
         const val COLLECTION_PATH_MOCK = "mock_test"
         const val COLLECTION_PATH_STUDENT = "students"
+        const val COLLECTION_PATH_NOTIFICATION = "notification"
 
         const val TPO_IMAGE_STORAGE_PATH = "tpo/profileImage/"
         const val COMPANY_IMAGE_STORAGE_PATH = "company/image/"

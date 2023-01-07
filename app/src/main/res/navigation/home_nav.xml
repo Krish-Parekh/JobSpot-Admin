@@ -135,5 +135,11 @@
         <argument
             android:name="student"
             app:argType="com.example.jobspotadmin.model.Student" />
+        <argument
+            android:name="fileName"
+            app:argType="string" />
+        <argument
+            android:name="fileMetaData"
+            app:argType="string" />
     </fragment>
 </navigation>

@@ -55,14 +55,16 @@
 
         <TextView
             android:id="@+id/tvUserEmail"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/small_margin"
+            android:layout_marginEnd="@dimen/small_margin"
+            android:ellipsize="end"
             android:fontFamily="@font/dm_sans_regular"
-            android:textAlignment="center"
+            android:maxLines="1"
             android:textColor="@color/text_color"
             android:textSize="18sp"
-            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintLeft_toLeftOf="@+id/tvUsername"
+            app:layout_constraintRight_toLeftOf="@+id/profileImage"
             app:layout_constraintTop_toBottomOf="@+id/tvUsername"
             tools:text="krish@gmail.com" />
 
@@ -82,7 +84,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="@dimen/small_padding">
+            android:paddingHorizontal="@dimen/medium_padding"
+            android:paddingVertical="@dimen/small_padding">
 
             <TextView
                 android:id="@+id/tvDetailHeading"
@@ -91,12 +94,12 @@
                 android:layout_marginStart="@dimen/small_margin"
                 android:fontFamily="@font/dm_sans_bold"
                 android:paddingVertical="@dimen/small_padding"
+                android:text="Details"
                 android:textAlignment="center"
                 android:textColor="@color/text_color"
-                android:textSize="22sp"
+                android:textSize="20sp"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Details" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/llSapContainer"
@@ -115,21 +118,21 @@
                     android:layout_marginStart="@dimen/small_margin"
                     android:fontFamily="@font/dm_sans_bold"
                     android:paddingVertical="@dimen/small_padding"
+                    android:text="SapID"
                     android:textAlignment="center"
                     android:textColor="@color/text_color"
-                    android:textSize="22sp"
-                    tools:text="SapID" />
+                    android:textSize="20sp" />
 
                 <TextView
                     android:id="@+id/tvSapId"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/small_margin"
-                    android:fontFamily="@font/dm_sans_medium"
+                    android:fontFamily="@font/dm_sans_regular"
                     android:paddingVertical="@dimen/small_padding"
                     android:textAlignment="center"
                     android:textColor="@color/text_color"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     tools:text="53003205035" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
@@ -151,21 +154,21 @@
                     android:layout_marginStart="@dimen/small_margin"
                     android:fontFamily="@font/dm_sans_bold"
                     android:paddingVertical="@dimen/small_padding"
+                    android:text="Mobile"
                     android:textAlignment="center"
                     android:textColor="@color/text_color"
-                    android:textSize="22sp"
-                    tools:text="Mobile" />
+                    android:textSize="20sp" />
 
                 <TextView
                     android:id="@+id/tvMobile"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/small_margin"
-                    android:fontFamily="@font/dm_sans_medium"
+                    android:fontFamily="@font/dm_sans_regular"
                     android:paddingVertical="@dimen/small_padding"
                     android:textAlignment="center"
                     android:textColor="@color/text_color"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     tools:text="8356056213" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
@@ -187,21 +190,21 @@
                     android:layout_marginStart="@dimen/small_margin"
                     android:fontFamily="@font/dm_sans_bold"
                     android:paddingVertical="@dimen/small_padding"
+                    android:text="Date of Birth"
                     android:textAlignment="center"
                     android:textColor="@color/text_color"
-                    android:textSize="22sp"
-                    tools:text="Date of Birth" />
+                    android:textSize="20sp" />
 
                 <TextView
                     android:id="@+id/tvDob"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/small_margin"
-                    android:fontFamily="@font/dm_sans_medium"
+                    android:fontFamily="@font/dm_sans_regular"
                     android:paddingVertical="@dimen/small_padding"
                     android:textAlignment="center"
                     android:textColor="@color/text_color"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     tools:text="20/12/2002" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
@@ -223,21 +226,21 @@
                     android:layout_marginStart="@dimen/small_margin"
                     android:fontFamily="@font/dm_sans_bold"
                     android:paddingVertical="@dimen/small_padding"
+                    android:text="Average SGPI"
                     android:textAlignment="center"
                     android:textColor="@color/text_color"
-                    android:textSize="22sp"
-                    tools:text="Average SGPI" />
+                    android:textSize="20sp" />
 
                 <TextView
                     android:id="@+id/tvAvgSGPI"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/small_margin"
-                    android:fontFamily="@font/dm_sans_medium"
+                    android:fontFamily="@font/dm_sans_regular"
                     android:paddingVertical="@dimen/small_padding"
                     android:textAlignment="center"
                     android:textColor="@color/text_color"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     tools:text="8" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
@@ -259,20 +262,20 @@
                     android:layout_marginStart="@dimen/small_margin"
                     android:fontFamily="@font/dm_sans_bold"
                     android:paddingVertical="@dimen/small_padding"
+                    android:text="Address"
                     android:textAlignment="center"
                     android:textColor="@color/text_color"
-                    android:textSize="22sp"
-                    tools:text="Address" />
+                    android:textSize="20sp" />
 
                 <TextView
                     android:id="@+id/tvAddress"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/small_margin"
-                    android:fontFamily="@font/dm_sans_medium"
+                    android:fontFamily="@font/dm_sans_regular"
                     android:paddingVertical="@dimen/small_padding"
                     android:textColor="@color/text_color"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     tools:text="1903, Benzer Tower, Thakur Complex, Kandivali (E), Mumbai, Maharashtra, 400066" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
@@ -294,12 +297,14 @@
                     android:layout_marginStart="@dimen/small_margin"
                     android:fontFamily="@font/dm_sans_bold"
                     android:paddingVertical="@dimen/small_padding"
+                    android:text="Resume"
                     android:textAlignment="center"
                     android:textColor="@color/text_color"
-                    android:textSize="22sp"
-                    tools:text="Resume" />
+                    android:textSize="20sp" />
 
-
+                <include
+                    android:id="@+id/layoutUploadedPdf"
+                    layout="@layout/uploaded_pdf_view" />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
 

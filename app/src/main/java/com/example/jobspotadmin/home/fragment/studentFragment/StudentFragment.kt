@@ -8,12 +8,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.jobspotadmin.databinding.FragmentStudentBinding
 import com.example.jobspotadmin.home.fragment.studentFragment.adapter.StudentAdapter
 import com.example.jobspotadmin.home.fragment.studentFragment.viewModel.StudentViewModel
 import com.example.jobspotadmin.model.Student
+import com.example.jobspotadmin.util.Constants.Companion.RESUME_PATH
+import com.example.jobspotadmin.util.LoadingDialog
+import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.tasks.await
 
 
 class StudentFragment : Fragment() {
@@ -25,6 +30,8 @@ class StudentFragment : Fragment() {
 
     private val studentViewModel by viewModels<StudentViewModel>()
     private val students : MutableList<Student> = mutableListOf()
+    private val loadingDialog by lazy { LoadingDialog(requireContext()) }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -77,8 +84,17 @@ class StudentFragment : Fragment() {
     }
 
     fun navigateToStudentView(student : Student){
-        val direction = StudentFragmentDirections.actionStudentFragmentToStudentViewFragment(student = student)
-        findNavController().navigate(direction)
+        lifecycleScope.launchWhenResumed {
+            loadingDialog.show()
+            val resumeRef = FirebaseStorage.getInstance().reference.child(RESUME_PATH).child(student.uid.toString())
+            val metadata = resumeRef.metadata.await()
+            val fileName = metadata.getCustomMetadata("fileName") ?: ""
+            val fileMetadata = metadata.getCustomMetadata("fileMetaData") ?: ""
+            val direction = StudentFragmentDirections.actionStudentFragmentToStudentViewFragment(student = student, fileName = fileName, fileMetaData = fileMetadata)
+            findNavController().navigate(direction)
+            loadingDialog.dismiss()
+        }
+
     }
 
     override fun onDestroyView() {

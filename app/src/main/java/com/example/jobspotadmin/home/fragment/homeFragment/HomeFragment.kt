@@ -44,7 +44,7 @@ class HomeFragment : Fragment() {
             } else {
                 binding.ivProfileImage.load(currentUser?.photoUrl)
             }
-            binding.tvWelcomeHeading.text = getString(R.string.field_welcome_heading, username)
+            binding.tvWelcomeHeading.text = getString(R.string.field_welcome_heading, currentUser?.displayName)
         }
         setupViews()
         return binding.root
@@ -56,6 +56,10 @@ class HomeFragment : Fragment() {
             counterAnimation(0, count.jobCount, binding.tvJobCount)
             counterAnimation(0, count.mockCount, binding.tvMockTestCount)
             counterAnimation(0, count.notificationCount, binding.tvNotificationCount)
+        }
+
+        binding.ivProfileImage.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_profileFragment)
         }
 
         binding.cvJob.setOnClickListener {

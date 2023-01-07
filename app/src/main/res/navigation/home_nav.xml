@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_homeFragment_to_quizFragment"
             app:destination="@id/quizFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
     </fragment>
     <fragment
         android:id="@+id/jobsFragment"
@@ -94,4 +97,22 @@
         android:name="com.example.jobspotadmin.home.fragment.quizFragment.CreateQuizFragment"
         android:label="fragment_create_quiz"
         tools:layout="@layout/fragment_create_quiz" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.jobspotadmin.home.fragment.profileFragment.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_profileFragment_to_profileEditFragment"
+            app:destination="@id/profileEditFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileEditFragment"
+        android:name="com.example.jobspotadmin.home.fragment.profileFragment.ProfileEditFragment"
+        android:label="fragment_profile_edit"
+        tools:layout="@layout/fragment_profile_edit" >
+        <argument
+            android:name="tpo"
+            app:argType="com.example.jobspotadmin.model.Tpo" />
+    </fragment>
 </navigation>

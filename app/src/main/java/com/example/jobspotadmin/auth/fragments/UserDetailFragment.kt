@@ -89,6 +89,7 @@ class UserDetailFragment : Fragment() {
                 val experience = etYearExperience.getInputValue()
                 val bio = etBio.getInputValue()
                 val imageUri = authViewModel.getImageUri()
+
                 if (detailVerification(
                         mobile,
                         dob,

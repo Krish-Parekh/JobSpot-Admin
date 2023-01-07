@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_homeFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_studentFragment"
+            app:destination="@id/studentFragment" />
     </fragment>
     <fragment
         android:id="@+id/jobsFragment"
@@ -114,5 +117,23 @@
         <argument
             android:name="tpo"
             app:argType="com.example.jobspotadmin.model.Tpo" />
+    </fragment>
+    <fragment
+        android:id="@+id/studentFragment"
+        android:name="com.example.jobspotadmin.home.fragment.studentFragment.StudentFragment"
+        android:label="fragment_student"
+        tools:layout="@layout/fragment_student" >
+        <action
+            android:id="@+id/action_studentFragment_to_studentViewFragment"
+            app:destination="@id/studentViewFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/studentViewFragment"
+        android:name="com.example.jobspotadmin.home.fragment.studentFragment.StudentViewFragment"
+        android:label="fragment_student_view"
+        tools:layout="@layout/fragment_student_view" >
+        <argument
+            android:name="student"
+            app:argType="com.example.jobspotadmin.model.Student" />
     </fragment>
 </navigation>

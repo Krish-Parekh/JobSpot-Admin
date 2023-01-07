@@ -1,6 +1,10 @@
 package com.example.jobspotadmin.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
+
+@Parcelize
 data class Details(
     var username: String = "",
     var email: String = "",
@@ -9,4 +13,4 @@ data class Details(
     var mobile: String = "",
     var dob: String = "",
     var gender: String = ""
-)
+) : Parcelable

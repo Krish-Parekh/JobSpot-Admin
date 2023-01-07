@@ -69,6 +69,10 @@ class HomeFragment : Fragment() {
         binding.cvMockTest.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_quizFragment)
         }
+
+        binding.cvStudent.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_studentFragment)
+        }
     }
 
     private fun counterAnimation(start: Int, end: Int, textView: TextView) {

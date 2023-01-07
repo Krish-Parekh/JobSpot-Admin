@@ -70,6 +70,7 @@ class StudentJobFragment : Fragment() {
                 viewLifecycleOwner,
                 Observer { pendingStudents ->
                     pendingStudentAdapter.setPendingStudent(pendingStudents)
+                    this@StudentJobFragment.pendingStudents.clear()
                     this@StudentJobFragment.pendingStudents.addAll(pendingStudents)
                 })
 
@@ -77,6 +78,7 @@ class StudentJobFragment : Fragment() {
                 viewLifecycleOwner,
                 Observer { evaluatedStudents ->
                     evaluationStudentAdapter.setEvaluatedStudent(evaluatedStudents)
+                    this@StudentJobFragment.evaluatedStudents.clear()
                     this@StudentJobFragment.evaluatedStudents.addAll(evaluatedStudents)
                 })
         }

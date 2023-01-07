@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".home.fragment.notification.AddNotificationFragment">
+
+    <ImageView
+        android:id="@+id/ivPopOut"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/medium_margin"
+        android:contentDescription="@null"
+        android:paddingVertical="@dimen/small_padding"
+        android:src="@drawable/ic_arrow_left"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/icon_tint" />
+
+
+    <TextView
+        android:id="@+id/tvAddNotificationHeading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/dm_sans_bold"
+        android:paddingVertical="@dimen/small_padding"
+        android:text="Add Notification"
+        android:textColor="@color/text_color"
+        android:textSize="26sp"
+        app:layout_constraintLeft_toLeftOf="@+id/ivPopOut"
+        app:layout_constraintTop_toBottomOf="@+id/ivPopOut" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:padding="@dimen/medium_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvAddNotificationHeading">
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/etTitleContainer"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Title"
+            app:boxStrokeColor="@color/box_stroke_color"
+            app:errorEnabled="true"
+            app:hintTextColor="@color/text_color"
+            app:placeholderText="Check Emails">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/dm_sans_medium"
+                android:inputType="text" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/etMessageContainer"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Message"
+            app:boxStrokeColor="@color/box_stroke_color"
+            app:errorEnabled="true"
+            app:hintTextColor="@color/text_color"
+            app:placeholderText="Write additional biography here">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/dm_sans_medium"
+                android:gravity="top"
+                android:inputType="textMultiLine"
+                android:lines="8" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSubmit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/medium_margin"
+            android:layout_marginVertical="@dimen/medium_margin"
+            android:backgroundTint="@color/button_color"
+            android:fontFamily="@font/dm_sans_medium"
+            android:padding="@dimen/button_padding"
+            android:text="@string/field_submit"
+            android:textColor="@color/button_text_color"
+            android:textSize="16sp"
+            app:cornerRadius="6dp" />
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

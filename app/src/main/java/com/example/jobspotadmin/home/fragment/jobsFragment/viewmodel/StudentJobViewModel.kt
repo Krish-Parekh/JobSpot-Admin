@@ -5,10 +5,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.jobspotadmin.model.HostNotification
 import com.example.jobspotadmin.model.JobApplication
 import com.example.jobspotadmin.model.JobStatus
 import com.example.jobspotadmin.model.Student
 import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_COMPANY
+import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_NOTIFICATION
 import com.google.firebase.database.*
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
@@ -90,8 +92,24 @@ class StudentJobViewModel : ViewModel() {
         viewModelScope.launch {
             val jobId = jobApplication.jobId
             val studentId = jobApplication.studentId
-            val companiesRef =
-                mRealtimeDatabase.child(COLLECTION_PATH_COMPANY).child(jobId).child(studentId)
+            val companiesRef = mRealtimeDatabase.child(COLLECTION_PATH_COMPANY).child(jobId).child(studentId)
+            val companyName = mFirestore.collection(COLLECTION_PATH_COMPANY).document(jobId).get().await().get("name") as String
+            if (jobApplication.applicationStatus == "Accepted"){
+                val notification = HostNotification(
+                    title = "Check Email",
+                    body = "You have been selected for company $companyName",
+                    hostId = jobApplication.studentId
+                )
+                mFirestore.collection(COLLECTION_PATH_NOTIFICATION).document(notification.id).set(notification).await()
+            } else {
+                val notification = HostNotification(
+                    title = "Check Email",
+                    body = "You aren't not selected for company $companyName",
+                    hostId = jobApplication.studentId
+                )
+                mFirestore.collection(COLLECTION_PATH_NOTIFICATION).document(notification.id).set(notification).await()
+            }
+
             companiesRef.setValue(jobApplication).await()
             Log.d(TAG, "Application Update Success")
         }

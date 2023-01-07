@@ -22,6 +22,9 @@
         <action
             android:id="@+id/action_homeFragment_to_studentFragment"
             app:destination="@id/studentFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_notificationFragment"
+            app:destination="@id/notificationFragment" />
     </fragment>
     <fragment
         android:id="@+id/jobsFragment"
@@ -142,4 +145,18 @@
             android:name="fileMetaData"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/notificationFragment"
+        android:name="com.example.jobspotadmin.home.fragment.notification.NotificationFragment"
+        android:label="fragment_notification"
+        tools:layout="@layout/fragment_notification" >
+        <action
+            android:id="@+id/action_notificationFragment_to_addNotificationFragment"
+            app:destination="@id/addNotificationFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addNotificationFragment"
+        android:name="com.example.jobspotadmin.home.fragment.notification.AddNotificationFragment"
+        android:label="fragment_add_notification"
+        tools:layout="@layout/fragment_add_notification" />
 </navigation>

@@ -43,6 +43,7 @@ class HomeFragment : Fragment() {
                 binding.ivProfileImage.visibility = View.GONE
             } else {
                 binding.ivProfileImage.load(currentUser?.photoUrl)
+                binding.cvPlacementOfficer.visibility = View.GONE
             }
             binding.tvWelcomeHeading.text = getString(R.string.field_welcome_heading, currentUser?.displayName)
         }
@@ -56,6 +57,9 @@ class HomeFragment : Fragment() {
             counterAnimation(0, count.jobCount, binding.tvJobCount)
             counterAnimation(0, count.mockCount, binding.tvMockTestCount)
             counterAnimation(0, count.notificationCount, binding.tvNotificationCount)
+            if (binding.cvPlacementOfficer.visibility == View.VISIBLE){
+                counterAnimation(0, count.tpoCount, binding.tvPlacementOfficerCount)
+            }
         }
 
         binding.ivProfileImage.setOnClickListener {
@@ -76,6 +80,10 @@ class HomeFragment : Fragment() {
 
         binding.cvNotification.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_notificationFragment)
+        }
+
+        binding.cvPlacementOfficer.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_tpoFragment)
         }
 
     }

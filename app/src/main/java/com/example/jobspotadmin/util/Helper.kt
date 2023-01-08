@@ -103,13 +103,13 @@ fun convertTimeStamp(timestamp: Date): String {
     var elapsedTimeString = ""
 
     if (elapsedDays > 0) {
-        elapsedTimeString = "$elapsedDays days"
+        elapsedTimeString = "$elapsedDays days ago"
     } else if (elapsedHours > 0) {
-        elapsedTimeString = "$elapsedHours hours"
+        elapsedTimeString = "$elapsedHours hours ago"
     } else if (elapsedMinutes > 0) {
-        elapsedTimeString = "$elapsedMinutes minutes"
+        elapsedTimeString = "$elapsedMinutes minutes ago"
     } else if (elapsedSeconds > 0) {
-        elapsedTimeString = "$elapsedSeconds seconds"
+        elapsedTimeString = "$elapsedSeconds seconds ago"
     }
     return elapsedTimeString
 }

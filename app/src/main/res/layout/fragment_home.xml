@@ -296,6 +296,60 @@
                         android:textSize="16sp" />
 
                 </LinearLayout>
+
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cvPlacementOfficer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/medium_margin"
+                app:cardBackgroundColor="@color/card_background"
+                app:cardCornerRadius="6dp"
+                app:layout_constraintLeft_toLeftOf="@+id/cvMockTest"
+                app:layout_constraintRight_toRightOf="@+id/cvMockTest"
+                app:layout_constraintTop_toBottomOf="@+id/cvMockTest">
+
+                <LinearLayout
+                    android:id="@+id/llPlacementOfficer"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="@dimen/large_padding">
+
+                    <ImageView
+                        android:id="@+id/ivPlacementOfficer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="@dimen/small_margin"
+                        android:adjustViewBounds="true"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_placement_officer" />
+
+                    <TextView
+                        android:id="@+id/tvPlacementOfficerCount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="@dimen/medium_margin"
+                        android:fontFamily="@font/dm_sans_bold"
+                        android:textAlignment="center"
+                        android:textColor="@color/text_color"
+                        android:textSize="22sp"
+                        tools:text="50" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/dm_sans_medium"
+                        android:text="Placement Officer"
+                        android:textAlignment="center"
+                        android:textColor="@color/text_color"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
             <View

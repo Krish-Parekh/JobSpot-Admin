@@ -25,6 +25,9 @@
         <action
             android:id="@+id/action_homeFragment_to_notificationFragment"
             app:destination="@id/notificationFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_tpoFragment"
+            app:destination="@id/tpoFragment" />
     </fragment>
     <fragment
         android:id="@+id/jobsFragment"
@@ -159,4 +162,22 @@
         android:name="com.example.jobspotadmin.home.fragment.notification.AddNotificationFragment"
         android:label="fragment_add_notification"
         tools:layout="@layout/fragment_add_notification" />
+    <fragment
+        android:id="@+id/tpoFragment"
+        android:name="com.example.jobspotadmin.home.fragment.tpoFragment.TpoFragment"
+        android:label="fragment_tpo"
+        tools:layout="@layout/fragment_tpo" >
+        <action
+            android:id="@+id/action_tpoFragment_to_tpoViewFragment"
+            app:destination="@id/tpoViewFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/tpoViewFragment"
+        android:name="com.example.jobspotadmin.home.fragment.tpoFragment.TpoViewFragment"
+        android:label="fragment_tpo_view"
+        tools:layout="@layout/fragment_tpo_view" >
+        <argument
+            android:name="tpo"
+            app:argType="com.example.jobspotadmin.model.Tpo" />
+    </fragment>
 </navigation>

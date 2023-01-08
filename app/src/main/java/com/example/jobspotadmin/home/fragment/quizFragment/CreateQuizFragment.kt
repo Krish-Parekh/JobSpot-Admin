@@ -14,6 +14,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.jobspotadmin.R
 import com.example.jobspotadmin.databinding.FragmentCreateQuizBinding
+import com.example.jobspotadmin.databinding.QuestionCardLayoutBinding
 import com.example.jobspotadmin.home.fragment.quizFragment.viewmodel.MockViewModel
 import com.example.jobspotadmin.model.Mock
 import com.example.jobspotadmin.model.MockQuestion
@@ -25,7 +26,8 @@ import com.skydoves.powerspinner.PowerSpinnerView
 private const val TAG = "CreateQuizFragmentTAG"
 
 class CreateQuizFragment : Fragment() {
-    private lateinit var binding: FragmentCreateQuizBinding
+    private var _binding: FragmentCreateQuizBinding? = null
+    private val binding get() = _binding!!
     private val options = listOf("A", "B", "C", "D")
     private val mockTestQuestions: MutableList<MockQuestion> = mutableListOf()
     private val mockViewModel: MockViewModel by viewModels()
@@ -34,7 +36,7 @@ class CreateQuizFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentCreateQuizBinding.inflate(inflater, container, false)
+        _binding = FragmentCreateQuizBinding.inflate(inflater, container, false)
 
         setupViews()
 
@@ -229,5 +231,10 @@ class CreateQuizFragment : Fragment() {
         dialog.setContentView(deleteDialog)
         dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
         dialog.show()
+    }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
     }
 }

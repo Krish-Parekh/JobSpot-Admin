@@ -38,7 +38,8 @@ class NotificationViewModel : ViewModel() {
                         val notificationList = documents.map {
                             it.toObject(BroadcastNotification::class.java)!!
                         }
-                        _notification.postValue(notificationList)
+                        val latestNotification = notificationList.sortedByDescending { it.timestamp }
+                        _notification.postValue(latestNotification)
                     }
             }
         } catch (e: Exception) {

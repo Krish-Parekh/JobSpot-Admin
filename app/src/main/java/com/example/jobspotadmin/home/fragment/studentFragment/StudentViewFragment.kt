@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.load
 import com.example.jobspotadmin.R
@@ -30,6 +31,11 @@ class StudentViewFragment : Fragment() {
 
     private fun setupUI() {
         binding.apply {
+
+            ivPopOut.setOnClickListener {
+                findNavController().popBackStack()
+            }
+
             tvUsername.text = args.student.details?.username
             tvUserEmail.text = args.student.details?.email
             profileImage.load(args.student.details?.imageUrl)

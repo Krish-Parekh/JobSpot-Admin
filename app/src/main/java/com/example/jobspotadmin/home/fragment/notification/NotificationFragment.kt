@@ -28,8 +28,10 @@ class NotificationFragment : Fragment() {
     ): View? {
         _binding = FragmentNotificationBinding.inflate(inflater, container, false)
         _notificationAdapter = NotificationAdapter()
+
         setupUI()
         setupObserver()
+
         return binding.root
     }
 

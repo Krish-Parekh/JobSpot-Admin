@@ -78,7 +78,7 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/field_quiz_title"
+                    android:hint="Mock Title"
                     app:boxStrokeColor="@color/box_stroke_color"
                     app:errorEnabled="true"
                     app:hintTextColor="@color/text_color"

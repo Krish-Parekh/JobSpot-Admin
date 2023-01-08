@@ -41,6 +41,7 @@ class HomeFragment : Fragment() {
             val username = requireActivity().intent.extras?.getString("USERNAME").toString()
             if (role == ROLE_TYPE_ADMIN){
                 binding.ivProfileImage.visibility = View.GONE
+                binding.ivLogout.visibility = View.VISIBLE
             } else {
                 binding.ivProfileImage.load(currentUser?.photoUrl)
                 binding.cvPlacementOfficer.visibility = View.GONE

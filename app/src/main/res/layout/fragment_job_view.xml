@@ -127,21 +127,9 @@
                     android:text="@string/heading_student_applied"
                     android:textColor="@color/text_color"
                     android:textSize="18sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toRightOf="@+id/ivStudentLogo"
                     app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/tvStudentCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/small_margin"
-                    android:fontFamily="@font/dm_sans_regular"
-                    android:text="50"
-                    android:textColor="@color/text_color"
-                    android:textSize="14sp"
-                    app:layout_constraintLeft_toLeftOf="@+id/tvStudentApplied"
-                    app:layout_constraintTop_toBottomOf="@+id/tvStudentApplied"
-                    tools:text="50" />
 
                 <ImageView
                     android:id="@+id/ivStudentApplied"

@@ -41,6 +41,7 @@ class StudentFragment : Fragment() {
 
         setupUI()
         setupObserver()
+
         return binding.root
     }
 

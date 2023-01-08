@@ -35,10 +35,8 @@ class HomeFragment : Fragment() {
         if (
             roleType != null
             && roleType.containsKey("ROLE_TYPE")
-            && roleType.containsKey("USERNAME")
         ){
             val role = requireActivity().intent.extras?.getString("ROLE_TYPE").toString()
-            val username = requireActivity().intent.extras?.getString("USERNAME").toString()
             if (role == ROLE_TYPE_ADMIN){
                 binding.ivProfileImage.visibility = View.GONE
             } else {

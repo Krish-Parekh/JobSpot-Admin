@@ -10,11 +10,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.jobspotadmin.R
 import com.example.jobspotadmin.databinding.FragmentTpoBinding
 import com.example.jobspotadmin.home.fragment.tpoFragment.adapter.TpoAdapter
 import com.example.jobspotadmin.home.fragment.tpoFragment.viewmodel.TpoViewModel
 import com.example.jobspotadmin.model.Job
 import com.example.jobspotadmin.model.Tpo
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.button.MaterialButton
 
 
 class TpoFragment : Fragment() {
@@ -73,6 +76,21 @@ class TpoFragment : Fragment() {
             tpos.clear()
             tpos.addAll(it)
         }
+    }
+
+    fun deleteTpo(tpo: Tpo){
+        val dialog = BottomSheetDialog(requireContext())
+        val bottomSheet = layoutInflater.inflate(R.layout.bottom_sheet_delete_tpo, null)
+        val btnNot: MaterialButton = bottomSheet.findViewById(R.id.btnNo)
+        val btnRemove: MaterialButton = bottomSheet.findViewById(R.id.btnRemoveTpo)
+        btnNot.setOnClickListener {
+            dialog.dismiss()
+        }
+        btnRemove.setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.setContentView(bottomSheet)
+        dialog.show()
     }
 
     fun navigateToTpoView(tpo: Tpo) {

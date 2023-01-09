@@ -21,6 +21,10 @@ class StudentAdapter(private val listener : StudentFragment) : RecyclerView.Adap
             binding.cvStudent.setOnClickListener {
                 listener.navigateToStudentView(student = student)
             }
+
+            binding.ivDeleteStudent.setOnClickListener {
+                listener.deleteStudent(student = student)
+            }
         }
     }
 

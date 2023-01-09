@@ -4,10 +4,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.jobspotadmin.databinding.NotificationCardLayoutBinding
+import com.example.jobspotadmin.home.fragment.notification.NotificationFragment
 import com.example.jobspotadmin.model.BroadcastNotification
 import com.example.jobspotadmin.util.convertTimeStamp
 
-class NotificationAdapter : RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder>() {
+class NotificationAdapter(private val listener : NotificationFragment) : RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder>() {
 
     private val notifications : MutableList<BroadcastNotification> = mutableListOf()
 
@@ -18,6 +19,10 @@ class NotificationAdapter : RecyclerView.Adapter<NotificationAdapter.Notificatio
             binding.tvNotificationTitle.text = notification.title
             binding.tvMessage.text = notification.body
             binding.tvTimestamp.text = convertTimeStamp(notification.timestamp.toDate())
+
+            binding.ivDelete.setOnClickListener {
+                listener.deleteNotification(notification = notification)
+            }
         }
     }
 

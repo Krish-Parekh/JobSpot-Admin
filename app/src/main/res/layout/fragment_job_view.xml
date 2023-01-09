@@ -80,15 +80,16 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:fontFamily="@font/dm_sans_regular"
-            android:maxLines="1"
+            android:maxLines="2"
             android:paddingHorizontal="@dimen/small_padding"
             android:paddingVertical="@dimen/small_padding"
+            android:textAlignment="center"
             android:textColor="@color/text_color"
             android:textSize="18sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvRole"
-            tools:text="\u2022 Google \u2022 California \u2022" />
+            tools:text="\u2022 Money Honey Finance Service Pvt Ltd \u2022 Hyderabad \u2022" />
 
 
         <com.google.android.material.card.MaterialCardView

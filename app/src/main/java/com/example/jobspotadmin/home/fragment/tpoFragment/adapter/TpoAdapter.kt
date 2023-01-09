@@ -23,6 +23,9 @@ class TpoAdapter(private val listener : TpoFragment) : RecyclerView.Adapter<TpoA
             binding.cvPlacementOfficer.setOnClickListener {
                 listener.navigateToTpoView(tpo)
             }
+            binding.ivDeleteTpo.setOnClickListener {
+                listener.deleteTpo(tpo = tpo)
+            }
         }
     }
 

@@ -12,6 +12,9 @@ import com.example.jobspotadmin.R
 import com.example.jobspotadmin.databinding.FragmentNotificationBinding
 import com.example.jobspotadmin.home.fragment.notification.adapter.NotificationAdapter
 import com.example.jobspotadmin.home.fragment.notification.viewmodel.NotificationViewModel
+import com.example.jobspotadmin.model.BroadcastNotification
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.button.MaterialButton
 
 
 class NotificationFragment : Fragment() {
@@ -27,7 +30,7 @@ class NotificationFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentNotificationBinding.inflate(inflater, container, false)
-        _notificationAdapter = NotificationAdapter()
+        _notificationAdapter = NotificationAdapter(this@NotificationFragment)
 
         setupUI()
         setupObserver()
@@ -57,6 +60,21 @@ class NotificationFragment : Fragment() {
         notificationViewModel.notification.observe(viewLifecycleOwner){
             notificationAdapter.setData(it)
         }
+    }
+
+    fun deleteNotification(notification : BroadcastNotification){
+        val dialog = BottomSheetDialog(requireContext())
+        val bottomSheet = layoutInflater.inflate(R.layout.bottom_sheet_delete_notification, null)
+        val btnNot: MaterialButton = bottomSheet.findViewById(R.id.btnNo)
+        val btnRemove: MaterialButton = bottomSheet.findViewById(R.id.btnRemoveNotification)
+        btnNot.setOnClickListener {
+            dialog.dismiss()
+        }
+        btnRemove.setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.setContentView(bottomSheet)
+        dialog.show()
     }
 
     override fun onDestroy() {

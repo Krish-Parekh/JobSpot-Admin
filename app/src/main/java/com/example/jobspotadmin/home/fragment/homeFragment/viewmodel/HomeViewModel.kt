@@ -1,5 +1,6 @@
 package com.example.jobspotadmin.home.fragment.homeFragment.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,41 +10,74 @@ import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_MOCK
 import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_NOTIFICATION
 import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_STUDENT
 import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_TPO
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 
-data class Counts(
-    var tpoCount : Int = 0,
-    var studentCount: Int = 0,
-    var jobCount: Int = 0,
-    var mockCount: Int = 0,
-    var notificationCount : Int = 0
-)
+
 
 private const val TAG = "HomeViewModelTAG"
 
 class HomeViewModel : ViewModel() {
 
-    init {
-        fetchCounts()
-    }
-
     private val mFirestore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
     private val _metaCounts: MutableLiveData<Counts> = MutableLiveData()
     val metaCounts: LiveData<Counts> = _metaCounts
 
-    private fun fetchCounts() {
+    fun fetchCounts() {
         viewModelScope.launch(Dispatchers.IO) {
-            val tpoCount = mFirestore.collection(COLLECTION_PATH_TPO).get().await().count()
-            val studentCount = mFirestore.collection(COLLECTION_PATH_STUDENT).get().await().count()
-            val jobCount = mFirestore.collection(COLLECTION_PATH_COMPANY).get().await().count()
-            val mockCount = mFirestore.collection(COLLECTION_PATH_MOCK).get().await().count()
-            val notificationCount = mFirestore.collection(COLLECTION_PATH_NOTIFICATION).get().await().count()
+            val tpoCount = getCount(COLLECTION_PATH_TPO)
+            val studentCount = getCount(COLLECTION_PATH_STUDENT)
+            val jobCount = getCount(COLLECTION_PATH_COMPANY)
+            val mockCount = getCount(COLLECTION_PATH_MOCK)
+            val notificationCount = getNotificationCount()
             val count = Counts(tpoCount, studentCount, jobCount, mockCount, notificationCount)
             _metaCounts.postValue(count)
         }
     }
+
+    private suspend fun getNotificationCount(): Int {
+        val countDeffered = CompletableDeferred<Int>()
+        val countListener = mFirestore
+            .collection(COLLECTION_PATH_NOTIFICATION)
+            .whereEqualTo("type", "BROADCAST")
+            .addSnapshotListener { value, error ->
+                if (error != null) {
+                    countDeffered.completeExceptionally(error)
+                    return@addSnapshotListener
+                }
+                val count = value?.documents?.count()!!
+                countDeffered.complete(count)
+            }
+        countDeffered.invokeOnCompletion {
+            countListener.remove()
+        }
+        return countDeffered.await()
+    }
+
+    private suspend fun getCount(collectionPath: String): Int {
+        val countDeffered = CompletableDeferred<Int>()
+        val countListener = mFirestore.collection(collectionPath)
+            .addSnapshotListener { value, error ->
+                if (error != null) {
+                    countDeffered.completeExceptionally(error)
+                    return@addSnapshotListener
+                }
+                val count = value?.documents?.count()!!
+                countDeffered.complete(count)
+            }
+        countDeffered.invokeOnCompletion {
+            countListener.remove()
+        }
+        return countDeffered.await()
+    }
 }
+
+data class Counts(
+    var tpoCount: Int = 0,
+    var studentCount: Int = 0,
+    var jobCount: Int = 0,
+    var mockCount: Int = 0,
+    var notificationCount: Int = 0
+)

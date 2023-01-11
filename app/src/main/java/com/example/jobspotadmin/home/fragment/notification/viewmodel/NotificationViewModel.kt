@@ -10,6 +10,7 @@ import com.example.jobspotadmin.model.BroadcastNotification
 import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_NOTIFICATION
 import com.example.jobspotadmin.util.UiState
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -27,9 +28,9 @@ class NotificationViewModel : ViewModel() {
     fun fetchNotifications() {
         try {
             viewModelScope.launch {
-
                 mFirestore.collection(COLLECTION_PATH_NOTIFICATION)
                     .whereEqualTo("type", "BROADCAST")
+                    .orderBy("timestamp", Query.Direction.DESCENDING)
                     .addSnapshotListener { value, error ->
                         if (error != null){
                             return@addSnapshotListener
@@ -38,8 +39,7 @@ class NotificationViewModel : ViewModel() {
                         val notificationList = documents.map {
                             it.toObject(BroadcastNotification::class.java)!!
                         }
-                        val latestNotification = notificationList.sortedByDescending { it.timestamp }
-                        _notification.postValue(latestNotification)
+                        _notification.postValue(notificationList)
                     }
             }
         } catch (e: Exception) {

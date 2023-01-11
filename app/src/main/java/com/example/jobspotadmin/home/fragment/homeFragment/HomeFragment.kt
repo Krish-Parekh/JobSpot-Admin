@@ -53,6 +53,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupViews() {
+        homeViewModel.fetchCounts()
         homeViewModel.metaCounts.observe(viewLifecycleOwner){ count ->
             counterAnimation(0, count.studentCount, binding.tvStudentCount)
             counterAnimation(0, count.jobCount, binding.tvJobCount)

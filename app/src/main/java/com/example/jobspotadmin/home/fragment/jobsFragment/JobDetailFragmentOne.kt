@@ -190,7 +190,7 @@ class JobDetailFragmentOne : Fragment() {
                 return isSalaryValid
             }
 
-            if (!InputValidation.checkNullity(workType)) {
+            if (InputValidation.checkNullity(workType)) {
                 workTypeSpinner.error = ""
                 return false
             }

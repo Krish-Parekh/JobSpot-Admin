@@ -76,14 +76,19 @@ class AddNotificationFragment : Fragment() {
         title: String,
         message: String
     ): Boolean {
-        if (!InputValidation.checkNullity(title)) {
-            binding.etTitleContainer.error = "Invalid Title"
-            return false
-        } else if (!InputValidation.checkNullity(message)) {
-            binding.etMessageContainer.error = "Invalid Message"
-            return false
-        } else {
-            return true
+
+        val (isNotificationTitleValid, notificationTitleError) = InputValidation.isNotificationTitleValid(title)
+        if (isNotificationTitleValid.not()) {
+            binding.etTitleContainer.error = notificationTitleError
+            return isNotificationTitleValid
         }
+
+        val (isNotificationBodyValid, notificationBodyError) = InputValidation.isNotificationBodyValid(message)
+        if (isNotificationBodyValid.not()) {
+            binding.etMessageContainer.error = notificationBodyError
+            return isNotificationBodyValid
+        }
+
+        return true
     }
 }

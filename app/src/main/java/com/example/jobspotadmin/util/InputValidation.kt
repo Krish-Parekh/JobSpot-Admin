@@ -24,11 +24,11 @@ class InputValidation {
             if (username.isEmpty()) {
                 return Pair(false, "Username cannot be empty.")
             }
-            if (username[0].isDigit()) {
-                return Pair(false, "Username cannot start with a number.")
-            }
             if (username.length > 100) {
                 return Pair(false, "Username cannot be more than 100 characters.")
+            }
+            if (username[0].isDigit()) {
+                return Pair(false, "Username cannot start with a number.")
             }
             if (username.matches("^[a-zA-Z0-9]+$".toRegex()).not()) {
                 return Pair(false, "Username can only contain alphabets and numbers.")
@@ -63,14 +63,8 @@ class InputValidation {
             if (mobileNumber.isEmpty()) {
                 return Pair(false, "Mobile number cannot be empty.")
             }
-            if (mobileNumber.startsWith("+91").not()) {
-                return Pair(false, "Mobile number must start with +91.")
-            }
             if (mobileNumber.length != 13) {
                 return Pair(false, "Mobile number must be 13 characters.")
-            }
-            if (mobileNumber.substring(1).matches("^[0-9]+$".toRegex()).not()) {
-                return Pair(false, "Mobile number can only contain digits.")
             }
             if (mobileNumber.substring(3, 6).equals("000")) {
                 return Pair(false, "Mobile number cannot start with 000.")
@@ -78,6 +72,12 @@ class InputValidation {
             val firstDigit = mobileNumber[3]
             if (mobileNumber.slice(3..12).all { it == firstDigit }) {
                 return Pair(false, "All the digits in mobile number cannot be same.")
+            }
+            if (mobileNumber.startsWith("+91").not()) {
+                return Pair(false, "Mobile number must start with +91.")
+            }
+            if (mobileNumber.substring(1).matches("^[0-9]+$".toRegex()).not()) {
+                return Pair(false, "Mobile number can only contain digits.")
             }
             return Pair(true, "")
         }
@@ -148,11 +148,11 @@ class InputValidation {
             if (jobTitle.isBlank()) {
                 return Pair(false, "Job Title is required field.")
             }
-            if(jobTitle[0].isDigit()) {
-                return Pair(false, "Job Title should not start with number.")
-            }
             if (jobTitle.length > 100) {
                 return Pair(false, "Job Title should be less than or equal to 100 characters.")
+            }
+            if(jobTitle[0].isDigit()) {
+                return Pair(false, "Job Title should not start with number.")
             }
             if(!jobTitle.matches("^[a-zA-Z\\s]+$".toRegex())) {
                 return Pair(false, "Special characters are not allowed in Job Title.")
@@ -181,11 +181,11 @@ class InputValidation {
             if (city.isEmpty()) {
                 return Pair(false, "City cannot be empty.")
             }
-            if (city.matches("^[a-zA-Z ]+$".toRegex()).not()) {
-                return Pair(false, "City can only contain letters and spaces.")
-            }
             if (city.length > 100) {
                 return Pair(false, "City cannot be more than 100 characters.")
+            }
+            if (city.matches("^[a-zA-Z ]+$".toRegex()).not()) {
+                return Pair(false, "City can only contain letters and spaces.")
             }
             return Pair(true, "")
         }
@@ -236,11 +236,11 @@ class InputValidation {
         }
 
         fun isMockTitleValid(mockTitle: String): Pair<Boolean, String> {
-            if (mockTitle.length > 100) {
-                return Pair(false, "Mock Title should be less than or equal to 100 characters.")
-            }
             if (mockTitle.isBlank()) {
                 return Pair(false, "Mock Title is required field.")
+            }
+            if (mockTitle.length > 100) {
+                return Pair(false, "Mock Title should be less than or equal to 100 characters.")
             }
             return Pair(true, "")
         }
@@ -264,11 +264,11 @@ class InputValidation {
         }
 
         fun isQuestionValid(question: String): Pair<Boolean, String> {
-            if (question.length > 200) {
-                return Pair(false, "Question should be less than or equal to 200 characters.")
-            }
             if (question.isBlank()) {
                 return Pair(false, "Question is required field.")
+            }
+            if (question.length > 200) {
+                return Pair(false, "Question should be less than or equal to 200 characters.")
             }
             return Pair(true, "")
         }
@@ -278,6 +278,9 @@ class InputValidation {
                 return Pair(false, "Options is required field.")
             }
 
+            if (options.size != 4){
+                return Pair(false, "Please fill all the options.")
+            }
             val uniqueOptions = HashSet<String>()
             for (option in options) {
                 if (option.length > 200) {
@@ -296,6 +299,27 @@ class InputValidation {
             }
             if (feedback.length > 200) {
                 return Pair(false, "Feedback should be less than or equal to 200 characters.")
+            }
+            return Pair(true, "")
+        }
+
+        // Notification Validation
+        fun isNotificationTitleValid(title: String): Pair<Boolean, String> {
+            if (title.isBlank()) {
+                return Pair(false, "Title is required field.")
+            }
+            if (title.length > 100) {
+                return Pair(false, "Title should be less than or equal to 100 characters.")
+            }
+            return Pair(true, "")
+        }
+
+        fun isNotificationBodyValid(body: String): Pair<Boolean, String> {
+            if (body.isBlank()) {
+                return Pair(false, "Body is required field.")
+            }
+            if (body.length > 200) {
+                return Pair(false, "Body should be less than or equal to 200 characters.")
             }
             return Pair(true, "")
         }

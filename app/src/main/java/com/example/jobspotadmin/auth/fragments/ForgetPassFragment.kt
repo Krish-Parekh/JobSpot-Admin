@@ -33,7 +33,8 @@ class ForgetPassFragment : Fragment() {
 
         binding.btnResetPassword.setOnClickListener {
             val email = binding.etEmail.getInputValue()
-            if(InputValidation.emailValidation(email)){
+            val (isEmailValid, emailError) = InputValidation.isEmailValid(email)
+            if(isEmailValid.not()){
                 loadingDialog.show()
                 mAuth.sendPasswordResetEmail(email)
                     .addOnSuccessListener {

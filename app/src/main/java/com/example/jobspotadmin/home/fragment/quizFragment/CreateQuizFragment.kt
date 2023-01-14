@@ -20,6 +20,7 @@ import com.example.jobspotadmin.model.Mock
 import com.example.jobspotadmin.model.MockQuestion
 import com.example.jobspotadmin.util.*
 import com.example.jobspotadmin.util.UiState.*
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.skydoves.powerspinner.PowerSpinnerView
 
@@ -62,10 +63,23 @@ class CreateQuizFragment : Fragment() {
                 }
             }
             tvSubmitQuiz.setOnClickListener {
+                submitQuizDialog("Submit Mock", "Are you sure you want to add this Mock test?")
+            }
+        }
+    }
+
+    private fun submitQuizDialog(title: String, message: String) {
+        MaterialAlertDialogBuilder(requireContext(), R.style.AlertDialogTheme)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("Yes") { _, _ ->
                 val questions = getMockTestQuestions()
                 submitMockTestQuestions(questions)
             }
-        }
+            .setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 
     private fun addQuestionView() {
@@ -186,30 +200,43 @@ class CreateQuizFragment : Fragment() {
     }
 
     private fun isQuestionValid(mockQuestion: MockQuestion): Boolean {
-        if (!InputValidation.checkNullity(mockQuestion.question)) {
-            return false
-        } else if (!InputValidation.checkNullity(mockQuestion.feedback)) {
-            return false
-        } else if (!InputValidation.checkNullity(mockQuestion.correctOption)) {
-            return false
-        } else if (!InputValidation.optionListValidation(mockQuestion.options)) {
-            return false
-        } else {
+        binding.apply {
+            val (isQuestionValid, questionError) = InputValidation.isQuestionValid(mockQuestion.question)
+            if (isQuestionValid.not()){
+                return isQuestionValid
+            }
+
+            val (isOptionsValid, optionsError) = InputValidation.isOptionsValid(mockQuestion.options)
+            if (isOptionsValid.not()){
+                return isQuestionValid
+            }
+
+            if (InputValidation.checkNullity(mockQuestion.correctOption).not()) {
+                return false
+            }
+
+            val (isFeedbackValid, feedbackError) = InputValidation.isFeedbackValid(mockQuestion.feedback)
+            if (isFeedbackValid.not()){
+                return isFeedbackValid
+            }
             return true
         }
     }
 
     private fun areMockTestDetailValid(title: String, duration: String): Boolean {
         binding.apply {
-            if (!InputValidation.checkNullity(title)) {
-                binding.etQuizTitleContainer.error = "Enter valid title"
-                return false
-            } else if (!InputValidation.mockDurationValidation(duration)) {
-                binding.etDurationContainer.error = "Enter valid duration"
-                return false
-            } else {
-                return true
+            val (isMockTitleValid, mockTitleError) = InputValidation.isMockTitleValid(title)
+            if (isMockTitleValid.not()){
+                etQuizTitleContainer.error = mockTitleError
+                return isMockTitleValid
             }
+
+            val (isDurationValid, durationError) = InputValidation.isDurationValid(duration)
+            if(isDurationValid.not()){
+                etDurationContainer.error = durationError
+                return isDurationValid
+            }
+            return true
         }
     }
 

@@ -224,30 +224,48 @@ class JobEditFragment : Fragment() {
         skills: MutableList<String>
     ): Boolean {
         binding.apply {
-            if (!InputValidation.checkNullity(title)) {
-                etJobTitleContainer.error = getString(R.string.field_error_job_title)
-                return false
-            } else if (!InputValidation.checkNullity(company)) {
-                etCompanyNameContainer.error = getString(R.string.field_error_company_name)
-                return false
-            } else if (!InputValidation.checkNullity(city)) {
-                etCityNameContainer.error = getString(R.string.field_error_city)
-                return false
-            } else if (!InputValidation.salaryValidation(salary)) {
-                etSalaryContainer.error = getString(R.string.field_error_salary)
-                return false
-            } else if (!InputValidation.checkNullity(description)) {
-                etJobDescContainer.error = getString(R.string.field_error_description)
-                return false
-            } else if (!InputValidation.checkNullity(responsibility)) {
-                etJobRespContainer.error = "Enter valid responsibility"
-                return false
-            } else if (skills.isEmpty()) {
-                showToast(requireContext(), "Enter skills")
-                return false
-            } else {
-                return true
+            val (isJobTitleValid, jobTitleError) = InputValidation.isJobTitleValid(title)
+            if (isJobTitleValid.not()){
+                etJobTitleContainer.error = jobTitleError
+                return isJobTitleValid
             }
+
+            val (isCompanyNameValid, companyNameError) = InputValidation.isCompanyNameValid(company)
+            if (isCompanyNameValid.not()){
+                etCompanyNameContainer.error = companyNameError
+                return isCompanyNameValid
+            }
+
+            val (isCityValid, cityError) = InputValidation.isCityValid(city)
+            if (isCityValid.not()){
+                etCityNameContainer.error = cityError
+                return isCityValid
+            }
+
+            val (isSalaryValid, salaryError) = InputValidation.isSalaryValid(salary)
+            if (isSalaryValid.not()){
+                etSalaryContainer.error = salaryError
+                return isSalaryValid
+            }
+
+            val (isDescriptionValid, descriptionError) = InputValidation.isJobDescriptionValid(description)
+            if (isDescriptionValid.not()) {
+                etJobDescContainer.error = descriptionError
+                return isDescriptionValid
+            }
+
+            val (isResponsibilityValid, responsibilityError) = InputValidation.isResponsibilityValid(responsibility)
+            if (isResponsibilityValid.not()){
+                etJobRespContainer.error = responsibilityError
+                return isResponsibilityValid
+            }
+
+            val (isSkillsValid, skillsError) = InputValidation.isSkillSetValid(skills)
+            if (isSkillsValid.not()){
+                etSkillsContainer.error = skillsError
+                return isSkillsValid
+            }
+            return true
         }
     }
 

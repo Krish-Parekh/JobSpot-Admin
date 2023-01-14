@@ -106,19 +106,30 @@ class ProfileEditFragment : Fragment() {
         email: String,
         mobile: String
     ): Boolean {
-        if (imageUri == null) {
-            showToast(requireContext(), getString(R.string.field_error_image))
-            return false
-        } else if (!InputValidation.checkNullity(username)) {
-            binding.etUsernameContainer.error = getString(R.string.field_error_username)
-            return false
-        } else if (!InputValidation.emailValidation(email)) {
-            binding.etEmailContainer.error = getString(R.string.field_error_email)
-            return false
-        } else if (!InputValidation.mobileValidation(mobile)) {
-            binding.etMobileContainer.error = getString(R.string.field_error_mobile)
-            return false
-        } else {
+        binding.apply {
+            if (imageUri == null) {
+                showToast(requireContext(), getString(R.string.field_error_image))
+                return false
+            }
+
+            val (isUsernameValid, usernameError) = InputValidation.isUsernameValid(username)
+            if (isUsernameValid.not()){
+                etUsernameContainer.error = usernameError
+                return isUsernameValid
+            }
+
+            val (isEmailValid, emailError) = InputValidation.isEmailValid(email)
+            if (isEmailValid.not()){
+                etEmailContainer.error = emailError
+                return isEmailValid
+            }
+
+            val (isMobileNumberValid, mobileNumberError) = InputValidation.isMobileNumberValid(mobile)
+            if (isMobileNumberValid.not()){
+                etMobileContainer.error = mobileNumberError
+                return isMobileNumberValid
+            }
+
             return true
         }
     }

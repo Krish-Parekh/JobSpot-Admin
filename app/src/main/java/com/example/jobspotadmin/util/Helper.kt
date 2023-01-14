@@ -47,19 +47,6 @@ fun createChip(
     }
 }
 
-fun checkField(
-    field: String,
-    errorMessage: String,
-    errorField: TextInputLayout
-): Boolean {
-    return if (!InputValidation.checkNullity(field)) {
-        errorField.error = errorMessage
-        false
-    } else {
-        true
-    }
-}
-
 fun TextInputEditText.clearText() {
     setText("")
     clearFocus()

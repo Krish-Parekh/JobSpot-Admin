@@ -108,15 +108,19 @@ class JobDetailFragmentTwo : Fragment() {
         skills: MutableList<String>
     ): Boolean {
         binding.apply {
-            if (!InputValidation.checkNullity(responsibility)) {
-                etJobRespContainer.error = "Enter valid responsibility"
-                return false
-            } else if (skills.isEmpty()) {
-                showToast(requireContext(), "Enter skills")
-                return false
-            } else {
-                return true
+            val (isResponsibilityValid, responsibilityError) = InputValidation.isResponsibilityValid(responsibility)
+            if (isResponsibilityValid.not()){
+                etJobRespContainer.error = responsibilityError
+                return isResponsibilityValid
             }
+
+            val (isSkillsValid, skillsError) = InputValidation.isSkillSetValid(skills)
+            if (isSkillsValid.not()){
+                etSkillsContainer.error = skillsError
+                return isSkillsValid
+            }
+
+            return true
         }
     }
 

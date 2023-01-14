@@ -154,7 +154,7 @@
 
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/etFieldOfStudyContainer"
+                android:id="@+id/etStreamContainer"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -167,7 +167,7 @@
                 app:startIconDrawable="@drawable/ic_stream">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etFieldOfStudy"
+                    android:id="@+id/etStream"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/dm_sans_medium"

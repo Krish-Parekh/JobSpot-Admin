@@ -32,6 +32,7 @@ class JobDetailFragmentOne : Fragment() {
         }
     private val jobsViewModel: JobsViewModel by viewModels()
     private var workType: String = ""
+    private var designation : String = ""
     private val mAuth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -71,6 +72,12 @@ class JobDetailFragmentOne : Fragment() {
                 workType = selectedWorkType
             }
 
+            designationSpinner.dismissWhenNotifiedItemSelected = true
+            designationSpinner.setOnSpinnerItemSelectedListener<String>{ _, _, _, selectedDesignation ->
+                designationSpinner.error = null
+                designation = selectedDesignation
+            }
+
             btnNext.setOnClickListener {
                 val jobRole = etJobTitle.getInputValue()
                 val companyName = etCompanyName.getInputValue()
@@ -86,6 +93,7 @@ class JobDetailFragmentOne : Fragment() {
                         companyName,
                         city,
                         salary,
+                        designation,
                         workType,
                         jobDescription
                     )
@@ -97,6 +105,7 @@ class JobDetailFragmentOne : Fragment() {
                         name = companyName,
                         city = city,
                         salary = salary,
+                        designation = designation,
                         workType = workType,
                         description = jobDescription
                     )
@@ -147,6 +156,7 @@ class JobDetailFragmentOne : Fragment() {
         company: String,
         city: String,
         salary: String,
+        designation : String,
         workType: String,
         description: String
     ): Boolean {
@@ -154,27 +164,49 @@ class JobDetailFragmentOne : Fragment() {
             if (imageUrl == null) {
                 showToast(requireContext(), getString(R.string.field_error_image))
                 return false
-            } else if (!InputValidation.checkNullity(title)) {
-                etJobTitleContainer.error = getString(R.string.field_error_job_title)
-                return false
-            } else if (!InputValidation.checkNullity(company)) {
-                etCompanyNameContainer.error = getString(R.string.field_error_company_name)
-                return false
-            } else if (!InputValidation.checkNullity(city)) {
-                etCityNameContainer.error = getString(R.string.field_error_city)
-                return false
-            } else if (!InputValidation.salaryValidation(salary)) {
-                etSalaryContainer.error = getString(R.string.field_error_salary)
-                return false
-            } else if (!InputValidation.checkNullity(workType)) {
+            }
+
+            val (isJobTitleValid, jobTitleError) = InputValidation.isJobTitleValid(title)
+            if (isJobTitleValid.not()){
+                etJobTitleContainer.error = jobTitleError
+                return isJobTitleValid
+            }
+
+            val (isCompanyNameValid, companyNameError) = InputValidation.isCompanyNameValid(company)
+            if (isCompanyNameValid.not()){
+                etCompanyNameContainer.error = companyNameError
+                return isCompanyNameValid
+            }
+
+            val (isCityValid, cityError) = InputValidation.isCityValid(city)
+            if (isCityValid.not()){
+                etCityNameContainer.error = cityError
+                return isCityValid
+            }
+
+            val (isSalaryValid, salaryError) = InputValidation.isSalaryValid(salary)
+            if (isSalaryValid.not()){
+                etSalaryContainer.error = salaryError
+                return isSalaryValid
+            }
+
+            if (!InputValidation.checkNullity(workType)) {
                 workTypeSpinner.error = ""
                 return false
-            } else if (!InputValidation.checkNullity(description)) {
-                etJobDescContainer.error = getString(R.string.field_error_description)
-                return false
-            } else {
-                return true
             }
+
+            val (isDescriptionValid, descriptionError) = InputValidation.isJobDescriptionValid(description)
+            if (isDescriptionValid.not()) {
+                etJobDescContainer.error = descriptionError
+                return isDescriptionValid
+            }
+
+            if (!InputValidation.checkNullity(designation)) {
+                designationSpinner.error = getString(R.string.field_error_description)
+                return false
+            }
+
+            return true
         }
     }
 

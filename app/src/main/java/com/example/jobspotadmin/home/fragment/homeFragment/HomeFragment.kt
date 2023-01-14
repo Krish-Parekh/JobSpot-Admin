@@ -1,8 +1,8 @@
 package com.example.jobspotadmin.home.fragment.homeFragment
 
 import android.animation.ValueAnimator
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,13 +10,15 @@ import android.view.animation.LinearInterpolator
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import coil.load
 import com.example.jobspotadmin.R
+import com.example.jobspotadmin.auth.AuthActivity
 import com.example.jobspotadmin.databinding.FragmentHomeBinding
 import com.example.jobspotadmin.home.fragment.homeFragment.viewmodel.HomeViewModel
 import com.example.jobspotadmin.util.Constants.Companion.ROLE_TYPE_ADMIN
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
 
 private const val TAG = "HomeFragment"
@@ -53,6 +55,13 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupViews() {
+
+        if (binding.ivLogout.visibility == View.VISIBLE){
+            binding.ivLogout.setOnClickListener {
+                showLogoutBottomSheet()
+            }
+        }
+
         homeViewModel.fetchCounts()
         homeViewModel.metaCounts.observe(viewLifecycleOwner){ count ->
             counterAnimation(0, count.studentCount, binding.tvStudentCount)
@@ -87,7 +96,26 @@ class HomeFragment : Fragment() {
         binding.cvPlacementOfficer.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_tpoFragment)
         }
+    }
 
+    private fun showLogoutBottomSheet() {
+        val dialog = BottomSheetDialog(requireContext())
+        val bottomSheet = layoutInflater.inflate(R.layout.bottom_sheet_logout, null)
+        val btnNot: MaterialButton = bottomSheet.findViewById(R.id.btnNo)
+        val btnRemove: MaterialButton = bottomSheet.findViewById(R.id.btnLogout)
+        btnNot.setOnClickListener {
+            dialog.dismiss()
+        }
+        btnRemove.setOnClickListener {
+            dialog.dismiss()
+            FirebaseAuth.getInstance().signOut()
+            requireActivity().finishAffinity()
+            val loginIntent = Intent(requireContext(), AuthActivity::class.java)
+            loginIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            startActivity(loginIntent)
+        }
+        dialog.setContentView(bottomSheet)
+        dialog.show()
     }
 
     private fun counterAnimation(start: Int, end: Int, textView: TextView) {

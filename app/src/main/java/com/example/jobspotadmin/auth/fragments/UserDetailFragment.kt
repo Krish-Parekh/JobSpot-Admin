@@ -22,6 +22,8 @@ import com.example.jobspotadmin.util.*
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.firebase.auth.FirebaseAuth
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 private const val TAG = "UserDetailFragment"
@@ -78,14 +80,14 @@ class UserDetailFragment : Fragment() {
             }
 
             etMobileContainer.addTextWatcher()
-            etFieldOfStudyContainer.addTextWatcher()
+            etStreamContainer.addTextWatcher()
             etYearExperienceContainer.addTextWatcher()
             etBioContainer.addTextWatcher()
 
             btnSubmit.setOnClickListener {
                 val mobile = etMobile.getInputValue()
                 val dob = etDate.getInputValue()
-                val stream = etFieldOfStudy.getInputValue()
+                val stream = etStream.getInputValue()
                 val experience = etYearExperience.getInputValue()
                 val bio = etBio.getInputValue()
                 val imageUri = authViewModel.getImageUri()
@@ -176,7 +178,10 @@ class UserDetailFragment : Fragment() {
             .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
             .build()
         datePicker.addOnPositiveButtonClickListener {
-            binding.etDate.setText(datePicker.headerText)
+            val date = Date(it)
+            val formatter = SimpleDateFormat("yyyy-MM-dd")
+            val dateString = formatter.format(date)
+            binding.etDate.setText(dateString)
         }
         datePicker.show(childFragmentManager, "Material DatePicker")
     }
@@ -195,37 +200,54 @@ class UserDetailFragment : Fragment() {
             if (imageUri == null) {
                 showToast(requireContext(), getString(R.string.field_error_image))
                 return false
-            } else if (!InputValidation.mobileValidation(mobile)) {
-                etMobileContainer.error = getString(R.string.field_error_mobile)
-                return false
-            } else if (!checkField(dob, getString(R.string.field_error_dob), etDateContainer)) {
+            }
+
+            val (isMobileNumberValid, mobileNumberError) = InputValidation.isMobileNumberValid(mobile)
+            if (isMobileNumberValid.not()){
+                etMobileContainer.error = mobileNumberError
+                return isMobileNumberValid
+            }
+
+            val (isDOBValid, dobError) = InputValidation.isDOBValid(dob)
+            if (isDOBValid.not()){
                 etDateContainer.apply {
+                    error = dobError
                     setErrorIconOnClickListener {
                         error = null
                     }
                 }
-                return false
-            } else if (!InputValidation.checkNullity(gender)) {
+                return isDOBValid
+            }
+
+            if (InputValidation.checkNullity(gender)){
                 genderSpinner.error = ""
                 return false
-            } else if (!InputValidation.checkNullity(qualification)) {
+            }
+
+            if (InputValidation.checkNullity(qualification)){
                 qualificationSpinner.error = ""
                 return false
-            } else if (!checkField(
-                    stream,
-                    getString(R.string.field_error_stream),
-                    etFieldOfStudyContainer
-                )
-            ) {
-                return false
-            } else if (!checkField(
-                    experience,
-                    getString(R.string.field_error_year),
-                    etYearExperienceContainer
-                )
-            ) {
-                return false
-            } else return checkField(bio, getString(R.string.field_error_bio), etBioContainer)
+            }
+
+            val (isStreamValid, streamError) = InputValidation.isStreamValid(stream)
+            if (isStreamValid.not()){
+                etStreamContainer.error = streamError
+                return isStreamValid
+            }
+
+            val (isExperienceValid, experienceError) = InputValidation.isExperienceValid(experience)
+            if (isExperienceValid.not()){
+                etYearExperienceContainer.error = experienceError
+                return isExperienceValid
+            }
+
+            val (isBiographyValid, biographyError) = InputValidation.isBiographyValid(bio)
+            if (isBiographyValid.not()){
+                etBioContainer.error = biographyError
+                return isBiographyValid
+            }
+
+            return true
         }
     }
 
@@ -235,7 +257,7 @@ class UserDetailFragment : Fragment() {
             etDate.clearText()
             genderSpinner.clearSelectedItem()
             qualificationSpinner.clearSelectedItem()
-            etFieldOfStudy.clearText()
+            etStream.clearText()
             etYearExperience.clearText()
             etBio.clearText()
             profileImage.setImageResource(R.drawable.ic_image_picker)

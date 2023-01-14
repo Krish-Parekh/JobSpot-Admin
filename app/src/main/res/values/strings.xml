@@ -140,6 +140,14 @@
         <item>C</item>
         <item>D</item>
     </string-array>
+
+    <string-array name="designation">
+        <item>Support</item>
+        <item>Consultant</item>
+        <item>Designer</item>
+        <item>Developer</item>
+        <item>Tester</item>
+    </string-array>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

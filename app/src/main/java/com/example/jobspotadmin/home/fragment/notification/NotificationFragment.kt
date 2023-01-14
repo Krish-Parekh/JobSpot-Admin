@@ -71,6 +71,7 @@ class NotificationFragment : Fragment() {
             dialog.dismiss()
         }
         btnRemove.setOnClickListener {
+            notificationViewModel.deleteNotification(notification)
             dialog.dismiss()
         }
         dialog.setContentView(bottomSheet)

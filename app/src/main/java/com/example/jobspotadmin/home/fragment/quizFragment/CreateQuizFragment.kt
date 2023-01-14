@@ -211,7 +211,7 @@ class CreateQuizFragment : Fragment() {
                 return isQuestionValid
             }
 
-            if (InputValidation.checkNullity(mockQuestion.correctOption).not()) {
+            if (InputValidation.checkNullity(mockQuestion.correctOption)) {
                 return false
             }
 

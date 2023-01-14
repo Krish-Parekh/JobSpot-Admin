@@ -114,6 +114,7 @@ class StudentFragment : Fragment() {
             dialog.dismiss()
         }
         btnRemove.setOnClickListener {
+            studentViewModel.deleteStudent(student)
             dialog.dismiss()
         }
         dialog.setContentView(bottomSheet)

@@ -87,6 +87,7 @@ class TpoFragment : Fragment() {
             dialog.dismiss()
         }
         btnRemove.setOnClickListener {
+            tpoViewModel.deleteTpo(tpo)
             dialog.dismiss()
         }
         dialog.setContentView(bottomSheet)

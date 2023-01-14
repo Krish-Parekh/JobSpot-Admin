@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 private const val TAG = "NotificationViewModelTAG"
+
 class NotificationViewModel : ViewModel() {
 
     private val mFirestore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
@@ -22,8 +23,9 @@ class NotificationViewModel : ViewModel() {
     private val _uploadStatus: MutableLiveData<UiState> = MutableLiveData(UiState.LOADING)
     val uploadStatus: LiveData<UiState> = _uploadStatus
 
-    private val _notification : MutableLiveData<List<BroadcastNotification>> = MutableLiveData(mutableListOf())
-    val notification : LiveData<List<BroadcastNotification>> = _notification
+    private val _notification: MutableLiveData<List<BroadcastNotification>> =
+        MutableLiveData(mutableListOf())
+    val notification: LiveData<List<BroadcastNotification>> = _notification
 
     fun fetchNotifications() {
         try {
@@ -32,7 +34,7 @@ class NotificationViewModel : ViewModel() {
                     .whereEqualTo("type", "BROADCAST")
                     .orderBy("timestamp", Query.Direction.DESCENDING)
                     .addSnapshotListener { value, error ->
-                        if (error != null){
+                        if (error != null) {
                             return@addSnapshotListener
                         }
                         val documents = value?.documents!!
@@ -60,6 +62,13 @@ class NotificationViewModel : ViewModel() {
             }
         } catch (e: Exception) {
             _uploadStatus.postValue(UiState.FAILURE)
+        }
+    }
+
+    fun deleteNotification(notification: BroadcastNotification) {
+        viewModelScope.launch {
+            val notificationId = notification.id
+            mFirestore.collection(COLLECTION_PATH_NOTIFICATION).document(notificationId).delete().await()
         }
     }
 }

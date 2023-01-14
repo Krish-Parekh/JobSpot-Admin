@@ -8,10 +8,12 @@ import androidx.lifecycle.viewModelScope
 import com.example.jobspotadmin.model.Mock
 import com.example.jobspotadmin.model.MockDetail
 import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_MOCK
+import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_MOCK_RESULT
 import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_STUDENT
 import com.example.jobspotadmin.util.UiState
 import com.google.firebase.database.*
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -74,26 +76,38 @@ class MockViewModel : ViewModel() {
 
     fun deleteMockTest(mockDetail: MockDetail) {
         viewModelScope.launch {
-            Log.d(TAG, "MockId : ${mockDetail}")
-            // delete from firestore
-            mFirestore.collection(COLLECTION_PATH_MOCK).document(mockDetail.mockId).delete().await()
-            Log.d(TAG, "Deleted From Firebase")
-            // delete from realtime db
-            val mockDetailRef =
-                mRealtimeDb.child(COLLECTION_PATH_MOCK).child(mockDetail.mockId).get().await()
-            val mockDetail = mockDetailRef.getValue(MockDetail::class.java)!!
-            mockDetail.studentIds.forEach { studentId ->
-                mRealtimeDb
-                    .child(COLLECTION_PATH_STUDENT)
-                    .child(studentId)
-                    .child(COLLECTION_PATH_MOCK)
-                    .child(mockDetail.mockId)
-                    .removeValue()
-                    .await()
-                Log.d(TAG, "Delete from studentCollection : $studentId")
+            val mockId = mockDetail.mockId
+            val mockTestDatabaseRef = "$COLLECTION_PATH_MOCK/$mockId"
+            val mockTestResultDatabaseRef = "$COLLECTION_PATH_MOCK_RESULT/$mockId"
+            // delete mock test from firestore
+            mFirestore.collection(COLLECTION_PATH_MOCK).document(mockId).delete().await()
+
+            // delete mock test from realtime db
+            mRealtimeDb.child(mockTestDatabaseRef).removeValue().await()
+            mRealtimeDb.child(mockTestResultDatabaseRef).removeValue().await()
+
+            // mock test delete from all the students
+            val studentRef = mRealtimeDb.child(COLLECTION_PATH_STUDENT)
+            val mockTestDeleteDeffered = CompletableDeferred<Unit>()
+            val mockTestDeleteListener = object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    snapshot.children.forEach { studentNode ->
+                        val doesMockExist = studentNode.child(COLLECTION_PATH_MOCK).hasChild(mockId)
+                        if (doesMockExist){
+                            studentNode.child(COLLECTION_PATH_MOCK).child(mockId).ref.removeValue()
+                        }
+                    }
+                    mockTestDeleteDeffered.complete(Unit)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    mockTestDeleteDeffered.completeExceptionally(error.toException())
+                }
             }
-            mRealtimeDb.child(COLLECTION_PATH_MOCK).child(mockDetail.mockId).removeValue().await()
-            Log.d(TAG, "Deleted Mock Collection")
+            studentRef.addValueEventListener(mockTestDeleteListener)
+            mockTestDeleteDeffered.invokeOnCompletion {
+                studentRef.removeEventListener(mockTestDeleteListener)
+            }
         }
     }
 

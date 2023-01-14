@@ -201,8 +201,8 @@ class JobDetailFragmentOne : Fragment() {
                 return isDescriptionValid
             }
 
-            if (!InputValidation.checkNullity(designation)) {
-                designationSpinner.error = getString(R.string.field_error_description)
+            if (InputValidation.checkNullity(designation)) {
+                designationSpinner.error = "Enter valid designation"
                 return false
             }
 

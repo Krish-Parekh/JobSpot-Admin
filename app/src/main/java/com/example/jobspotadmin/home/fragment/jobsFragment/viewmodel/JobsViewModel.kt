@@ -8,10 +8,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jobspotadmin.model.Job
 import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_COMPANY
+import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_STUDENT
 import com.example.jobspotadmin.util.Constants.Companion.COMPANY_IMAGE_STORAGE_PATH
 import com.example.jobspotadmin.util.UiState
+import com.google.firebase.database.*
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -22,6 +25,7 @@ class JobsViewModel : ViewModel() {
     private var imageUri: Uri? = null
     private val mFireStore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
     private val mFireStorage: FirebaseStorage by lazy { FirebaseStorage.getInstance() }
+    private val mRealtimeDb: DatabaseReference by lazy { FirebaseDatabase.getInstance().reference }
 
     private val _operationStatus: MutableLiveData<UiState> = MutableLiveData(UiState.LOADING)
     val operationStatus: LiveData<UiState> = _operationStatus
@@ -79,18 +83,42 @@ class JobsViewModel : ViewModel() {
 
     fun deleteJob(job: Job) {
         viewModelScope.launch {
-            try {
-                _operationStatus.postValue(UiState.LOADING)
-                val uid = job.uid
-                mFireStorage.reference.child(COMPANY_IMAGE_STORAGE_PATH + uid).delete()
-                Log.d(TAG, "Company image delete success")
-                mFireStore.collection(COLLECTION_PATH_COMPANY).document(uid).delete().await()
-                Log.d(TAG, "Company data delete success")
-                _operationStatus.postValue(UiState.SUCCESS)
-            } catch (error: Exception) {
-                Log.d(TAG, "Exception : ${error.message}")
-                _operationStatus.postValue(UiState.FAILURE)
+            val companyId = job.uid
+            val companyImagePath = "$COMPANY_IMAGE_STORAGE_PATH/$companyId"
+            val companyDatabasePath = "$COLLECTION_PATH_COMPANY/$companyId"
+            val studentCompanyDatabasePath = "$COLLECTION_PATH_COMPANY/$companyId"
+            _operationStatus.postValue(UiState.LOADING)
+
+            mFireStore.collection(COLLECTION_PATH_COMPANY).document(companyId).delete().await()
+            mFireStorage.reference.child(companyImagePath).delete().await()
+
+            mRealtimeDb.child(companyDatabasePath).removeValue().await()
+
+            val deleteCompaniesFromStudentDeferred = CompletableDeferred<Unit>()
+            val studentRef = mRealtimeDb.child(COLLECTION_PATH_STUDENT)
+            val companyDeleteListener = object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    snapshot.children.forEach { studentNode ->
+                        val doCompanyExist = studentNode.hasChild(studentCompanyDatabasePath)
+                        if (doCompanyExist){
+                            studentNode.child(studentCompanyDatabasePath).ref.removeValue()
+                        }
+                    }
+                    deleteCompaniesFromStudentDeferred.complete(Unit)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    deleteCompaniesFromStudentDeferred.completeExceptionally(error.toException())
+                }
             }
+            studentRef.addValueEventListener(companyDeleteListener)
+            deleteCompaniesFromStudentDeferred.invokeOnCompletion {
+                _operationStatus.postValue(UiState.FAILURE)
+                studentRef.removeEventListener(companyDeleteListener)
+            }
+
+            deleteCompaniesFromStudentDeferred.await()
+            _operationStatus.postValue(UiState.SUCCESS)
         }
     }
 }

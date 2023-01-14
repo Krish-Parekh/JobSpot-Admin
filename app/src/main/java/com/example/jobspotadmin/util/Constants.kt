@@ -10,6 +10,7 @@ class Constants {
         const val COLLECTION_PATH_ADMIN = "admin"
         const val COLLECTION_PATH_COMPANY = "companies"
         const val COLLECTION_PATH_MOCK = "mock_test"
+        const val COLLECTION_PATH_MOCK_RESULT = "mock_result"
         const val COLLECTION_PATH_STUDENT = "students"
         const val COLLECTION_PATH_NOTIFICATION = "notification"
 

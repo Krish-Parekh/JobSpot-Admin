@@ -40,7 +40,7 @@ class TpoViewModel : ViewModel() {
             val tpoId = tpo.uid
             val tpoImagePath = "$TPO_IMAGE_STORAGE_PATH/$tpoId"
             mFirestore.collection(COLLECTION_PATH_TPO).document(tpoId).delete().await()
-            mFirestore.collection(COLLECTION_PATH_ROLE).document().delete().await()
+            mFirestore.collection(COLLECTION_PATH_ROLE).document(tpoId).delete().await()
             mStorage.child(tpoImagePath).delete().await()
         }
     }

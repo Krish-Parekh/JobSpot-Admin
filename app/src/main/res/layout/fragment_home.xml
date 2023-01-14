@@ -83,10 +83,13 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ivHomeBanner" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+
+        <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingVertical="@dimen/medium_padding"
+            android:layout_margin="@dimen/small_margin"
+            android:columnCount="2"
+            android:rowCount="3"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -96,14 +99,15 @@
                 android:id="@+id/cvStudent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/medium_margin"
-                android:layout_marginVertical="@dimen/small_margin"
-                android:layout_weight="1"
+                android:layout_row="0"
+                android:layout_rowWeight="1"
+                android:layout_column="0"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"
+                android:layout_margin="@dimen/extra_small_margin"
                 app:cardBackgroundColor="@color/card_background"
                 app:cardCornerRadius="6dp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toLeftOf="@+id/cvJob"
-                app:layout_constraintTop_toTopOf="parent">
+                app:cardUseCompatPadding="true">
 
                 <LinearLayout
                     android:id="@+id/llStudentCard"
@@ -112,7 +116,7 @@
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="@dimen/large_padding">
+                    android:padding="@dimen/medium_padding">
 
                     <ImageView
                         android:id="@+id/ivStudent"
@@ -138,7 +142,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/dm_sans_medium"
-                        android:text="@string/field_student_card_title"
+                        android:text="@string/field_jobs_card_title"
                         android:textAlignment="center"
                         android:textColor="@color/text_color"
                         android:textSize="16sp" />
@@ -150,14 +154,15 @@
                 android:id="@+id/cvJob"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/medium_margin"
-                android:layout_marginVertical="@dimen/small_margin"
-                android:layout_weight="1"
+                android:layout_row="0"
+                android:layout_rowWeight="1"
+                android:layout_column="1"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"
+                android:layout_margin="@dimen/extra_small_margin"
                 app:cardBackgroundColor="@color/card_background"
                 app:cardCornerRadius="6dp"
-                app:layout_constraintLeft_toRightOf="@+id/cvStudent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:cardUseCompatPadding="true">
 
                 <LinearLayout
                     android:id="@+id/llJobCard"
@@ -166,7 +171,7 @@
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="@dimen/large_padding">
+                    android:padding="@dimen/medium_padding">
 
                     <ImageView
                         android:id="@+id/ivJobs"
@@ -204,14 +209,15 @@
                 android:id="@+id/cvMockTest"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/medium_margin"
-                android:layout_marginVertical="@dimen/medium_margin"
-                android:layout_weight="1"
+                android:layout_row="1"
+                android:layout_rowWeight="1"
+                android:layout_column="0"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"
+                android:layout_margin="@dimen/extra_small_margin"
                 app:cardBackgroundColor="@color/card_background"
                 app:cardCornerRadius="6dp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toLeftOf="@+id/cvNotification"
-                app:layout_constraintTop_toBottomOf="@+id/cvStudent">
+                app:cardUseCompatPadding="true">
 
                 <LinearLayout
                     android:id="@+id/llMockTestCard"
@@ -220,7 +226,7 @@
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="@dimen/large_padding">
+                    android:padding="@dimen/medium_padding">
 
                     <ImageView
                         android:id="@+id/ivMockTest"
@@ -258,14 +264,15 @@
                 android:id="@+id/cvNotification"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/medium_margin"
-                android:layout_marginVertical="@dimen/medium_margin"
-                android:layout_weight="1"
+                android:layout_row="1"
+                android:layout_rowWeight="1"
+                android:layout_column="1"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"
+                android:layout_margin="@dimen/extra_small_margin"
                 app:cardBackgroundColor="@color/card_background"
                 app:cardCornerRadius="6dp"
-                app:layout_constraintLeft_toRightOf="@+id/cvMockTest"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cvJob">
+                app:cardUseCompatPadding="true">
 
                 <LinearLayout
                     android:id="@+id/llNotificationCard"
@@ -274,7 +281,7 @@
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="@dimen/large_padding">
+                    android:padding="@dimen/medium_padding">
 
                     <ImageView
                         android:id="@+id/ivNotification"
@@ -306,20 +313,21 @@
                         android:textSize="16sp" />
 
                 </LinearLayout>
-
-
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cvPlacementOfficer"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/medium_margin"
+                android:layout_row="2"
+                android:layout_rowWeight="1"
+                android:layout_column="0"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"
+                android:layout_margin="@dimen/extra_small_margin"
                 app:cardBackgroundColor="@color/card_background"
                 app:cardCornerRadius="6dp"
-                app:layout_constraintLeft_toLeftOf="@+id/cvMockTest"
-                app:layout_constraintRight_toRightOf="@+id/cvMockTest"
-                app:layout_constraintTop_toBottomOf="@+id/cvMockTest">
+                app:cardUseCompatPadding="true">
 
                 <LinearLayout
                     android:id="@+id/llPlacementOfficer"
@@ -328,7 +336,7 @@
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="@dimen/large_padding">
+                    android:padding="@dimen/medium_padding">
 
                     <ImageView
                         android:id="@+id/ivPlacementOfficer"
@@ -362,12 +370,7 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="16dp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cvMockTest" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </GridLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

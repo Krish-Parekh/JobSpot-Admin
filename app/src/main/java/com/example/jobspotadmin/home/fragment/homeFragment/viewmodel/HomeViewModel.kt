@@ -1,6 +1,5 @@
 package com.example.jobspotadmin.home.fragment.homeFragment.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,6 +10,7 @@ import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_NOTIFIC
 import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_STUDENT
 import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_TPO
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,6 +24,8 @@ class HomeViewModel : ViewModel() {
     private val mFirestore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
     private val _metaCounts: MutableLiveData<Counts> = MutableLiveData()
     val metaCounts: LiveData<Counts> = _metaCounts
+    private var notificationCountListener : ListenerRegistration? = null
+    private var countListener : ListenerRegistration? = null
 
     fun fetchCounts() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -39,7 +41,7 @@ class HomeViewModel : ViewModel() {
 
     private suspend fun getNotificationCount(): Int {
         val countDeffered = CompletableDeferred<Int>()
-        val countListener = mFirestore
+        notificationCountListener = mFirestore
             .collection(COLLECTION_PATH_NOTIFICATION)
             .whereEqualTo("type", "BROADCAST")
             .addSnapshotListener { value, error ->
@@ -50,15 +52,12 @@ class HomeViewModel : ViewModel() {
                 val count = value?.documents?.count()!!
                 countDeffered.complete(count)
             }
-        countDeffered.invokeOnCompletion {
-            countListener.remove()
-        }
         return countDeffered.await()
     }
 
     private suspend fun getCount(collectionPath: String): Int {
         val countDeffered = CompletableDeferred<Int>()
-        val countListener = mFirestore.collection(collectionPath)
+        countListener = mFirestore.collection(collectionPath)
             .addSnapshotListener { value, error ->
                 if (error != null) {
                     countDeffered.completeExceptionally(error)
@@ -67,10 +66,13 @@ class HomeViewModel : ViewModel() {
                 val count = value?.documents?.count()!!
                 countDeffered.complete(count)
             }
-        countDeffered.invokeOnCompletion {
-            countListener.remove()
-        }
         return countDeffered.await()
+    }
+
+    override fun onCleared() {
+        notificationCountListener?.remove()
+        countListener?.remove()
+        super.onCleared()
     }
 }
 

@@ -1,5 +1,6 @@
 package com.example.jobspotadmin.util
 
+import android.util.Log
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -278,14 +279,16 @@ class InputValidation {
                 return Pair(false, "Options is required field.")
             }
 
-            if (options.size != 4){
-                return Pair(false, "Please fill all the options.")
-            }
             val uniqueOptions = HashSet<String>()
             for (option in options) {
+                if (option.isEmpty()){
+                    return Pair(false, "Please fill all the options.")
+                }
+
                 if (option.length > 200) {
                     return Pair(false, "Each option in list should be less than or equal to 200 characters.")
                 }
+
                 if (uniqueOptions.add(option).not()) {
                     return Pair(false, "Each option in list should be unique.")
                 }

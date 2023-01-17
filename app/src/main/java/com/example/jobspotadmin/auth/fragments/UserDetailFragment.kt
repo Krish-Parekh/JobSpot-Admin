@@ -22,8 +22,10 @@ import com.example.jobspotadmin.util.*
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.firebase.auth.FirebaseAuth
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.roundToLong
 
 
 private const val TAG = "UserDetailFragment"
@@ -88,7 +90,7 @@ class UserDetailFragment : Fragment() {
                 val mobile = etMobile.getInputValue()
                 val dob = etDate.getInputValue()
                 val stream = etStream.getInputValue()
-                val experience = etYearExperience.getInputValue()
+                var experience = etYearExperience.getInputValue()
                 val bio = etBio.getInputValue()
                 val imageUri = authViewModel.getImageUri()
 
@@ -103,6 +105,8 @@ class UserDetailFragment : Fragment() {
                         bio
                     )
                 ) {
+                    val df = DecimalFormat("#.##")
+                    experience = df.format(experience.toDouble())
                     val tpo = Tpo(
                         uid = mAuth.currentUser?.uid.toString(),
                         email = args.email,

@@ -83,7 +83,7 @@ class CreateQuizFragment : Fragment() {
     }
 
     private fun addQuestionView() {
-        val questionCard =
+        val questionCard = 
             layoutInflater.inflate(R.layout.question_card_layout, binding.questionContainer, false)
         val questionTextView: TextView = questionCard.findViewById(R.id.tvQuestionCount)
         val deleteBtn: ImageView = questionCard.findViewById(R.id.ivDeleteQuestion)
@@ -118,7 +118,7 @@ class CreateQuizFragment : Fragment() {
                 val questionCard = binding.questionContainer.getChildAt(index)
                 val locationX = questionCard.x
                 val locationY = questionCard.y
-                showToast(requireContext(), "MockQuestion ${index + 1}")
+//                showToast(requireContext(), "MockQuestion ${index + 1}")
                 binding.questionScrollContainer.smoothScrollTo(locationX.toInt(), locationY.toInt())
                 return
             }
@@ -203,20 +203,24 @@ class CreateQuizFragment : Fragment() {
         binding.apply {
             val (isQuestionValid, questionError) = InputValidation.isQuestionValid(mockQuestion.question)
             if (isQuestionValid.not()){
+                showToast(requireContext(), questionError)
                 return isQuestionValid
             }
 
             val (isOptionsValid, optionsError) = InputValidation.isOptionsValid(mockQuestion.options)
             if (isOptionsValid.not()){
-                return isQuestionValid
+                showToast(requireContext(), optionsError)
+                return isOptionsValid
             }
 
             if (InputValidation.checkNullity(mockQuestion.correctOption)) {
+                showToast(requireContext(), "Please choose correct-answer.")
                 return false
             }
 
             val (isFeedbackValid, feedbackError) = InputValidation.isFeedbackValid(mockQuestion.feedback)
             if (isFeedbackValid.not()){
+                showToast(requireContext(), feedbackError)
                 return isFeedbackValid
             }
             return true

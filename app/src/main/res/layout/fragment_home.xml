@@ -118,7 +118,7 @@
                     android:orientation="vertical"
                     android:padding="@dimen/medium_padding">
 
-                    <ImageView
+                     <ImageView
                         android:id="@+id/ivStudent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -142,7 +142,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/dm_sans_medium"
-                        android:text="@string/field_jobs_card_title"
+                        android:text="@string/field_student_card_title"
                         android:textAlignment="center"
                         android:textColor="@color/text_color"
                         android:textSize="16sp" />

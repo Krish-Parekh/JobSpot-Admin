@@ -1,9 +1,9 @@
 package com.example.jobspotadmin.home.fragment.profileFragment
 
 import android.app.Activity
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,13 +15,17 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.load
 import com.example.jobspotadmin.R
+import com.example.jobspotadmin.auth.AuthActivity
 import com.example.jobspotadmin.databinding.FragmentProfileEditBinding
 import com.example.jobspotadmin.home.fragment.profileFragment.viewmodel.ProfileViewModel
 import com.example.jobspotadmin.util.*
 import com.example.jobspotadmin.util.UiState.*
 import com.github.dhaval2404.imagepicker.ImagePicker
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.button.MaterialButton
 
 private const val TAG = "ProfileEditFragmentTAG"
+
 class ProfileEditFragment : Fragment() {
     private var _binding: FragmentProfileEditBinding? = null
     private val binding get() = _binding!!
@@ -69,7 +73,7 @@ class ProfileEditFragment : Fragment() {
                 val email = etEmail.getInputValue()
                 val mobile = etMobile.getInputValue()
                 val imageUrl = profileViewModel.getImageUri() ?: Uri.parse(args.tpo.imageUri)
-                if (detailVerification(imageUrl ,username, email, mobile)) {
+                if (detailVerification(imageUrl, username, email, mobile)) {
                     args.tpo.username = username
                     args.tpo.email = email
                     args.tpo.mobile = mobile
@@ -78,12 +82,49 @@ class ProfileEditFragment : Fragment() {
                     setupObserver()
                 }
             }
+
+            ivDeleteAccount.setOnClickListener {
+                deleteAccountBottomSheet()
+            }
         }
     }
 
+    private fun deleteAccountBottomSheet() {
+        val dialog = BottomSheetDialog(requireContext())
+        val bottomSheet = layoutInflater.inflate(R.layout.bottom_sheet_delete_tpo_account, null)
+        val btnNot: MaterialButton = bottomSheet.findViewById(R.id.btnNo)
+        val btnDeleteAccount: MaterialButton = bottomSheet.findViewById(R.id.btnDeleteAccount)
+        btnNot.setOnClickListener {
+            dialog.dismiss()
+        }
+        btnDeleteAccount.setOnClickListener {
+            profileViewModel.deleteAccount(args.tpo)
+            profileViewModel.deleteStatus.observe(viewLifecycleOwner) { uiState ->
+                when (uiState) {
+                    LOADING -> {
+                        loadingDialog.show()
+                    }
+                    SUCCESS -> {
+                        requireActivity().finishAffinity()
+                        val loginIntent = Intent(requireContext(), AuthActivity::class.java)
+                        loginIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                        startActivity(loginIntent)
+                        loadingDialog.dismiss()
+                    }
+                    FAILURE -> {
+                        loadingDialog.dismiss()
+                    }
+                    else -> Unit
+                }
+            }
+        }
+        dialog.setContentView(bottomSheet)
+        dialog.show()
+    }
+
     private fun setupObserver() {
-        profileViewModel.updateStatus.observe(viewLifecycleOwner){ uiState ->
-            when(uiState){
+        profileViewModel.updateStatus.observe(viewLifecycleOwner) { uiState ->
+            when (uiState) {
                 LOADING -> {
                     loadingDialog.show()
                 }
@@ -113,19 +154,21 @@ class ProfileEditFragment : Fragment() {
             }
 
             val (isUsernameValid, usernameError) = InputValidation.isUsernameValid(username)
-            if (isUsernameValid.not()){
+            if (isUsernameValid.not()) {
                 etUsernameContainer.error = usernameError
                 return isUsernameValid
             }
 
             val (isEmailValid, emailError) = InputValidation.isEmailValid(email)
-            if (isEmailValid.not()){
+            if (isEmailValid.not()) {
                 etEmailContainer.error = emailError
                 return isEmailValid
             }
 
-            val (isMobileNumberValid, mobileNumberError) = InputValidation.isMobileNumberValid(mobile)
-            if (isMobileNumberValid.not()){
+            val (isMobileNumberValid, mobileNumberError) = InputValidation.isMobileNumberValid(
+                mobile
+            )
+            if (isMobileNumberValid.not()) {
                 etMobileContainer.error = mobileNumberError
                 return isMobileNumberValid
             }

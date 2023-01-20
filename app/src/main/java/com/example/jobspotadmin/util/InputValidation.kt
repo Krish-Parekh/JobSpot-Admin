@@ -64,20 +64,17 @@ class InputValidation {
             if (mobileNumber.isEmpty()) {
                 return Pair(false, "Mobile number cannot be empty.")
             }
-            if (mobileNumber.length != 13) {
-                return Pair(false, "Mobile number must be 13 characters.")
+            if (mobileNumber.length != 10) {
+                return Pair(false, "Mobile number must be 10 characters.")
             }
-            if (mobileNumber.substring(3, 6).equals("000")) {
+            if (mobileNumber.substring(0, 3).equals("000")) {
                 return Pair(false, "Mobile number cannot start with 000.")
             }
-            val firstDigit = mobileNumber[3]
-            if (mobileNumber.slice(3..12).all { it == firstDigit }) {
+            val firstDigit = mobileNumber[0]
+            if (mobileNumber.slice(0..9).all { it == firstDigit }) {
                 return Pair(false, "All the digits in mobile number cannot be same.")
             }
-            if (mobileNumber.startsWith("+91").not()) {
-                return Pair(false, "Mobile number must start with +91.")
-            }
-            if (mobileNumber.substring(1).matches("^[0-9]+$".toRegex()).not()) {
+            if (mobileNumber.matches("^[0-9]+$".toRegex()).not()) {
                 return Pair(false, "Mobile number can only contain digits.")
             }
             return Pair(true, "")

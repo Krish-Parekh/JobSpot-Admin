@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jobspotadmin.model.Tpo
+import com.example.jobspotadmin.util.Constants
 import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_TPO
 import com.example.jobspotadmin.util.Constants.Companion.TPO_IMAGE_STORAGE_PATH
 import com.example.jobspotadmin.util.UiState
@@ -39,6 +40,9 @@ class ProfileViewModel : ViewModel() {
 
     private val _updateStatus : MutableLiveData<UiState> = MutableLiveData(UiState.LOADING)
     val updateStatus : LiveData<UiState> = _updateStatus
+
+    private val _deleteStatus : MutableLiveData<UiState> = MutableLiveData(UiState.LOADING)
+    val deleteStatus : LiveData<UiState> = _deleteStatus
 
     fun fetchUser(uid: String) {
         viewModelScope.launch {
@@ -81,6 +85,25 @@ class ProfileViewModel : ViewModel() {
            Log.d(TAG, "Error : ${e.message}")
            _updateStatus.postValue(UiState.FAILURE)
        }
+    }
+
+    fun deleteAccount(tpo: Tpo){
+        viewModelScope.launch {
+            try {
+                _deleteStatus.postValue(UiState.LOADING)
+                val tpoId = tpo.uid
+                val tpoImagePath = "$TPO_IMAGE_STORAGE_PATH/$tpoId"
+                mFirebaseAuth.currentUser?.delete()?.await()
+                mFirestore.collection(COLLECTION_PATH_TPO).document(tpoId).delete().await()
+                mFirestore.collection(Constants.COLLECTION_PATH_ROLE).document(tpoId).delete().await()
+                mFirebaseStorage.reference.child(tpoImagePath).delete().await()
+                _deleteStatus.postValue(UiState.SUCCESS)
+            } catch (error : Exception){
+                Log.d(TAG, "deleteAccount Error: ${error.message}")
+                _deleteStatus.postValue(UiState.FAILURE)
+            }
+
+        }
     }
 
 }

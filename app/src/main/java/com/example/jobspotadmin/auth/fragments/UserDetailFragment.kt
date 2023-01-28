@@ -1,9 +1,9 @@
 package com.example.jobspotadmin.auth.fragments
 
+
 import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,52 +11,55 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.jobspotadmin.R
 import com.example.jobspotadmin.auth.viewmodel.AuthViewModel
+import com.example.jobspotadmin.auth.viewmodel.UserDetailViewModel
 import com.example.jobspotadmin.databinding.FragmentUserDetailBinding
 import com.example.jobspotadmin.model.Tpo
 import com.example.jobspotadmin.util.*
+import com.example.jobspotadmin.util.Status.*
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.firebase.auth.FirebaseAuth
+import java.text.DateFormat
 import java.text.DecimalFormat
-import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.math.roundToLong
 
-
-private const val TAG = "UserDetailFragment"
 
 class UserDetailFragment : Fragment() {
     private var _binding: FragmentUserDetailBinding? = null
     private val binding get() = _binding!!
     private val args by navArgs<UserDetailFragmentArgs>()
-    private val authViewModel: AuthViewModel by viewModels()
-    private val mAuth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
-    private val startForProfileImageResult =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-            handleCapturedImage(result)
-        }
+    private val userDetailViewModel by viewModels<UserDetailViewModel>()
+    private val imagePicker = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result: ActivityResult ->
+        handleCapturedImage(result)
+    }
+    private val loadingDialog: LoadingDialog by lazy { LoadingDialog(requireContext()) }
     private var gender: String = ""
     private var qualification: String = ""
-    private val loadingDialog: LoadingDialog by lazy { LoadingDialog(requireContext()) }
+
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentUserDetailBinding.inflate(inflater, container, false)
-        setupView()
+
+        setupUI()
+        setupObserver()
+
         return binding.root
     }
 
-    private fun setupView() {
+    private fun setupUI() {
         binding.apply {
 
-            if (authViewModel.getImageUri() != null) {
-                profileImage.setImageURI(authViewModel.getImageUri())
+            if(userDetailViewModel.getImageUri() != null){
+                val profileUri = userDetailViewModel.getImageUri()
+                profileImage.setImageURI(profileUri)
             }
 
             profileImage.setOnClickListener {
@@ -92,7 +95,7 @@ class UserDetailFragment : Fragment() {
                 val stream = etStream.getInputValue()
                 var experience = etYearExperience.getInputValue()
                 val bio = etBio.getInputValue()
-                val imageUri = authViewModel.getImageUri()
+                val imageUri = userDetailViewModel.getImageUri()
 
                 if (detailVerification(
                         mobile,
@@ -108,7 +111,6 @@ class UserDetailFragment : Fragment() {
                     val df = DecimalFormat("#.##")
                     experience = df.format(experience.toDouble())
                     val tpo = Tpo(
-                        uid = mAuth.currentUser?.uid.toString(),
                         email = args.email,
                         username = args.username,
                         mobile = mobile,
@@ -119,43 +121,31 @@ class UserDetailFragment : Fragment() {
                         experience = experience,
                         biography = bio,
                     )
-                    Log.d(TAG, "Tpo : $tpo")
-                    authViewModel.uploadData(imageUri = imageUri!!, tpo = tpo)
-                    handleUploadResponse()
-                    clearField()
+                    userDetailViewModel.uploadUserDetail(imageUri!!, tpo)
                 }
+
             }
+
         }
     }
 
-    private fun handleUploadResponse() {
-        authViewModel.uploadDataStatus.observe(viewLifecycleOwner, Observer { uiState ->
-            when (uiState) {
-                UiState.LOADING -> {
+    private fun setupObserver() {
+        userDetailViewModel.userUploadStatus.observe(viewLifecycleOwner) { uploadState ->
+            when(uploadState.status){
+                LOADING -> {
                     loadingDialog.show()
                 }
-                UiState.SUCCESS -> {
+                SUCCESS -> {
                     loadingDialog.dismiss()
                     findNavController().popBackStack(R.id.signupFragment, true)
-                    authViewModel.setImageUri(null)
+                    userDetailViewModel.setImageUri(null)
                 }
-                UiState.FAILURE -> {
+                ERROR -> {
                     loadingDialog.dismiss()
                 }
-                else -> Unit
             }
-        })
-    }
 
-    private fun startCrop() {
-        ImagePicker.with(this)
-            .galleryOnly()
-            .crop()
-            .compress(1024)
-            .maxResultSize(300, 300)
-            .createIntent { intent ->
-                startForProfileImageResult.launch(intent)
-            }
+        }
     }
 
     private fun handleCapturedImage(result: ActivityResult) {
@@ -164,8 +154,8 @@ class UserDetailFragment : Fragment() {
 
         when (resultCode) {
             Activity.RESULT_OK -> {
-                authViewModel.setImageUri(imageUri = data?.data!!)
-                binding.profileImage.setImageURI(authViewModel.getImageUri())
+                userDetailViewModel.setImageUri(imageUri = data?.data!!)
+                binding.profileImage.setImageURI(userDetailViewModel.getImageUri())
             }
             ImagePicker.RESULT_ERROR -> {
                 showToast(requireContext(), ImagePicker.getError(data))
@@ -176,6 +166,17 @@ class UserDetailFragment : Fragment() {
         }
     }
 
+    private fun startCrop() {
+        ImagePicker.with(this)
+            .galleryOnly()
+            .crop()
+            .compress(1024)
+            .maxResultSize(300, 300)
+            .createIntent { intent ->
+                imagePicker.launch(intent)
+            }
+    }
+
     private fun showCalendar() {
         val datePicker = MaterialDatePicker.Builder.datePicker()
             .setTitleText("Select date")
@@ -183,7 +184,7 @@ class UserDetailFragment : Fragment() {
             .build()
         datePicker.addOnPositiveButtonClickListener {
             val date = Date(it)
-            val formatter = SimpleDateFormat("yyyy-MM-dd")
+            val formatter = DateFormat.getDateInstance(DateFormat.SHORT, Locale.US)
             val dateString = formatter.format(date)
             binding.etDate.setText(dateString)
         }
@@ -252,19 +253,6 @@ class UserDetailFragment : Fragment() {
             }
 
             return true
-        }
-    }
-
-    private fun clearField() {
-        binding.apply {
-            etMobile.clearText()
-            etDate.clearText()
-            genderSpinner.clearSelectedItem()
-            qualificationSpinner.clearSelectedItem()
-            etStream.clearText()
-            etYearExperience.clearText()
-            etBio.clearText()
-            profileImage.setImageResource(R.drawable.ic_image_picker)
         }
     }
 

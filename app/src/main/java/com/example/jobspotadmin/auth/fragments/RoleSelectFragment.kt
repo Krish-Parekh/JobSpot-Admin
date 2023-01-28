@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
-import com.example.jobspotadmin.R
 import com.example.jobspotadmin.databinding.FragmentRoleSelectBinding
 import com.example.jobspotadmin.util.Constants.Companion.ROLE_TYPE_ADMIN
 import com.example.jobspotadmin.util.Constants.Companion.ROLE_TYPE_TPO
@@ -21,12 +20,12 @@ class RoleSelectFragment : Fragment() {
     ): View? {
         _binding = FragmentRoleSelectBinding.inflate(inflater, container, false)
 
-        setupView()
+        setupUI()
 
         return binding.root
     }
 
-    private fun setupView() {
+    private fun setupUI() {
         binding.apply {
             ivRoleAdmin.setOnClickListener {
                 navigateToLogin(roleType = ROLE_TYPE_ADMIN)

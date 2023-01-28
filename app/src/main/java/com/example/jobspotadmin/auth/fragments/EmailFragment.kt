@@ -26,12 +26,12 @@ class EmailFragment : Fragment() {
     ): View? {
         _binding = FragmentEmailBinding.inflate(inflater, container, false)
 
-        setupView()
+        setupUI()
 
         return binding.root
     }
 
-    private fun setupView() {
+    private fun setupUI() {
 
         binding.apply {
 
@@ -54,7 +54,6 @@ class EmailFragment : Fragment() {
         val resendText = SpannableString(getString(R.string.email_resend_prompt))
         val color = ContextCompat.getColor(requireActivity(), R.color.on_boarding_span_text_color)
         val resendColor = ForegroundColorSpan(color)
-
         resendText.setSpan(UnderlineSpan(), 33, resendText.length, 0)
         resendText.setSpan(resendColor, 33, resendText.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
         return resendText

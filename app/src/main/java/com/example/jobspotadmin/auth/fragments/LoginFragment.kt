@@ -77,6 +77,7 @@ class LoginFragment : Fragment() {
                 SUCCESS -> {
                     loadingDialog.dismiss()
                     val user = loginState.data!!
+                    Log.d(TAG, "User: $user ")
                     if (user.roleType == args.roleType) {
                         if (user.userInfoExist.not() && user.roleType == ROLE_TYPE_TPO) {
                             navigateToUserDetail(username = user.username, email = user.email)

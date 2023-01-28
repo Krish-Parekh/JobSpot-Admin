@@ -8,6 +8,7 @@ import com.example.jobspotadmin.model.Admin
 import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_ADMIN
 import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_ROLE
 import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_STUDENT
+import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_TPO
 import com.example.jobspotadmin.util.Constants.Companion.ROLE_TYPE_ADMIN
 import com.example.jobspotadmin.util.Resource
 import com.google.firebase.FirebaseNetworkException
@@ -54,7 +55,7 @@ class AuthViewModel : ViewModel() {
                     return@launch
                 }
                 val userRole = roleDocument.get("role") as String
-                val userRef = mFirestore.collection(COLLECTION_PATH_STUDENT).document(userId)
+                val userRef = mFirestore.collection(COLLECTION_PATH_TPO).document(userId)
                 val userDocument = userRef.get().await()
                 val userInfoExist = userDocument.exists()
 

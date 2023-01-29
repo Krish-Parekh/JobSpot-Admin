@@ -1,5 +1,6 @@
 package com.example.jobspotadmin.home.fragment.homeFragment.viewmodel
 
+
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,8 +10,10 @@ import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_MOCK
 import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_NOTIFICATION
 import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_STUDENT
 import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_TPO
+import com.example.jobspotadmin.util.Resource
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.auth.User
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -22,20 +25,26 @@ private const val TAG = "HomeViewModelTAG"
 class HomeViewModel : ViewModel() {
 
     private val mFirestore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
-    private val _metaCounts: MutableLiveData<Counts> = MutableLiveData()
-    val metaCounts: LiveData<Counts> = _metaCounts
+    private val _metaCounts: MutableLiveData<Resource<Counts>> = MutableLiveData()
+    val metaCounts: LiveData<Resource<Counts>> = _metaCounts
     private var notificationCountListener : ListenerRegistration? = null
     private var countListener : ListenerRegistration? = null
 
     fun fetchCounts() {
         viewModelScope.launch(Dispatchers.IO) {
-            val tpoCount = getCount(COLLECTION_PATH_TPO)
-            val studentCount = getCount(COLLECTION_PATH_STUDENT)
-            val jobCount = getCount(COLLECTION_PATH_COMPANY)
-            val mockCount = getCount(COLLECTION_PATH_MOCK)
-            val notificationCount = getNotificationCount()
-            val count = Counts(tpoCount, studentCount, jobCount, mockCount, notificationCount)
-            _metaCounts.postValue(count)
+            try {
+                _metaCounts.postValue(Resource.loading())
+                val tpoCount = getCount(COLLECTION_PATH_TPO)
+                val studentCount = getCount(COLLECTION_PATH_STUDENT)
+                val jobCount = getCount(COLLECTION_PATH_COMPANY)
+                val mockCount = getCount(COLLECTION_PATH_MOCK)
+                val notificationCount = getNotificationCount()
+                val count = Counts(tpoCount, studentCount, jobCount, mockCount, notificationCount)
+                _metaCounts.postValue(Resource.success(count))
+            } catch (error : Exception){
+                val errorMessage = error.message!!
+                _metaCounts.postValue(Resource.error(errorMessage))
+            }
         }
     }
 
@@ -81,5 +90,6 @@ data class Counts(
     var studentCount: Int = 0,
     var jobCount: Int = 0,
     var mockCount: Int = 0,
-    var notificationCount: Int = 0
+    var notificationCount: Int = 0,
+    var user : User? = null
 )

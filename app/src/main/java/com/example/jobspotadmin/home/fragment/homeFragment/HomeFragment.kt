@@ -14,115 +14,125 @@ import androidx.navigation.fragment.findNavController
 import coil.load
 import com.example.jobspotadmin.R
 import com.example.jobspotadmin.auth.AuthActivity
+import com.example.jobspotadmin.databinding.BottomSheetLogoutBinding
 import com.example.jobspotadmin.databinding.FragmentHomeBinding
 import com.example.jobspotadmin.home.fragment.homeFragment.viewmodel.HomeViewModel
 import com.example.jobspotadmin.util.Constants.Companion.ROLE_TYPE_ADMIN
+import com.example.jobspotadmin.util.LoadingDialog
+import com.example.jobspotadmin.util.Status.*
+import com.example.jobspotadmin.util.showToast
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.button.MaterialButton
-import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 private const val TAG = "HomeFragment"
+
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private val homeViewModel by viewModels<HomeViewModel>()
-    private val currentUser by lazy { FirebaseAuth.getInstance().currentUser }
+    private val user: FirebaseUser? by lazy { Firebase.auth.currentUser }
+    private val loadingDialog by lazy { LoadingDialog(requireContext()) }
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
-        val roleType: Bundle? = requireActivity().intent.extras
-        if (
-            roleType != null
-            && roleType.containsKey("ROLE_TYPE")
-            && roleType.containsKey("USERNAME")
-        ){
-            val role = requireActivity().intent.extras?.getString("ROLE_TYPE").toString()
-            val username = requireActivity().intent.extras?.getString("USERNAME").toString()
-            if (role == ROLE_TYPE_ADMIN){
-                binding.ivProfileImage.visibility = View.GONE
-                binding.ivLogout.visibility = View.VISIBLE
-            } else {
-                binding.ivProfileImage.load(currentUser?.photoUrl)
-                binding.cvPlacementOfficer.visibility = View.GONE
-            }
-            binding.tvWelcomeHeading.text = getString(R.string.field_welcome_heading, currentUser?.displayName)
-        }
-        setupViews()
+        setupUI()
+        setupObserver()
+
         return binding.root
     }
 
-    private fun setupViews() {
-
-        if (binding.ivLogout.visibility == View.VISIBLE){
-            binding.ivLogout.setOnClickListener {
-                showLogoutBottomSheet()
+    private fun setupUI() {
+        binding.apply {
+            homeViewModel.fetchCounts()
+            val bundle: Bundle? = requireActivity().intent.extras
+            if (
+                bundle != null
+                && user != null
+                && bundle.containsKey("ROLE_TYPE")
+                && bundle.containsKey("USERNAME")
+            ) {
+                val roleType = bundle.getString("ROLE_TYPE").toString()
+                val username = bundle.getString("USERNAME").toString()
+                if (roleType == ROLE_TYPE_ADMIN) {
+                    ivProfileImage.visibility = View.GONE
+                    ivLogout.visibility = View.VISIBLE
+                } else {
+                    ivProfileImage.load(user?.photoUrl)
+                    cvPlacementOfficer.visibility = View.GONE
+                }
+                binding.tvWelcomeHeading.text =
+                    getString(R.string.field_welcome_heading, user?.displayName)
             }
-        }
 
-        homeViewModel.fetchCounts()
-        homeViewModel.metaCounts.observe(viewLifecycleOwner){ count ->
-            counterAnimation(0, count.studentCount, binding.tvStudentCount)
-            counterAnimation(0, count.jobCount, binding.tvJobCount)
-            counterAnimation(0, count.mockCount, binding.tvMockTestCount)
-            counterAnimation(0, count.notificationCount, binding.tvNotificationCount)
-            if (binding.cvPlacementOfficer.visibility == View.VISIBLE){
-                counterAnimation(0, count.tpoCount, binding.tvPlacementOfficerCount)
+            if (ivLogout.visibility == View.VISIBLE) {
+                ivLogout.setOnClickListener {
+                    showLogoutBottomSheet()
+                }
             }
-        }
 
-        binding.ivProfileImage.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_profileFragment)
-        }
+            ivProfileImage.setOnClickListener {
+                findNavController().navigate(R.id.action_homeFragment_to_profileFragment)
+            }
 
-        binding.cvJob.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_jobsFragment)
-        }
+            cvJob.setOnClickListener {
+                findNavController().navigate(R.id.action_homeFragment_to_jobsFragment)
+            }
 
-        binding.cvMockTest.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_quizFragment)
-        }
+            cvMockTest.setOnClickListener {
+                findNavController().navigate(R.id.action_homeFragment_to_quizFragment)
+            }
 
-        binding.cvStudent.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_studentFragment)
-        }
+            cvStudent.setOnClickListener {
+                findNavController().navigate(R.id.action_homeFragment_to_studentFragment)
+            }
 
-        binding.cvNotification.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_notificationFragment)
-        }
+            cvNotification.setOnClickListener {
+                findNavController().navigate(R.id.action_homeFragment_to_notificationFragment)
+            }
 
-        binding.cvPlacementOfficer.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_tpoFragment)
+            cvPlacementOfficer.setOnClickListener {
+                findNavController().navigate(R.id.action_homeFragment_to_tpoFragment)
+            }
         }
     }
 
-    private fun showLogoutBottomSheet() {
-        val dialog = BottomSheetDialog(requireContext())
-        val bottomSheet = layoutInflater.inflate(R.layout.bottom_sheet_logout, null)
-        val btnNot: MaterialButton = bottomSheet.findViewById(R.id.btnNo)
-        val btnRemove: MaterialButton = bottomSheet.findViewById(R.id.btnLogout)
-        btnNot.setOnClickListener {
-            dialog.dismiss()
+    private fun setupObserver() {
+        homeViewModel.metaCounts.observe(viewLifecycleOwner) { countState ->
+            when (countState.status) {
+                LOADING -> {
+                    loadingDialog.show()
+                }
+                SUCCESS -> {
+                    val counts = countState.data!!
+                    counterAnimation(counts.studentCount, binding.tvStudentCount)
+                    counterAnimation(counts.jobCount, binding.tvJobCount)
+                    counterAnimation(counts.mockCount, binding.tvMockTestCount)
+                    counterAnimation(counts.notificationCount, binding.tvNotificationCount)
+                    if (binding.cvPlacementOfficer.visibility == View.VISIBLE){
+                        counterAnimation(counts.tpoCount, binding.tvPlacementOfficerCount)
+                    }
+                    loadingDialog.dismiss()
+                }
+                ERROR -> {
+                    val errorMessage = countState.message!!
+                    showToast(requireContext(), errorMessage)
+                    loadingDialog.dismiss()
+                }
+            }
         }
-        btnRemove.setOnClickListener {
-            dialog.dismiss()
-            FirebaseAuth.getInstance().signOut()
-            requireActivity().finishAffinity()
-            val loginIntent = Intent(requireContext(), AuthActivity::class.java)
-            loginIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-            startActivity(loginIntent)
-        }
-        dialog.setContentView(bottomSheet)
-        dialog.show()
     }
 
-    private fun counterAnimation(start: Int, end: Int, textView: TextView) {
-        if (start == end) {
-            textView.text = start.toString()
+    private fun counterAnimation(count: Int, textView: TextView) {
+        if (count == 0) {
+            textView.text = "0"
         } else {
-            val animator = ValueAnimator.ofInt(start, end)
+            val animator = ValueAnimator.ofInt(0, count)
             animator.duration = 500
             animator.interpolator = LinearInterpolator()
             animator.addUpdateListener {
@@ -133,9 +143,32 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun showLogoutBottomSheet() {
+        val bottomSheetDialog = BottomSheetDialog(requireContext())
+        val logoutSheetBinding = BottomSheetLogoutBinding.inflate(layoutInflater)
+        bottomSheetDialog.setContentView(logoutSheetBinding.root)
+        logoutSheetBinding.apply {
+            btnNo.setOnClickListener {
+                bottomSheetDialog.dismiss()
+            }
+            btnLogout.setOnClickListener {
+                bottomSheetDialog.dismiss()
+                logout()
+            }
+        }
+        bottomSheetDialog.show()
+    }
+
+    private fun logout() {
+        Firebase.auth.signOut()
+        requireActivity().finishAffinity()
+        val loginIntent = Intent(requireContext(), AuthActivity::class.java)
+        loginIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        startActivity(loginIntent)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-
 }

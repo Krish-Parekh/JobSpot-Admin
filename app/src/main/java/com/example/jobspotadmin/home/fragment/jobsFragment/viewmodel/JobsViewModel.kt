@@ -130,6 +130,7 @@ class JobsViewModel : ViewModel() {
                     studentRef.removeEventListener(companyDeleteListener)
                 }
                 deleteCompaniesFromStudentDeferred.await()
+                _deleteJobStatus.postValue(Resource.success("Job delete success."))
 
             } catch (error: Exception) {
                 val errorMessage = error.message!!

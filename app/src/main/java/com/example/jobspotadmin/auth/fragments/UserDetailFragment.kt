@@ -24,6 +24,7 @@ import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.datepicker.MaterialDatePicker
 import java.text.DateFormat
 import java.text.DecimalFormat
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -184,7 +185,7 @@ class UserDetailFragment : Fragment() {
             .build()
         datePicker.addOnPositiveButtonClickListener {
             val date = Date(it)
-            val formatter = DateFormat.getDateInstance(DateFormat.SHORT, Locale.US)
+            val formatter = SimpleDateFormat("yyyy-MM-dd")
             val dateString = formatter.format(date)
             binding.etDate.setText(dateString)
         }

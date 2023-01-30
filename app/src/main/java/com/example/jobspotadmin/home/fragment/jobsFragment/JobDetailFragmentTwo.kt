@@ -3,7 +3,6 @@ package com.example.jobspotadmin.home.fragment.jobsFragment
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +17,7 @@ import com.example.jobspotadmin.databinding.FragmentJobDetailTwoBinding
 import com.example.jobspotadmin.home.fragment.jobsFragment.viewmodel.ChipsViewModel
 import com.example.jobspotadmin.home.fragment.jobsFragment.viewmodel.JobsViewModel
 import com.example.jobspotadmin.util.*
+import com.example.jobspotadmin.util.Status.*
 
 private const val TAG = "JobDetailFragmentTwo"
 
@@ -86,21 +86,24 @@ class JobDetailFragmentTwo : Fragment() {
     }
 
     private fun handleUploadResponse() {
-        jobsViewModel.operationStatus.observe(viewLifecycleOwner, Observer { uiState ->
-            when (uiState) {
-                UiState.LOADING -> {
+        jobsViewModel.uploadJobStatus.observe(viewLifecycleOwner){ uploadState ->
+            when(uploadState.status){
+                LOADING -> {
                     loadingDialog.show()
                 }
-                UiState.SUCCESS -> {
+                SUCCESS -> {
                     loadingDialog.dismiss()
+                    val successMessage = uploadState.data!!
+                    showToast(requireContext(), successMessage)
                     findNavController().popBackStack(R.id.jobDetailFragmentOne, inclusive = true)
                 }
-                UiState.FAILURE -> {
+                ERROR -> {
                     loadingDialog.dismiss()
+                    val errorMessage = uploadState.message!!
+                    showToast(requireContext(), errorMessage)
                 }
-                else -> Unit
             }
-        })
+        }
     }
 
     private fun detailVerification(

@@ -10,20 +10,19 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.load
 import com.example.jobspotadmin.R
+import com.example.jobspotadmin.databinding.BottomSheetDeleteJobBinding
 import com.example.jobspotadmin.databinding.FragmentJobViewBinding
 import com.example.jobspotadmin.home.fragment.jobsFragment.viewmodel.JobsViewModel
 import com.example.jobspotadmin.model.Job
 import com.example.jobspotadmin.util.LoadingDialog
-import com.example.jobspotadmin.util.UiState
+import com.example.jobspotadmin.util.Status
 import com.example.jobspotadmin.util.convertToShortString
 import com.example.jobspotadmin.util.showToast
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.chip.Chip
 
 private const val TAG = "JobViewFragment"
@@ -43,19 +42,20 @@ class JobViewFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentJobViewBinding.inflate(inflater, container, false)
 
-        setupView()
+        setupUI()
+        setupObserver()
 
         return binding.root
     }
 
-    private fun setupView() {
+    private fun setupUI() {
         binding.apply {
             ivPopOut.setOnClickListener {
                 findNavController().popBackStack()
             }
 
             ivDeleteJob.setOnClickListener {
-                showDeleteDialog(job = job)
+                deleteJobDialog(job = job)
             }
 
             ivEditJob.setOnClickListener {
@@ -82,6 +82,26 @@ class JobViewFragment : Fragment() {
         }
     }
 
+    private fun setupObserver() {
+        jobsViewModel.deleteJobStatus.observe(viewLifecycleOwner){ deleteState ->
+            when(deleteState.status){
+                Status.LOADING -> {
+                    loadingDialog.show()
+                }
+                Status.SUCCESS -> {
+                    loadingDialog.dismiss()
+                    val successMessage = deleteState.data!!
+                    showToast(requireContext(), successMessage)
+                }
+                Status.ERROR -> {
+                    loadingDialog.dismiss()
+                    val errorMessage = deleteState.message!!
+                    showToast(requireContext(), errorMessage)
+                }
+            }
+        }
+    }
+
     private fun createSkillSetChip(job: String) {
         val chip = Chip(requireContext())
         chip.text = job
@@ -103,41 +123,20 @@ class JobViewFragment : Fragment() {
         return salaryText
     }
 
-    private fun showDeleteDialog(job: Job) {
-        val dialog = BottomSheetDialog(requireContext())
-        val bottomSheet = layoutInflater.inflate(R.layout.bottom_sheet_delete_job, null)
-        val btnNot: MaterialButton = bottomSheet.findViewById(R.id.btnNo)
-        val btnRemove: MaterialButton = bottomSheet.findViewById(R.id.btnRemoveFile)
-        btnNot.setOnClickListener {
-            dialog.dismiss()
-        }
-        btnRemove.setOnClickListener {
-            jobsViewModel.deleteJob(job = job)
-            handleDeleteResponse()
-            dialog.dismiss()
-        }
-        dialog.setContentView(bottomSheet)
-        dialog.show()
-    }
-
-    private fun handleDeleteResponse() {
-        jobsViewModel.operationStatus.observe(viewLifecycleOwner, Observer { uiState ->
-            when (uiState) {
-                UiState.LOADING -> {
-                    loadingDialog.show()
-                }
-                UiState.SUCCESS -> {
-                    showToast(requireContext(), "Job delete success")
-                    loadingDialog.dismiss()
-                    findNavController().popBackStack()
-                }
-                UiState.FAILURE -> {
-                    showToast(requireContext(), "Error while deleting job")
-                    loadingDialog.dismiss()
-                }
-                else -> Unit
+    fun deleteJobDialog(job: Job) {
+        val bottomSheetDialog = BottomSheetDialog(requireContext())
+        val jobDeleteSheetBinding = BottomSheetDeleteJobBinding.inflate(layoutInflater)
+        bottomSheetDialog.setContentView(jobDeleteSheetBinding.root)
+        jobDeleteSheetBinding.apply {
+            btnNo.setOnClickListener {
+                bottomSheetDialog.dismiss()
             }
-        })
+            btnRemoveJob.setOnClickListener {
+                jobsViewModel.deleteJob(job)
+                bottomSheetDialog.dismiss()
+            }
+        }
+        bottomSheetDialog.show()
     }
 
     override fun onDestroyView() {

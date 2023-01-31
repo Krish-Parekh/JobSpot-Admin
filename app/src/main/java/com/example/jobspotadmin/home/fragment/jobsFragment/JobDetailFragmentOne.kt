@@ -20,7 +20,8 @@ import com.example.jobspotadmin.util.addTextWatcher
 import com.example.jobspotadmin.util.getInputValue
 import com.example.jobspotadmin.util.showToast
 import com.github.dhaval2404.imagepicker.ImagePicker
-import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 
 class JobDetailFragmentOne : Fragment() {
@@ -30,22 +31,21 @@ class JobDetailFragmentOne : Fragment() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             handleCapturedImage(result)
         }
-    private val jobsViewModel: JobsViewModel by viewModels()
+    private val jobsViewModel by viewModels<JobsViewModel>()
     private var workType: String = ""
     private var designation : String = ""
-    private val mAuth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentJobDetailOneBinding.inflate(inflater, container, false)
 
-        setupView()
+        setupUI()
 
         return binding.root
     }
 
-    private fun setupView() {
+    private fun setupUI() {
         binding.apply {
 
             if (jobsViewModel.getImageUri() != null) {
@@ -85,7 +85,7 @@ class JobDetailFragmentOne : Fragment() {
                 val salary = etSalary.getInputValue()
                 val jobDescription = etJobDesc.getInputValue()
                 val imageUrl = jobsViewModel.getImageUri()
-                val currentUid = mAuth.currentUser?.uid.toString()
+                val currentUid = Firebase.auth.currentUser?.uid.toString()
 
                 if (detailVerification(
                         imageUrl,

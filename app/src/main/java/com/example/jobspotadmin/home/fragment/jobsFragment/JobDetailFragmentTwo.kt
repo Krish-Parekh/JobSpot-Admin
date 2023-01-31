@@ -28,20 +28,21 @@ class JobDetailFragmentTwo : Fragment() {
     private val args by navArgs<JobDetailFragmentTwoArgs>()
     private val job by lazy { args.job }
     private val loadingDialog: LoadingDialog by lazy { LoadingDialog(requireContext()) }
-    private val jobsViewModel: JobsViewModel by viewModels()
-    private val chipsViewModel : ChipsViewModel by viewModels()
+    private val jobsViewModel by viewModels<JobsViewModel>()
+    private val chipsViewModel by viewModels<ChipsViewModel>()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentJobDetailTwoBinding.inflate(inflater, container, false)
 
-        setupView()
+        setupUI()
+        setupObserver()
 
         return binding.root
     }
 
-    private fun setupView() {
+    private fun setupUI() {
         binding.apply {
 
             ivPopOut.setOnClickListener {
@@ -61,31 +62,30 @@ class JobDetailFragmentTwo : Fragment() {
                 }
             }
 
-            chipsViewModel.chips.observe(viewLifecycleOwner, Observer { chips ->
-                if (chips.isNotEmpty()) {
-                    skillChipGroup.removeAllViews()
-                    chips.forEach { chip ->
-                        createChip(chip, requireContext(), skillChipGroup, chipsViewModel::removeChip)
-                    }
-                }
-            })
-
-
             btnSave.setOnClickListener {
                 val responsibility = etJobResp.getInputValue()
                 val skills = chipsViewModel.chips.value?.toMutableList() ?: mutableListOf()
                 if (detailVerification(responsibility, skills)) {
                     job.responsibility = responsibility
                     job.skillSet = skills
-                    val imageUri: Uri = Uri.parse(job.imageUrl)
+                    val imageUri = Uri.parse(job.imageUrl)
                     jobsViewModel.uploadData(imageUri, job)
-                    handleUploadResponse()
                 }
             }
         }
     }
 
-    private fun handleUploadResponse() {
+    private fun setupObserver() {
+        chipsViewModel.chips.observe(viewLifecycleOwner) { chips ->
+            if (chips.isNotEmpty()) {
+                binding.skillChipGroup.removeAllViews()
+                chips.forEach { chip ->
+                    createChip(chip, requireContext(), binding.skillChipGroup, chipsViewModel::removeChip)
+                }
+            }
+        }
+
+
         jobsViewModel.uploadJobStatus.observe(viewLifecycleOwner){ uploadState ->
             when(uploadState.status){
                 LOADING -> {

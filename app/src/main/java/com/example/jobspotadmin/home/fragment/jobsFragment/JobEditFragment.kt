@@ -11,36 +11,32 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.load
-import com.example.jobspotadmin.R
 import com.example.jobspotadmin.databinding.FragmentJobEditBinding
 import com.example.jobspotadmin.home.fragment.jobsFragment.viewmodel.ChipsViewModel
 import com.example.jobspotadmin.home.fragment.jobsFragment.viewmodel.JobEditViewModel
-import com.example.jobspotadmin.home.fragment.jobsFragment.viewmodel.JobsViewModel
 import com.example.jobspotadmin.model.Job
 import com.example.jobspotadmin.util.*
-import com.example.jobspotadmin.util.UiState.*
+import com.example.jobspotadmin.util.Status.*
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.textfield.TextInputLayout
 
 private const val TAG = "JobEditFragmentTAG"
 
 class JobEditFragment : Fragment() {
+    private var _binding: FragmentJobEditBinding? = null
+    private val binding get() = _binding!!
     private val startForProfileImageResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             handleCapturedImage(result)
         }
-    private val jobsViewModel: JobsViewModel by viewModels()
-    private val chipsViewModel: ChipsViewModel by viewModels()
-    private val jobEditViewModel: JobEditViewModel by viewModels()
-    private var _binding: FragmentJobEditBinding? = null
-    private val binding get() = _binding!!
+    private val chipsViewModel by viewModels<ChipsViewModel>()
+    private val jobEditViewModel by viewModels<JobEditViewModel>()
     private val args by navArgs<JobViewFragmentArgs>()
     private val job by lazy { args.job }
-    private val loadingDialog: LoadingDialog by lazy { LoadingDialog(requireContext()) }
+    private val loadingDialog by lazy { LoadingDialog(requireContext()) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,27 +44,30 @@ class JobEditFragment : Fragment() {
     ): View? {
         _binding = FragmentJobEditBinding.inflate(inflater, container, false)
 
-        setupViews()
+        setupUI()
+        setupObserver()
 
         return binding.root
     }
 
-    private fun setupViews() {
+    private fun setupUI() {
         binding.apply {
+
+            populateFields(job)
 
             ivPopOut.setOnClickListener {
                 findNavController().popBackStack()
             }
 
             companyImage.load(job.imageUrl)
-            if (jobsViewModel.getImageUri() != null) {
-                companyImage.setImageURI(jobsViewModel.getImageUri())
+
+            if (jobEditViewModel.getImageUri() != null) {
+                companyImage.setImageURI(jobEditViewModel.getImageUri())
             }
+
             companyImage.setOnClickListener {
                 startCrop()
             }
-
-            populateFields(job)
 
             addTextWatchers(
                 etJobTitleContainer,
@@ -82,20 +81,6 @@ class JobEditFragment : Fragment() {
             etSkills.addTextChangedListener { text: Editable? ->
                 handleSkillInput(text)
             }
-
-            chipsViewModel.chips.observe(viewLifecycleOwner, Observer { chips ->
-                if (chips.isNotEmpty()) {
-                    skillChipGroup.removeAllViews()
-                    chips.forEach { chip ->
-                        createChip(
-                            chip,
-                            requireContext(),
-                            skillChipGroup,
-                            chipsViewModel::removeChip
-                        )
-                    }
-                }
-            })
 
             btnSave.setOnClickListener {
                 handleSaveClick()
@@ -138,7 +123,7 @@ class JobEditFragment : Fragment() {
             val salary = etSalary.getInputValue()
             val jobDescription = etJobDesc.getInputValue()
             val responsibility = etJobResp.getInputValue()
-            val imageUrl = jobsViewModel.getImageUri() ?: job.imageUrl
+            val imageUrl = jobEditViewModel.getImageUri() ?: job.imageUrl
             val skills = chipsViewModel.chips.value?.toMutableList() ?: mutableListOf()
 
             if (detailVerification(
@@ -161,28 +146,42 @@ class JobEditFragment : Fragment() {
                 job.skillSet = skills
 
                 jobEditViewModel.editJob(job = job)
-                handleEditResponse()
+
             }
         }
     }
 
-    private fun handleEditResponse() {
-        jobEditViewModel.editOperationStatus.observe(viewLifecycleOwner, Observer { uiState ->
-            when (uiState) {
+    private fun setupObserver() {
+        chipsViewModel.chips.observe(viewLifecycleOwner) { chips ->
+            if (chips.isNotEmpty()) {
+                binding.skillChipGroup.removeAllViews()
+                chips.forEach { chip ->
+                    createChip(
+                        chip,
+                        requireContext(),
+                        binding.skillChipGroup,
+                        chipsViewModel::removeChip
+                    )
+                }
+            }
+        }
+        jobEditViewModel.editJobStatus.observe(viewLifecycleOwner) { editJobStatus ->
+            when (editJobStatus.status) {
                 LOADING -> {
                     loadingDialog.show()
                 }
                 SUCCESS -> {
                     loadingDialog.dismiss()
-                    showToast(requireContext(), "Success")
+                    val successMessage = editJobStatus.data!!
+                    showToast(requireContext(), successMessage)
                 }
-                FAILURE -> {
+                ERROR -> {
                     loadingDialog.dismiss()
-                    showToast(requireContext(), "Error")
+                    val errorMessage = editJobStatus.message!!
+                    showToast(requireContext(), errorMessage)
                 }
-                else -> Unit
             }
-        })
+        }
     }
 
     private fun startCrop() {
@@ -202,8 +201,8 @@ class JobEditFragment : Fragment() {
 
         when (resultCode) {
             Activity.RESULT_OK -> {
-                jobsViewModel.setImageUri(imageUri = data?.data!!)
-                binding.companyImage.setImageURI(jobsViewModel.getImageUri())
+                jobEditViewModel.setImageUri(imageUri = data?.data!!)
+                binding.companyImage.setImageURI(jobEditViewModel.getImageUri())
             }
             ImagePicker.RESULT_ERROR -> {
                 showToast(requireContext(), ImagePicker.getError(data))
@@ -225,43 +224,47 @@ class JobEditFragment : Fragment() {
     ): Boolean {
         binding.apply {
             val (isJobTitleValid, jobTitleError) = InputValidation.isJobTitleValid(title)
-            if (isJobTitleValid.not()){
+            if (isJobTitleValid.not()) {
                 etJobTitleContainer.error = jobTitleError
                 return isJobTitleValid
             }
 
             val (isCompanyNameValid, companyNameError) = InputValidation.isCompanyNameValid(company)
-            if (isCompanyNameValid.not()){
+            if (isCompanyNameValid.not()) {
                 etCompanyNameContainer.error = companyNameError
                 return isCompanyNameValid
             }
 
             val (isCityValid, cityError) = InputValidation.isCityValid(city)
-            if (isCityValid.not()){
+            if (isCityValid.not()) {
                 etCityNameContainer.error = cityError
                 return isCityValid
             }
 
             val (isSalaryValid, salaryError) = InputValidation.isSalaryValid(salary)
-            if (isSalaryValid.not()){
+            if (isSalaryValid.not()) {
                 etSalaryContainer.error = salaryError
                 return isSalaryValid
             }
 
-            val (isDescriptionValid, descriptionError) = InputValidation.isJobDescriptionValid(description)
+            val (isDescriptionValid, descriptionError) = InputValidation.isJobDescriptionValid(
+                description
+            )
             if (isDescriptionValid.not()) {
                 etJobDescContainer.error = descriptionError
                 return isDescriptionValid
             }
 
-            val (isResponsibilityValid, responsibilityError) = InputValidation.isResponsibilityValid(responsibility)
-            if (isResponsibilityValid.not()){
+            val (isResponsibilityValid, responsibilityError) = InputValidation.isResponsibilityValid(
+                responsibility
+            )
+            if (isResponsibilityValid.not()) {
                 etJobRespContainer.error = responsibilityError
                 return isResponsibilityValid
             }
 
             val (isSkillsValid, skillsError) = InputValidation.isSkillSetValid(skills)
-            if (isSkillsValid.not()){
+            if (isSkillsValid.not()) {
                 etSkillsContainer.error = skillsError
                 return isSkillsValid
             }

@@ -19,13 +19,13 @@ import com.example.jobspotadmin.databinding.FragmentJobViewBinding
 import com.example.jobspotadmin.home.fragment.jobsFragment.viewmodel.JobsViewModel
 import com.example.jobspotadmin.model.Job
 import com.example.jobspotadmin.util.LoadingDialog
-import com.example.jobspotadmin.util.Status
+import com.example.jobspotadmin.util.Status.SUCCESS
+import com.example.jobspotadmin.util.Status.LOADING
+import com.example.jobspotadmin.util.Status.ERROR
 import com.example.jobspotadmin.util.convertToShortString
 import com.example.jobspotadmin.util.showToast
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
-
-private const val TAG = "JobViewFragment"
 
 class JobViewFragment : Fragment() {
     private var _binding: FragmentJobViewBinding? = null
@@ -85,15 +85,15 @@ class JobViewFragment : Fragment() {
     private fun setupObserver() {
         jobsViewModel.deleteJobStatus.observe(viewLifecycleOwner){ deleteState ->
             when(deleteState.status){
-                Status.LOADING -> {
+                LOADING -> {
                     loadingDialog.show()
                 }
-                Status.SUCCESS -> {
+                SUCCESS -> {
                     loadingDialog.dismiss()
                     val successMessage = deleteState.data!!
                     showToast(requireContext(), successMessage)
                 }
-                Status.ERROR -> {
+                ERROR -> {
                     loadingDialog.dismiss()
                     val errorMessage = deleteState.message!!
                     showToast(requireContext(), errorMessage)
@@ -123,7 +123,7 @@ class JobViewFragment : Fragment() {
         return salaryText
     }
 
-    fun deleteJobDialog(job: Job) {
+    private fun deleteJobDialog(job: Job) {
         val bottomSheetDialog = BottomSheetDialog(requireContext())
         val jobDeleteSheetBinding = BottomSheetDeleteJobBinding.inflate(layoutInflater)
         bottomSheetDialog.setContentView(jobDeleteSheetBinding.root)

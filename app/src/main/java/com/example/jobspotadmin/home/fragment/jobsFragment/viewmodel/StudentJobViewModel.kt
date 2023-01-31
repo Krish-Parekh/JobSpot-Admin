@@ -27,9 +27,9 @@ class StudentJobViewModel : ViewModel() {
         MutableLiveData(mutableListOf())
     val pendingApplications: LiveData<MutableList<JobStatus>> = _pendingApplications
 
-    private val _evaluatedApplication: MutableLiveData<MutableList<JobStatus>> =
+    private val _evaluatedApplications: MutableLiveData<MutableList<JobStatus>> =
         MutableLiveData(mutableListOf())
-    val evaluatedApplication: LiveData<MutableList<JobStatus>> = _evaluatedApplication
+    val evaluatedApplications: LiveData<MutableList<JobStatus>> = _evaluatedApplications
 
 
     fun fetchStudents(jobId: String) {
@@ -57,7 +57,7 @@ class StudentJobViewModel : ViewModel() {
                             }
                         }
                         _pendingApplications.postValue(tempPendingList)
-                        _evaluatedApplication.postValue(tempEvaluatedList)
+                        _evaluatedApplications.postValue(tempEvaluatedList)
                     }
                 }
 

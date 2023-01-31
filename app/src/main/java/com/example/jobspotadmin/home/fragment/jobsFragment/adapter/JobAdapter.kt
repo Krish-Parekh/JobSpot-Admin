@@ -9,9 +9,9 @@ import com.example.jobspotadmin.databinding.JobCardLayoutBinding
 import com.example.jobspotadmin.home.fragment.jobsFragment.JobsFragment
 import com.example.jobspotadmin.model.Job
 
-class JobAdapter(private val listener: JobsFragment) :
-    RecyclerView.Adapter<JobAdapter.JobViewHolder>() {
-
+class JobAdapter(
+    private val listener: JobsFragment
+) : RecyclerView.Adapter<JobAdapter.JobViewHolder>() {
     private var jobs: MutableList<Job> = mutableListOf()
 
     inner class JobViewHolder(

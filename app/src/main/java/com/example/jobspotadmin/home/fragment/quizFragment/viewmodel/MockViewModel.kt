@@ -15,6 +15,7 @@ import com.google.firebase.database.*
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.launch
+import com.example.jobspotadmin.util.Resource
 import kotlinx.coroutines.tasks.await
 
 private const val TAG = "QuizViewModelTAG"
@@ -25,11 +26,10 @@ class MockViewModel : ViewModel() {
     private val mRealtimeDb: DatabaseReference by lazy { FirebaseDatabase.getInstance().reference }
     private var listener: ValueEventListener? = null
 
-    private val _mockTestUploadStatus: MutableLiveData<UiState> = MutableLiveData(UiState.LOADING)
-    val mockTestUploadStatus: LiveData<UiState> = _mockTestUploadStatus
+    private val _mockTestUploadStatus: MutableLiveData<Resource<String>> = MutableLiveData()
+    val mockTestUploadStatus: LiveData<Resource<String>> = _mockTestUploadStatus
 
-    private val _mockDetails: MutableLiveData<List<MockDetail>> =
-        MutableLiveData(mutableListOf())
+    private val _mockDetails: MutableLiveData<List<MockDetail>> = MutableLiveData(mutableListOf())
     val mockDetails: LiveData<List<MockDetail>> = _mockDetails
 
     var mockQuestionCounter: Int = 1
@@ -45,15 +45,15 @@ class MockViewModel : ViewModel() {
     fun uploadMockTest(mock: Mock) {
         viewModelScope.launch {
             try {
-                _mockTestUploadStatus.postValue(UiState.LOADING)
+                _mockTestUploadStatus.postValue(Resource.loading())
                 val uid = mock.uid
                 mFirestore.collection(COLLECTION_PATH_MOCK).document(uid).set(mock).await()
                 val mockDetail = MockDetail(mockId = uid, mockName = mock.title)
                 mRealtimeDb.child(COLLECTION_PATH_MOCK).child(uid).setValue(mockDetail)
-                _mockTestUploadStatus.postValue(UiState.SUCCESS)
-            } catch (e: Exception) {
-                Log.d(TAG, "${e.message}")
-                _mockTestUploadStatus.postValue(UiState.FAILURE)
+                _mockTestUploadStatus.postValue(Resource.success("Mock upload success."))
+            } catch (error: Exception) {
+                val errorMessage = error.message!!
+                _mockTestUploadStatus.postValue(Resource.error(errorMessage))
             }
         }
     }

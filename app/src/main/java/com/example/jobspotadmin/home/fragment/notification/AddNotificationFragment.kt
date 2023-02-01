@@ -11,7 +11,6 @@ import com.example.jobspotadmin.databinding.FragmentAddNotificationBinding
 import com.example.jobspotadmin.home.fragment.notification.viewmodel.NotificationViewModel
 import com.example.jobspotadmin.model.BroadcastNotification
 import com.example.jobspotadmin.util.*
-import com.example.jobspotadmin.util.UiState.*
 
 
 class AddNotificationFragment : Fragment() {
@@ -25,7 +24,10 @@ class AddNotificationFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentAddNotificationBinding.inflate(inflater, container, false)
+
         setupUI()
+        setupObserver()
+
         return binding.root
     }
 
@@ -46,28 +48,25 @@ class AddNotificationFragment : Fragment() {
                 if (detailVerification(title, message)) {
                     val notification = BroadcastNotification(title = title, body = message)
                     notificationViewModel.broadcastNotification(notification)
-                    handleUploadResponse()
                 }
             }
         }
     }
 
-    private fun handleUploadResponse() {
-        notificationViewModel.uploadStatus.observe(viewLifecycleOwner){ uiState ->
-            when(uiState){
-                LOADING -> {
+    private fun setupObserver() {
+        notificationViewModel.uploadStatus.observe(viewLifecycleOwner) { notificationState ->
+            when(notificationState.status) {
+                Status.LOADING -> {
                     loadingDialog.show()
                 }
-                SUCCESS -> {
-                    showToast(requireContext(), "Notification upload success")
-                    findNavController().popBackStack()
-                    loadingDialog.dismiss()
+                Status.SUCCESS -> {
+                    val successMessage = notificationState.data!!
+                    showToast(requireContext(), successMessage)
                 }
-                FAILURE -> {
-                    showToast(requireContext(), "Error while uploading")
-                    loadingDialog.dismiss()
+                Status.ERROR -> {
+                    val errorMessage = notificationState.message!!
+                    showToast(requireContext(), errorMessage)
                 }
-                else -> Unit
             }
         }
     }

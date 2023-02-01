@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jobspotadmin.model.BroadcastNotification
 import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_NOTIFICATION
+import com.example.jobspotadmin.util.Resource
 import com.example.jobspotadmin.util.UiState
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -20,8 +21,8 @@ class NotificationViewModel : ViewModel() {
 
     private val mFirestore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
 
-    private val _uploadStatus: MutableLiveData<UiState> = MutableLiveData(UiState.LOADING)
-    val uploadStatus: LiveData<UiState> = _uploadStatus
+    private val _uploadStatus: MutableLiveData<Resource<String>> = MutableLiveData()
+    val uploadStatus: LiveData<Resource<String>> = _uploadStatus
 
     private val _notification: MutableLiveData<List<BroadcastNotification>> =
         MutableLiveData(mutableListOf())
@@ -52,16 +53,17 @@ class NotificationViewModel : ViewModel() {
     fun broadcastNotification(notification: BroadcastNotification) {
         try {
             viewModelScope.launch {
-                _uploadStatus.postValue(UiState.LOADING)
+                _uploadStatus.postValue(Resource.loading())
                 mFirestore
                     .collection(COLLECTION_PATH_NOTIFICATION)
                     .document(notification.id)
                     .set(notification)
                     .await()
-                _uploadStatus.postValue(UiState.SUCCESS)
+                _uploadStatus.postValue(Resource.success("Notification upload success."))
             }
-        } catch (e: Exception) {
-            _uploadStatus.postValue(UiState.FAILURE)
+        } catch (error: Exception) {
+            val errorMessage = error.message!!
+            _uploadStatus.postValue(Resource.error(errorMessage))
         }
     }
 

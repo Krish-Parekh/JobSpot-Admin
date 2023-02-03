@@ -11,6 +11,9 @@ import com.example.jobspotadmin.databinding.FragmentAddNotificationBinding
 import com.example.jobspotadmin.home.fragment.notification.viewmodel.NotificationViewModel
 import com.example.jobspotadmin.model.BroadcastNotification
 import com.example.jobspotadmin.util.*
+import com.example.jobspotadmin.util.Status.LOADING
+import com.example.jobspotadmin.util.Status.SUCCESS
+import com.example.jobspotadmin.util.Status.ERROR
 
 
 class AddNotificationFragment : Fragment() {
@@ -56,14 +59,16 @@ class AddNotificationFragment : Fragment() {
     private fun setupObserver() {
         notificationViewModel.uploadStatus.observe(viewLifecycleOwner) { notificationState ->
             when(notificationState.status) {
-                Status.LOADING -> {
+                LOADING -> {
                     loadingDialog.show()
                 }
-                Status.SUCCESS -> {
+                SUCCESS -> {
+                    loadingDialog.dismiss()
                     val successMessage = notificationState.data!!
                     showToast(requireContext(), successMessage)
                 }
-                Status.ERROR -> {
+                ERROR -> {
+                    loadingDialog.dismiss()
                     val errorMessage = notificationState.message!!
                     showToast(requireContext(), errorMessage)
                 }

@@ -6,6 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.jobspotadmin.R
@@ -40,7 +43,12 @@ class NotificationFragment : Fragment() {
 
     private fun setupUI() {
         binding.apply {
-            notificationViewModel.fetchNotifications()
+
+            lifecycleScope.launchWhenStarted {
+                repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    notificationViewModel.fetchNotifications()
+                }
+            }
 
             ivPopOut.setOnClickListener {
                 findNavController().popBackStack()

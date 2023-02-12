@@ -10,12 +10,11 @@ import com.example.jobspotadmin.model.MockDetail
 import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_MOCK
 import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_MOCK_RESULT
 import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_STUDENT
-import com.example.jobspotadmin.util.UiState
+import com.example.jobspotadmin.util.Resource
 import com.google.firebase.database.*
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.launch
-import com.example.jobspotadmin.util.Resource
 import kotlinx.coroutines.tasks.await
 
 private const val TAG = "QuizViewModelTAG"
@@ -24,6 +23,7 @@ class MockViewModel : ViewModel() {
 
     private val mFirestore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
     private val mRealtimeDb: DatabaseReference by lazy { FirebaseDatabase.getInstance().reference }
+    private val mockTestRef = mRealtimeDb.child(COLLECTION_PATH_MOCK)
     private var listener: ValueEventListener? = null
 
     private val _mockTestUploadStatus: MutableLiveData<Resource<String>> = MutableLiveData()
@@ -59,19 +59,19 @@ class MockViewModel : ViewModel() {
     }
 
     fun fetchMockTest() {
-        listener = mRealtimeDb.child(COLLECTION_PATH_MOCK)
-            .addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val mockDetailList = snapshot.children.map { quizDetail ->
-                        quizDetail.getValue(MockDetail::class.java)!!
-                    }
-                    _mockDetails.postValue(mockDetailList)
+        listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val mockDetailList = snapshot.children.map { quizDetail ->
+                    quizDetail.getValue(MockDetail::class.java)!!
                 }
+                _mockDetails.postValue(mockDetailList)
+            }
 
-                override fun onCancelled(error: DatabaseError) {
-                    Log.d(TAG, "Error : ${error.message}")
-                }
-            })
+            override fun onCancelled(error: DatabaseError) {
+                Log.d(TAG, "Error : ${error.message}")
+            }
+        }
+        mockTestRef.addValueEventListener(listener!!)
     }
 
     fun deleteMockTest(mockDetail: MockDetail) {
@@ -93,7 +93,7 @@ class MockViewModel : ViewModel() {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     snapshot.children.forEach { studentNode ->
                         val doesMockExist = studentNode.child(COLLECTION_PATH_MOCK).hasChild(mockId)
-                        if (doesMockExist){
+                        if (doesMockExist) {
                             studentNode.child(COLLECTION_PATH_MOCK).child(mockId).ref.removeValue()
                         }
                     }
@@ -112,9 +112,8 @@ class MockViewModel : ViewModel() {
     }
 
     override fun onCleared() {
-        if (listener != null) {
-            mRealtimeDb.removeEventListener(listener!!)
-            listener = null
+        listener?.let {
+            mockTestRef.removeEventListener(it)
         }
         super.onCleared()
     }

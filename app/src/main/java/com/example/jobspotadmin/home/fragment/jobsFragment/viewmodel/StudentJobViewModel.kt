@@ -21,7 +21,7 @@ private const val TAG = "StudentJobViewModelTAG"
 class StudentJobViewModel : ViewModel() {
     private val mFirestore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
     private val mRealtimeDatabase: DatabaseReference by lazy { FirebaseDatabase.getInstance().reference }
-    private var listener: ValueEventListener? = null
+    private var studentListener: ValueEventListener? = null
 
     private val _pendingApplications: MutableLiveData<MutableList<JobStatus>> =
         MutableLiveData(mutableListOf())
@@ -37,7 +37,7 @@ class StudentJobViewModel : ViewModel() {
         val tempEvaluatedList = mutableListOf<JobStatus>()
         try {
             val companiesRef = mRealtimeDatabase.child(COLLECTION_PATH_COMPANY).child(jobId)
-            listener = companiesRef.addValueEventListener(object : ValueEventListener {
+            studentListener = companiesRef.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val applicationList = snapshot.children.map { application ->
                         application.getValue(JobApplication::class.java)!!
@@ -71,9 +71,9 @@ class StudentJobViewModel : ViewModel() {
         } finally {
             tempPendingList.clear()
             tempEvaluatedList.clear()
-            if (listener != null){
-                mRealtimeDatabase.removeEventListener(listener!!)
-                listener = null
+            if (studentListener != null) {
+                mRealtimeDatabase.removeEventListener(studentListener!!)
+                studentListener = null
                 Log.d(TAG, "We are inside fetchStudent Function")
             }
         }
@@ -92,22 +92,27 @@ class StudentJobViewModel : ViewModel() {
         viewModelScope.launch {
             val jobId = jobApplication.jobId
             val studentId = jobApplication.studentId
-            val companiesRef = mRealtimeDatabase.child(COLLECTION_PATH_COMPANY).child(jobId).child(studentId)
-            val companyName = mFirestore.collection(COLLECTION_PATH_COMPANY).document(jobId).get().await().get("name") as String
-            if (jobApplication.applicationStatus == "Accepted"){
+            val companiesRef =
+                mRealtimeDatabase.child(COLLECTION_PATH_COMPANY).child(jobId).child(studentId)
+            val companyName =
+                mFirestore.collection(COLLECTION_PATH_COMPANY).document(jobId).get().await()
+                    .get("name") as String
+            if (jobApplication.applicationStatus == "Accepted") {
                 val notification = HostNotification(
                     title = "Check Email",
                     body = "You have been selected for company $companyName",
                     hostId = jobApplication.studentId
                 )
-                mFirestore.collection(COLLECTION_PATH_NOTIFICATION).document(notification.id).set(notification).await()
+                mFirestore.collection(COLLECTION_PATH_NOTIFICATION).document(notification.id)
+                    .set(notification).await()
             } else {
                 val notification = HostNotification(
                     title = "Check Email",
                     body = "You aren't not selected for company $companyName",
                     hostId = jobApplication.studentId
                 )
-                mFirestore.collection(COLLECTION_PATH_NOTIFICATION).document(notification.id).set(notification).await()
+                mFirestore.collection(COLLECTION_PATH_NOTIFICATION).document(notification.id)
+                    .set(notification).await()
             }
 
             companiesRef.setValue(jobApplication).await()
@@ -116,10 +121,10 @@ class StudentJobViewModel : ViewModel() {
     }
 
     override fun onCleared() {
-        if (listener != null) {
+        if (studentListener != null) {
             Log.d(TAG, "Called and listener is removed")
-            mRealtimeDatabase.removeEventListener(listener!!)
-            listener = null
+            mRealtimeDatabase.removeEventListener(studentListener!!)
+            studentListener = null
         }
         super.onCleared()
     }

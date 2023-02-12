@@ -13,9 +13,9 @@ import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_ROLE
 import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_STUDENT
 import com.example.jobspotadmin.util.Constants.Companion.PROFILE_IMAGE_PATH
 import com.example.jobspotadmin.util.Constants.Companion.RESUME_PATH
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.CompletableDeferred
@@ -29,23 +29,23 @@ class StudentViewModel : ViewModel() {
     private val mFirestore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
     private val mRealtimeDb: DatabaseReference by lazy { FirebaseDatabase.getInstance().reference }
     private val mStorage: StorageReference by lazy { FirebaseStorage.getInstance().reference }
-
+    private var studentListener: ListenerRegistration? = null
     private val _students: MutableLiveData<List<Student>> = MutableLiveData(mutableListOf())
     val students: LiveData<List<Student>> = _students
 
     fun fetchStudents() {
         viewModelScope.launch {
-            mFirestore.collection(COLLECTION_PATH_STUDENT)
-                .addSnapshotListener { value, error ->
-                    if (error != null) {
-                        return@addSnapshotListener
-                    }
-                    val documents = value?.documents!!
-                    val studentList = documents.map {
-                        it.toObject(Student::class.java)!!
-                    }
-                    _students.postValue(studentList)
+            val studentRef = mFirestore.collection(COLLECTION_PATH_STUDENT)
+            studentListener = studentRef.addSnapshotListener { value, error ->
+                if (error != null) {
+                    return@addSnapshotListener
                 }
+                val documents = value?.documents!!
+                val studentList = documents.map {
+                    it.toObject(Student::class.java)!!
+                }
+                _students.postValue(studentList)
+            }
         }
     }
 
@@ -89,7 +89,7 @@ class StudentViewModel : ViewModel() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 snapshot.children.forEach { companyNode ->
                     val doStudentExist = companyNode.hasChild(studentId)
-                    if (doStudentExist){
+                    if (doStudentExist) {
                         companyNode.ref.child(studentId).removeValue()
                     }
                 }
@@ -108,6 +108,7 @@ class StudentViewModel : ViewModel() {
         }
         studentDeleteFromCompaniesDeffered.await()
     }
+
     private suspend fun deleteStudentFromMockTest(studentId: String) {
         val mockTestRef = mRealtimeDb.child(COLLECTION_PATH_MOCK)
         val studentMockTestDeffered = CompletableDeferred<Unit>()
@@ -119,14 +120,17 @@ class StudentViewModel : ViewModel() {
                     studentIdsRef.addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(snapshot: DataSnapshot) {
                             val studentIds = snapshot.value as List<*>?
-                            if (studentIds != null){
+                            if (studentIds != null) {
                                 val updateStudentIds = studentIds.filter { it != studentId }
                                 snapshot.ref.setValue(updateStudentIds)
                                     .addOnSuccessListener {
                                         studentMockTestDeffered.complete(Unit)
                                     }
                                     .addOnFailureListener { exception ->
-                                        Log.d(TAG, "deleteStudentFromMockTest: ${exception.message}")
+                                        Log.d(
+                                            TAG,
+                                            "deleteStudentFromMockTest: ${exception.message}"
+                                        )
                                         studentMockTestDeffered.completeExceptionally(exception)
                                     }
                             }
@@ -152,6 +156,7 @@ class StudentViewModel : ViewModel() {
         }
         studentMockTestDeffered.await()
     }
+
     private suspend fun deleteStudentFromMockResult(studentId: String) {
         val mockResultRef = mRealtimeDb.child(COLLECTION_PATH_MOCK_RESULT)
         val studentDeleteFromMockResultDeffered = CompletableDeferred<Unit>()
@@ -159,7 +164,7 @@ class StudentViewModel : ViewModel() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 snapshot.children.forEach { mockResultNode ->
                     val doStudentExist = mockResultNode.hasChild(studentId)
-                    if (doStudentExist){
+                    if (doStudentExist) {
                         mockResultNode.child(studentId).ref.removeValue()
                     }
                 }
@@ -177,5 +182,10 @@ class StudentViewModel : ViewModel() {
             mockResultRef.removeEventListener(studentMockResultDeleteListener)
         }
         studentDeleteFromMockResultDeffered.await()
+    }
+
+    override fun onCleared() {
+        studentListener?.remove()
+        super.onCleared()
     }
 }

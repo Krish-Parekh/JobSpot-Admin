@@ -77,7 +77,6 @@ class JobsFragment : Fragment() {
                     jobs.addAll(jobList)
                 }
                 ERROR -> {
-                    // throw error
                     val errorMessage = jobState.message!!
                     showToast(requireContext(), errorMessage)
                 }

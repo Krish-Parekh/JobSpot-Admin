@@ -12,6 +12,7 @@ import com.example.jobspotadmin.util.Constants.Companion.COMPANY_IMAGE_STORAGE_P
 import com.example.jobspotadmin.util.Resource
 import com.google.firebase.database.*
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers.IO
@@ -26,6 +27,7 @@ class JobsViewModel : ViewModel() {
     private val mFirestore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
     private val mStorage: FirebaseStorage by lazy { FirebaseStorage.getInstance() }
     private val mRealtimeDb: DatabaseReference by lazy { FirebaseDatabase.getInstance().reference }
+    private var companyListener : ListenerRegistration? = null
 
     private val _uploadJobStatus : MutableLiveData<Resource<String>> = MutableLiveData()
     val uploadJobStatus : LiveData<Resource<String>> = _uploadJobStatus
@@ -70,7 +72,7 @@ class JobsViewModel : ViewModel() {
             try {
                 _jobs.postValue(Resource.loading())
                 val companyRef = mFirestore.collection(COLLECTION_PATH_COMPANY)
-                companyRef.addSnapshotListener { value, error ->
+                companyListener = companyRef.addSnapshotListener { value, error ->
                     if (error != null) {
                         val errorMessage = error.message!!
                         _jobs.postValue(Resource.error(errorMessage))
@@ -137,5 +139,10 @@ class JobsViewModel : ViewModel() {
                 _deleteJobStatus.postValue(Resource.error(errorMessage))
             }
         }
+    }
+
+    override fun onCleared() {
+        companyListener?.remove()
+        super.onCleared()
     }
 }

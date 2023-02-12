@@ -10,9 +10,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.jobspotadmin.auth.viewmodel.AuthViewModel
 import com.example.jobspotadmin.databinding.FragmentForgetPassBinding
 import com.example.jobspotadmin.util.*
-import com.example.jobspotadmin.util.Status.SUCCESS
-import com.example.jobspotadmin.util.Status.LOADING
-import com.example.jobspotadmin.util.Status.ERROR
+import com.example.jobspotadmin.util.Status.*
 
 
 private const val TAG = "FORGOT_PASSWORD"
@@ -35,45 +33,41 @@ class ForgetPassFragment : Fragment() {
     }
 
     private fun setupUI() {
-        binding.btnBackToLogin.setOnClickListener {
-            findNavController().popBackStack()
-        }
+        with(binding) {
+            btnBackToLogin.setOnClickListener {
+                findNavController().popBackStack()
+            }
 
-        binding.etEmailContainer.addTextWatcher()
+            etEmailContainer.addTextWatcher()
 
-        binding.btnResetPassword.setOnClickListener {
-            val email = binding.etEmail.getInputValue()
-            val (isEmailValid, emailError) = InputValidation.isEmailValid(email)
-            if (isEmailValid.not()) {
-                authViewModel.resendPassword(email)
-                clearField()
-            } else {
-                binding.etEmailContainer.error = emailError
+            btnResetPassword.setOnClickListener {
+                val email = etEmail.getInputValue()
+                val (isEmailValid, emailError) = InputValidation.isEmailValid(email)
+                if (isEmailValid.not()) {
+                    authViewModel.resendPassword(email)
+                } else {
+                    etEmailContainer.error = emailError
+                }
             }
         }
     }
 
     private fun setupObserver() {
-        authViewModel.resendPasswordStatus.observe(viewLifecycleOwner) { resendPasswordState ->
-            when (resendPasswordState.status) {
+        authViewModel.resendPasswordStatus.observe(viewLifecycleOwner) { resource ->
+            when (resource.status) {
                 LOADING -> {
                     loadingDialog.show()
                 }
                 SUCCESS -> {
-                    val successMessage = resendPasswordState.data!!
+                    val successMessage = resource.data!!
                     showToast(requireContext(), successMessage)
                 }
                 ERROR -> {
-                    val errorMessage = resendPasswordState.message!!
+                    val errorMessage = resource.message!!
                     showToast(requireContext(), errorMessage)
                 }
             }
         }
-    }
-
-
-    private fun clearField() {
-        binding.etEmail.clearText()
     }
 
     override fun onDestroyView() {

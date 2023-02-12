@@ -43,7 +43,7 @@ class JobDetailFragmentTwo : Fragment() {
     }
 
     private fun setupUI() {
-        binding.apply {
+        with(binding) {
 
             ivPopOut.setOnClickListener {
                 findNavController().popBackStack()
@@ -86,20 +86,20 @@ class JobDetailFragmentTwo : Fragment() {
         }
 
 
-        jobsViewModel.uploadJobStatus.observe(viewLifecycleOwner){ uploadState ->
-            when(uploadState.status){
+        jobsViewModel.uploadJobStatus.observe(viewLifecycleOwner){ resource ->
+            when(resource.status){
                 LOADING -> {
                     loadingDialog.show()
                 }
                 SUCCESS -> {
                     loadingDialog.dismiss()
-                    val successMessage = uploadState.data!!
+                    val successMessage = resource.data!!
                     showToast(requireContext(), successMessage)
                     findNavController().popBackStack(R.id.jobDetailFragmentOne, inclusive = true)
                 }
                 ERROR -> {
                     loadingDialog.dismiss()
-                    val errorMessage = uploadState.message!!
+                    val errorMessage = resource.message!!
                     showToast(requireContext(), errorMessage)
                 }
             }
@@ -110,7 +110,7 @@ class JobDetailFragmentTwo : Fragment() {
         responsibility: String,
         skills: MutableList<String>
     ): Boolean {
-        binding.apply {
+        with(binding) {
             val (isResponsibilityValid, responsibilityError) = InputValidation.isResponsibilityValid(responsibility)
             if (isResponsibilityValid.not()){
                 etJobRespContainer.error = responsibilityError

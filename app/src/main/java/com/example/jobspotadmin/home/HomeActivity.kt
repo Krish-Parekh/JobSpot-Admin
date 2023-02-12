@@ -8,11 +8,15 @@ import android.widget.TextView
 import com.example.jobspotadmin.databinding.ActivityHomeBinding
 
 class HomeActivity : AppCompatActivity() {
-    private lateinit var binding : ActivityHomeBinding
+    private var _binding : ActivityHomeBinding? = null
+    private val binding get() = _binding!!
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityHomeBinding.inflate(layoutInflater)
+        _binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+    }
+    override fun onDestroy() {
+        _binding = null
+        super.onDestroy()
     }
 }

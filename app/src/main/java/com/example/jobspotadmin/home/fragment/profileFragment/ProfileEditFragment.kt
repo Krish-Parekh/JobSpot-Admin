@@ -46,7 +46,7 @@ class ProfileEditFragment : Fragment() {
     }
 
     private fun setupUI() {
-        binding.apply {
+        with(binding) {
             profileImage.load(args.tpo.imageUri)
             etUsername.setText(args.tpo.username)
             etEmail.setText(args.tpo.email)

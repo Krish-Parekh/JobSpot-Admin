@@ -15,23 +15,20 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.auth.User
 import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
-
-
-
-private const val TAG = "HomeViewModelTAG"
 
 class HomeViewModel : ViewModel() {
 
     private val mFirestore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
+
     private val _metaCounts: MutableLiveData<Resource<Counts>> = MutableLiveData()
     val metaCounts: LiveData<Resource<Counts>> = _metaCounts
-    private var notificationCountListener : ListenerRegistration? = null
-    private var countListener : ListenerRegistration? = null
+    private var notificationCountListener: ListenerRegistration? = null
+    private var countListener: ListenerRegistration? = null
 
     fun fetchCounts() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(IO) {
             try {
                 _metaCounts.postValue(Resource.loading())
                 val tpoCount = getCount(COLLECTION_PATH_TPO)
@@ -41,7 +38,7 @@ class HomeViewModel : ViewModel() {
                 val notificationCount = getNotificationCount()
                 val count = Counts(tpoCount, studentCount, jobCount, mockCount, notificationCount)
                 _metaCounts.postValue(Resource.success(count))
-            } catch (error : Exception){
+            } catch (error: Exception) {
                 val errorMessage = error.message!!
                 _metaCounts.postValue(Resource.error(errorMessage))
             }
@@ -50,23 +47,23 @@ class HomeViewModel : ViewModel() {
 
     private suspend fun getNotificationCount(): Int {
         val countDeffered = CompletableDeferred<Int>()
-        notificationCountListener = mFirestore
-            .collection(COLLECTION_PATH_NOTIFICATION)
-            .whereEqualTo("type", "BROADCAST")
-            .addSnapshotListener { value, error ->
-                if (error != null) {
-                    countDeffered.completeExceptionally(error)
-                    return@addSnapshotListener
-                }
-                val count = value?.documents?.count()!!
-                countDeffered.complete(count)
+        val notificationRef =
+            mFirestore.collection(COLLECTION_PATH_NOTIFICATION).whereEqualTo("type", "BROADCAST")
+        notificationCountListener = notificationRef.addSnapshotListener { value, error ->
+            if (error != null) {
+                countDeffered.completeExceptionally(error)
+                return@addSnapshotListener
             }
+            val count = value?.documents?.count()!!
+            countDeffered.complete(count)
+        }
         return countDeffered.await()
     }
 
     private suspend fun getCount(collectionPath: String): Int {
         val countDeffered = CompletableDeferred<Int>()
-        countListener = mFirestore.collection(collectionPath)
+        val countRef = mFirestore.collection(collectionPath)
+        countListener = countRef
             .addSnapshotListener { value, error ->
                 if (error != null) {
                     countDeffered.completeExceptionally(error)
@@ -91,5 +88,5 @@ data class Counts(
     var jobCount: Int = 0,
     var mockCount: Int = 0,
     var notificationCount: Int = 0,
-    var user : User? = null
+    var user: User? = null
 )

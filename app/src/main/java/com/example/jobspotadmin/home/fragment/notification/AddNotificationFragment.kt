@@ -35,7 +35,7 @@ class AddNotificationFragment : Fragment() {
     }
 
     private fun setupUI() {
-        binding.apply {
+        with(binding) {
 
             ivPopOut.setOnClickListener {
                 findNavController().popBackStack()
@@ -57,19 +57,19 @@ class AddNotificationFragment : Fragment() {
     }
 
     private fun setupObserver() {
-        notificationViewModel.uploadStatus.observe(viewLifecycleOwner) { notificationState ->
-            when(notificationState.status) {
+        notificationViewModel.uploadStatus.observe(viewLifecycleOwner) { resource ->
+            when(resource.status) {
                 LOADING -> {
                     loadingDialog.show()
                 }
                 SUCCESS -> {
                     loadingDialog.dismiss()
-                    val successMessage = notificationState.data!!
+                    val successMessage = resource.data!!
                     showToast(requireContext(), successMessage)
                 }
                 ERROR -> {
                     loadingDialog.dismiss()
-                    val errorMessage = notificationState.message!!
+                    val errorMessage = resource.message!!
                     showToast(requireContext(), errorMessage)
                 }
             }

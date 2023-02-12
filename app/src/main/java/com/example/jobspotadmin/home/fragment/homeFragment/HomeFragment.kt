@@ -48,17 +48,15 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupUI() {
-        binding.apply {
+        with(binding)  {
             homeViewModel.fetchCounts()
             val bundle: Bundle? = requireActivity().intent.extras
             if (
                 bundle != null
                 && user != null
                 && bundle.containsKey("ROLE_TYPE")
-                && bundle.containsKey("USERNAME")
             ) {
                 val roleType = bundle.getString("ROLE_TYPE").toString()
-                val username = bundle.getString("USERNAME").toString()
                 if (roleType == ROLE_TYPE_ADMIN) {
                     ivProfileImage.visibility = View.GONE
                     ivLogout.visibility = View.VISIBLE
@@ -103,13 +101,13 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupObserver() {
-        homeViewModel.metaCounts.observe(viewLifecycleOwner) { countState ->
-            when (countState.status) {
+        homeViewModel.metaCounts.observe(viewLifecycleOwner) { resource ->
+            when (resource.status) {
                 LOADING -> {
                     loadingDialog.show()
                 }
                 SUCCESS -> {
-                    val counts = countState.data!!
+                    val counts = resource.data!!
                     counterAnimation(counts.studentCount, binding.tvStudentCount)
                     counterAnimation(counts.jobCount, binding.tvJobCount)
                     counterAnimation(counts.mockCount, binding.tvMockTestCount)
@@ -120,7 +118,7 @@ class HomeFragment : Fragment() {
                     loadingDialog.dismiss()
                 }
                 ERROR -> {
-                    val errorMessage = countState.message!!
+                    val errorMessage = resource.message!!
                     showToast(requireContext(), errorMessage)
                     loadingDialog.dismiss()
                 }

@@ -18,7 +18,7 @@ class JobAdapter(
         private val binding: JobCardLayoutBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(job: Job) {
-            binding.apply {
+            with(binding) {
                 ivCompanyLogo.load(job.imageUrl) {
                     error(R.drawable.ic_apple_logo)
                     placeholder(R.drawable.ic_jobs)

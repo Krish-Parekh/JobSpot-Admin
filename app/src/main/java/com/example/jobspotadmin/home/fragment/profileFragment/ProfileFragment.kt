@@ -36,7 +36,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun setupView() {
-        binding.apply {
+        with(binding) {
             val currentUser = mFirebaseAuth.currentUser!!
             val image = currentUser.photoUrl
             val username = currentUser.displayName

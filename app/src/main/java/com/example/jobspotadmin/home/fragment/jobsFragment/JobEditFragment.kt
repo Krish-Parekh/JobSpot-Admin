@@ -51,7 +51,7 @@ class JobEditFragment : Fragment() {
     }
 
     private fun setupUI() {
-        binding.apply {
+        with(binding) {
 
             populateFields(job)
 
@@ -89,7 +89,7 @@ class JobEditFragment : Fragment() {
     }
 
     private fun populateFields(job: Job) {
-        binding.apply {
+        with(binding) {
             etJobTitle.setText(job.role)
             etCompanyName.setText(job.name)
             etCityName.setText(job.city)
@@ -116,7 +116,7 @@ class JobEditFragment : Fragment() {
     }
 
     private fun handleSaveClick() {
-        binding.apply {
+        with(binding) {
             val jobRole = etJobTitle.getInputValue()
             val companyName = etCompanyName.getInputValue()
             val city = etCityName.getInputValue()
@@ -165,19 +165,19 @@ class JobEditFragment : Fragment() {
                 }
             }
         }
-        jobEditViewModel.editJobStatus.observe(viewLifecycleOwner) { editJobStatus ->
-            when (editJobStatus.status) {
+        jobEditViewModel.editJobStatus.observe(viewLifecycleOwner) { resource ->
+            when (resource.status) {
                 LOADING -> {
                     loadingDialog.show()
                 }
                 SUCCESS -> {
                     loadingDialog.dismiss()
-                    val successMessage = editJobStatus.data!!
+                    val successMessage = resource.data!!
                     showToast(requireContext(), successMessage)
                 }
                 ERROR -> {
                     loadingDialog.dismiss()
-                    val errorMessage = editJobStatus.message!!
+                    val errorMessage = resource.message!!
                     showToast(requireContext(), errorMessage)
                 }
             }
@@ -222,7 +222,7 @@ class JobEditFragment : Fragment() {
         responsibility: String,
         skills: MutableList<String>
     ): Boolean {
-        binding.apply {
+        with(binding) {
             val (isJobTitleValid, jobTitleError) = InputValidation.isJobTitleValid(title)
             if (isJobTitleValid.not()) {
                 etJobTitleContainer.error = jobTitleError

@@ -46,7 +46,7 @@ class JobDetailFragmentOne : Fragment() {
     }
 
     private fun setupUI() {
-        binding.apply {
+        with(binding) {
 
             if (jobsViewModel.getImageUri() != null) {
                 ivCompany.setImageURI(jobsViewModel.getImageUri())
@@ -160,7 +160,7 @@ class JobDetailFragmentOne : Fragment() {
         workType: String,
         description: String
     ): Boolean {
-        binding.apply {
+        with(binding) {
             if (imageUrl == null) {
                 showToast(requireContext(), getString(R.string.field_error_image))
                 return false

@@ -30,9 +30,8 @@ import com.google.android.material.chip.Chip
 class JobViewFragment : Fragment() {
     private var _binding: FragmentJobViewBinding? = null
     private val binding get() = _binding!!
-
     private val args by navArgs<JobViewFragmentArgs>()
-    private val jobsViewModel : JobsViewModel by viewModels()
+    private val jobsViewModel by viewModels<JobsViewModel>()
     private val loadingDialog : LoadingDialog by lazy { LoadingDialog(requireContext()) }
     private val job by lazy { args.job }
     override fun onCreateView(

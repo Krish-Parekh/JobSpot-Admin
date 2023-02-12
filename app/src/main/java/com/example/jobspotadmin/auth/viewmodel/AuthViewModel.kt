@@ -26,7 +26,6 @@ class AuthViewModel : ViewModel() {
 
     private val mAuth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
     private val mFirestore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
-    private val mStorage: FirebaseStorage by lazy { FirebaseStorage.getInstance() }
 
     private val _loginStatus: MutableLiveData<Resource<LoginUiState>> = MutableLiveData()
     val loginStatus: LiveData<Resource<LoginUiState>> = _loginStatus

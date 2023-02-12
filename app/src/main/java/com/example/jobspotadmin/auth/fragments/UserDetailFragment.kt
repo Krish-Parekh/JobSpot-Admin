@@ -14,7 +14,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.jobspotadmin.R
-import com.example.jobspotadmin.auth.viewmodel.AuthViewModel
 import com.example.jobspotadmin.auth.viewmodel.UserDetailViewModel
 import com.example.jobspotadmin.databinding.FragmentUserDetailBinding
 import com.example.jobspotadmin.model.Tpo
@@ -22,7 +21,6 @@ import com.example.jobspotadmin.util.*
 import com.example.jobspotadmin.util.Status.*
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.datepicker.MaterialDatePicker
-import java.text.DateFormat
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -56,9 +54,9 @@ class UserDetailFragment : Fragment() {
     }
 
     private fun setupUI() {
-        binding.apply {
+        with(binding) {
 
-            if(userDetailViewModel.getImageUri() != null){
+            if (userDetailViewModel.getImageUri() != null) {
                 val profileUri = userDetailViewModel.getImageUri()
                 profileImage.setImageURI(profileUri)
             }
@@ -72,7 +70,6 @@ class UserDetailFragment : Fragment() {
             etDateContainer.setEndIconOnClickListener {
                 showCalendar()
             }
-
             genderSpinner.dismissWhenNotifiedItemSelected = true
             genderSpinner.setOnSpinnerItemSelectedListener<String> { _, _, _, selectedGender ->
                 genderSpinner.error = null
@@ -131,8 +128,8 @@ class UserDetailFragment : Fragment() {
     }
 
     private fun setupObserver() {
-        userDetailViewModel.userUploadStatus.observe(viewLifecycleOwner) { uploadState ->
-            when(uploadState.status){
+        userDetailViewModel.userUploadStatus.observe(viewLifecycleOwner) { resource ->
+            when (resource.status) {
                 LOADING -> {
                     loadingDialog.show()
                 }
@@ -208,14 +205,16 @@ class UserDetailFragment : Fragment() {
                 return false
             }
 
-            val (isMobileNumberValid, mobileNumberError) = InputValidation.isMobileNumberValid(mobile)
-            if (isMobileNumberValid.not()){
+            val (isMobileNumberValid, mobileNumberError) = InputValidation.isMobileNumberValid(
+                mobile
+            )
+            if (isMobileNumberValid.not()) {
                 etMobileContainer.error = mobileNumberError
                 return isMobileNumberValid
             }
 
             val (isDOBValid, dobError) = InputValidation.isDOBValid(dob)
-            if (isDOBValid.not()){
+            if (isDOBValid.not()) {
                 etDateContainer.apply {
                     error = dobError
                     setErrorIconOnClickListener {
@@ -225,30 +224,30 @@ class UserDetailFragment : Fragment() {
                 return isDOBValid
             }
 
-            if (InputValidation.checkNullity(gender)){
+            if (InputValidation.checkNullity(gender)) {
                 genderSpinner.error = ""
                 return false
             }
 
-            if (InputValidation.checkNullity(qualification)){
+            if (InputValidation.checkNullity(qualification)) {
                 qualificationSpinner.error = ""
                 return false
             }
 
             val (isStreamValid, streamError) = InputValidation.isStreamValid(stream)
-            if (isStreamValid.not()){
+            if (isStreamValid.not()) {
                 etStreamContainer.error = streamError
                 return isStreamValid
             }
 
             val (isExperienceValid, experienceError) = InputValidation.isExperienceValid(experience)
-            if (isExperienceValid.not()){
+            if (isExperienceValid.not()) {
                 etYearExperienceContainer.error = experienceError
                 return isExperienceValid
             }
 
             val (isBiographyValid, biographyError) = InputValidation.isBiographyValid(bio)
-            if (isBiographyValid.not()){
+            if (isBiographyValid.not()) {
                 etBioContainer.error = biographyError
                 return isBiographyValid
             }

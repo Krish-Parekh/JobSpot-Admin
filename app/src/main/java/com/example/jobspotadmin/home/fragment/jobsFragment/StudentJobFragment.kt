@@ -48,7 +48,7 @@ class StudentJobFragment : Fragment() {
 
     private fun setupUI() {
         studentJobViewModel.fetchStudents(args.jobId)
-        binding.apply {
+        with(binding) {
 
             ivPopOut.setOnClickListener {
                 findNavController().popBackStack()

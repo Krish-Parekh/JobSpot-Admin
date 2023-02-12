@@ -17,7 +17,7 @@ class EvaluationStudentAdapter : RecyclerView.Adapter<EvaluationStudentAdapter.E
         fun bind(jobStatus: JobStatus) {
             val student = jobStatus.student
             val details = student.details!!
-            binding.apply {
+            with(binding) {
                 ivStudentProfile.load(details.imageUrl)
                 tvStudentName.text = details.username
                 tvStudentEmail.text = details.email

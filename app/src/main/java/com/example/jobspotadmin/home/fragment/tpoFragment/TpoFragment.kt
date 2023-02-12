@@ -42,7 +42,7 @@ class TpoFragment : Fragment() {
     }
 
     private fun setupUI() {
-        binding.apply {
+        with(binding) {
             tpoViewModel.fetchTpo()
             ivPopOut.setOnClickListener {
                 findNavController().popBackStack()
@@ -58,7 +58,7 @@ class TpoFragment : Fragment() {
     }
 
     private fun filterTpo(text: Editable?) {
-        if (!text.isNullOrEmpty()) {
+        if (text.isNullOrEmpty().not()) {
             val filteredJobList = tpos.filter { tpo ->
                 val title = tpo.username.lowercase()
                 val inputText = text.toString().lowercase()

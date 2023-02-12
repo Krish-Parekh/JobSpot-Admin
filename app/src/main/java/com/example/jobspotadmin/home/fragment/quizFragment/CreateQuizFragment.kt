@@ -42,7 +42,7 @@ class CreateQuizFragment : Fragment() {
     }
 
     private fun setupUI() {
-        binding.apply {
+        with(binding) {
             ivPopOut.setOnClickListener {
                 findNavController().popBackStack()
             }
@@ -63,21 +63,21 @@ class CreateQuizFragment : Fragment() {
     }
 
     private fun setupObserver() {
-        mockViewModel.mockTestUploadStatus.observe(viewLifecycleOwner){ mockUploadState ->
-            when(mockUploadState.status){
+        mockViewModel.mockTestUploadStatus.observe(viewLifecycleOwner){ resource ->
+            when(resource.status){
                 LOADING -> {
                     loadingDialog.show()
                 }
                 SUCCESS -> {
                     loadingDialog.dismiss()
                     mockTestQuestions.clear()
-                    val successMessage = mockUploadState.data!!
+                    val successMessage = resource.data!!
                     showToast(requireContext(), successMessage)
                     findNavController().popBackStack()
                 }
                 ERROR -> {
                     loadingDialog.dismiss()
-                    val errorMessage = mockUploadState.message!!
+                    val errorMessage = resource.message!!
                     showToast(requireContext(), errorMessage)
                 }
             }
@@ -197,7 +197,7 @@ class CreateQuizFragment : Fragment() {
     }
 
     private fun isMockTestDetailValid(title: String, duration: String): Boolean {
-        binding.apply {
+        with(binding) {
             val (isMockTitleValid, mockTitleError) = InputValidation.isMockTitleValid(title)
             if (isMockTitleValid.not()) {
                 etQuizTitleContainer.error = mockTitleError
@@ -214,31 +214,29 @@ class CreateQuizFragment : Fragment() {
     }
 
     private fun isQuestionValid(mockQuestion: MockQuestion): Boolean {
-        binding.apply {
-            val (isQuestionValid, questionError) = InputValidation.isQuestionValid(mockQuestion.question)
-            if (isQuestionValid.not()) {
-                showToast(requireContext(), questionError)
-                return isQuestionValid
-            }
-
-            val (isOptionsValid, optionsError) = InputValidation.isOptionsValid(mockQuestion.options)
-            if (isOptionsValid.not()) {
-                showToast(requireContext(), optionsError)
-                return isOptionsValid
-            }
-
-            if (InputValidation.checkNullity(mockQuestion.correctOption)) {
-                showToast(requireContext(), "Please choose correct-answer.")
-                return false
-            }
-
-            val (isFeedbackValid, feedbackError) = InputValidation.isFeedbackValid(mockQuestion.feedback)
-            if (isFeedbackValid.not()) {
-                showToast(requireContext(), feedbackError)
-                return isFeedbackValid
-            }
-            return true
+        val (isQuestionValid, questionError) = InputValidation.isQuestionValid(mockQuestion.question)
+        if (isQuestionValid.not()) {
+            showToast(requireContext(), questionError)
+            return isQuestionValid
         }
+
+        val (isOptionsValid, optionsError) = InputValidation.isOptionsValid(mockQuestion.options)
+        if (isOptionsValid.not()) {
+            showToast(requireContext(), optionsError)
+            return isOptionsValid
+        }
+
+        if (InputValidation.checkNullity(mockQuestion.correctOption)) {
+            showToast(requireContext(), "Please choose correct-answer.")
+            return false
+        }
+
+        val (isFeedbackValid, feedbackError) = InputValidation.isFeedbackValid(mockQuestion.feedback)
+        if (isFeedbackValid.not()) {
+            showToast(requireContext(), feedbackError)
+            return isFeedbackValid
+        }
+        return true
     }
 
     override fun onDestroyView() {

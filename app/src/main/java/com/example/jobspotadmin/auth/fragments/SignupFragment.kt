@@ -42,7 +42,7 @@ class SignupFragment : Fragment() {
 
     private fun setupUI() {
 
-        binding.apply {
+        with(binding) {
 
             tvLogin.text = createLoginText()
             tvLogin.setOnClickListener {
@@ -66,18 +66,18 @@ class SignupFragment : Fragment() {
     }
 
     private fun setupObserver() {
-        authViewModel.signupStatus.observe(viewLifecycleOwner){ signupState ->
-            when(signupState.status){
+        authViewModel.signupStatus.observe(viewLifecycleOwner){ resource ->
+            when(resource.status){
                 LOADING -> {
                     loadingDialog.show()
                 }
                 SUCCESS -> {
                     loadingDialog.dismiss()
-                    val (username, email) = signupState.data!!
+                    val (username, email) = resource.data!!
                     navigateToUserDetail(username, email)
                 }
                 ERROR -> {
-                    showToast(requireContext(), signupState.message.toString())
+                    showToast(requireContext(), resource.message.toString())
                     loadingDialog.dismiss()
                 }
             }
@@ -113,7 +113,7 @@ class SignupFragment : Fragment() {
         email: String,
         password: String
     ): Boolean {
-        binding.apply {
+        with(binding) {
             val (isUsernameValid, usernameError) = InputValidation.isUsernameValid(username)
             if (isUsernameValid.not()){
                 etUsernameContainer.error = usernameError

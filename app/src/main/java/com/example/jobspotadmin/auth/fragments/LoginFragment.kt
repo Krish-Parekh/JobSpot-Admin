@@ -46,7 +46,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun setupUI() {
-        binding.apply {
+        with(binding) {
             tvSignup.text = createSignupText()
             tvSignup.setOnClickListener {
                 navigateToSignup(roleType = args.roleType)
@@ -65,18 +65,17 @@ class LoginFragment : Fragment() {
                 }
             }
         }
-
     }
 
     private fun setupObserver() {
-        authViewModel.loginStatus.observe(viewLifecycleOwner) { loginState ->
-            when (loginState.status) {
+        authViewModel.loginStatus.observe(viewLifecycleOwner) { resource ->
+            when (resource.status) {
                 LOADING -> {
                     loadingDialog.show()
                 }
                 SUCCESS -> {
                     loadingDialog.dismiss()
-                    val user = loginState.data!!
+                    val user = resource.data!!
                     Log.d(TAG, "User: $user ")
                     if (user.roleType == args.roleType) {
                         if (user.userInfoExist.not() && user.roleType == ROLE_TYPE_TPO) {
@@ -98,7 +97,7 @@ class LoginFragment : Fragment() {
                 }
                 ERROR -> {
                     loadingDialog.dismiss()
-                    val errorMessage = loginState.message!!
+                    val errorMessage = resource.message!!
                     showToast(requireContext(), errorMessage)
                 }
             }
@@ -120,10 +119,8 @@ class LoginFragment : Fragment() {
     }
 
     private fun navigateToHomeActivity(roleType: String, username: String) {
-        Log.d(TAG, "RoleType = $roleType")
         val homeActivity = Intent(requireContext(), HomeActivity::class.java)
         homeActivity.putExtra("ROLE_TYPE", roleType)
-        homeActivity.putExtra("USERNAME", username)
         requireActivity().startActivity(homeActivity)
         requireActivity().finish()
     }
@@ -142,7 +139,7 @@ class LoginFragment : Fragment() {
         email: String,
         password: String
     ): Boolean {
-        binding.apply {
+        with(binding) {
             val (isEmailValid, emailError) = InputValidation.isEmailValid(email)
             if (isEmailValid.not()) {
                 etEmailContainer.error = emailError

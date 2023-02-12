@@ -8,20 +8,22 @@ import com.example.jobspotadmin.home.fragment.notification.NotificationFragment
 import com.example.jobspotadmin.model.BroadcastNotification
 import com.example.jobspotadmin.util.convertTimeStamp
 
-class NotificationAdapter(private val listener : NotificationFragment) : RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder>() {
+class NotificationAdapter(private val listener: NotificationFragment) :
+    RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder>() {
 
-    private val notifications : MutableList<BroadcastNotification> = mutableListOf()
+    private val notifications: MutableList<BroadcastNotification> = mutableListOf()
 
     inner class NotificationViewHolder(
         private val binding: NotificationCardLayoutBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(notification: BroadcastNotification){
-            binding.tvNotificationTitle.text = notification.title
-            binding.tvMessage.text = notification.body
-            binding.tvTimestamp.text = convertTimeStamp(notification.timestamp.toDate())
-
-            binding.ivDelete.setOnClickListener {
-                listener.deleteNotification(notification = notification)
+        fun bind(notification: BroadcastNotification) {
+            with(binding) {
+                tvNotificationTitle.text = notification.title
+                tvMessage.text = notification.body
+                tvTimestamp.text = convertTimeStamp(notification.timestamp.toDate())
+                ivDelete.setOnClickListener {
+                    listener.deleteNotification(notification = notification)
+                }
             }
         }
     }
@@ -41,7 +43,7 @@ class NotificationAdapter(private val listener : NotificationFragment) : Recycle
 
     override fun getItemCount(): Int = notifications.size
 
-    fun setData(newNotificationList : List<BroadcastNotification>){
+    fun setData(newNotificationList: List<BroadcastNotification>) {
         notifications.clear()
         notifications.addAll(newNotificationList)
         notifyDataSetChanged()

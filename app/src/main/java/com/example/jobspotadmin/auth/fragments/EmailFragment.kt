@@ -17,7 +17,6 @@ import com.example.jobspotadmin.databinding.FragmentEmailBinding
 
 
 class EmailFragment : Fragment() {
-
     private var _binding: FragmentEmailBinding? = null
     private val binding get() = _binding!!
     override fun onCreateView(
@@ -25,16 +24,12 @@ class EmailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentEmailBinding.inflate(inflater, container, false)
-
         setupUI()
-
         return binding.root
     }
 
     private fun setupUI() {
-
-        binding.apply {
-
+        with(binding){
             tvEmailResend.text = createResendText()
 
             btnBackToLogin.setOnClickListener {

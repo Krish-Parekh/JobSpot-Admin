@@ -26,7 +26,7 @@ class RoleSelectFragment : Fragment() {
     }
 
     private fun setupUI() {
-        binding.apply {
+        with(binding) {
             ivRoleAdmin.setOnClickListener {
                 navigateToLogin(roleType = ROLE_TYPE_ADMIN)
             }

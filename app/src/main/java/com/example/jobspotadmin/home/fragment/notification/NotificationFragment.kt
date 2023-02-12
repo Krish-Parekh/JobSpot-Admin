@@ -42,7 +42,7 @@ class NotificationFragment : Fragment() {
     }
 
     private fun setupUI() {
-        binding.apply {
+        with(binding) {
 
             lifecycleScope.launchWhenStarted {
                 repeatOnLifecycle(Lifecycle.State.STARTED) {

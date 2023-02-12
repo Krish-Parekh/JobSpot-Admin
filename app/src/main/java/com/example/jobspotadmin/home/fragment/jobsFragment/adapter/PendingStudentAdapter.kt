@@ -18,7 +18,7 @@ class PendingStudentAdapter(
         private val binding: PendingStudentsCardLayoutBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(jobStatus: JobStatus) {
-            binding.apply {
+            with(binding) {
                 val student = jobStatus.student
                 val details = student.details!!
                 ivStudentProfile.load(details.imageUrl)

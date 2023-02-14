@@ -19,6 +19,7 @@ import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -34,7 +35,7 @@ class StudentViewModel : ViewModel() {
     val students: LiveData<List<Student>> = _students
 
     fun fetchStudents() {
-        viewModelScope.launch {
+        viewModelScope.launch(IO) {
             val studentRef = mFirestore.collection(COLLECTION_PATH_STUDENT)
             studentListener = studentRef.addSnapshotListener { value, error ->
                 if (error != null) {
@@ -50,7 +51,7 @@ class StudentViewModel : ViewModel() {
     }
 
     fun deleteStudent(student: Student) {
-        viewModelScope.launch {
+        viewModelScope.launch(IO) {
             val studentId = student.uid!!
             val studentImagePath = "$PROFILE_IMAGE_PATH/$studentId"
             val studentResumePath = "$RESUME_PATH/$studentId"
@@ -127,10 +128,7 @@ class StudentViewModel : ViewModel() {
                                         studentMockTestDeffered.complete(Unit)
                                     }
                                     .addOnFailureListener { exception ->
-                                        Log.d(
-                                            TAG,
-                                            "deleteStudentFromMockTest: ${exception.message}"
-                                        )
+                                        Log.d(TAG, "deleteStudentFromMockTest: ${exception.message}")
                                         studentMockTestDeffered.completeExceptionally(exception)
                                     }
                             }

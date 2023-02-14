@@ -27,7 +27,7 @@ class TpoViewFragment : Fragment() {
     }
 
     private fun setupUI() {
-        binding.apply {
+        with(binding) {
 
             ivPopOut.setOnClickListener {
                 findNavController().popBackStack()

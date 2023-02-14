@@ -87,7 +87,7 @@ class QuizFragment : Fragment() {
         val dialog = BottomSheetDialog(requireContext())
         val bottomSheet = layoutInflater.inflate(R.layout.bottom_sheet_delete_quiz, null)
         val btnNot: MaterialButton = bottomSheet.findViewById(R.id.btnNo)
-        val btnRemove: MaterialButton = bottomSheet.findViewById(R.id.btnRemoveFile)
+        val btnRemove: MaterialButton = bottomSheet.findViewById(R.id.btnRemoveStudent)
         btnNot.setOnClickListener {
             dialog.dismiss()
         }

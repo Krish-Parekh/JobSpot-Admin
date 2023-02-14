@@ -16,6 +16,7 @@ import androidx.navigation.fragment.navArgs
 import coil.load
 import com.example.jobspotadmin.R
 import com.example.jobspotadmin.auth.AuthActivity
+import com.example.jobspotadmin.databinding.BottomSheetDeleteTpoAccountBinding
 import com.example.jobspotadmin.databinding.FragmentProfileEditBinding
 import com.example.jobspotadmin.home.fragment.profileFragment.viewmodel.ProfileViewModel
 import com.example.jobspotadmin.util.*
@@ -24,7 +25,6 @@ import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 
-private const val TAG = "ProfileEditFragmentTAG"
 
 class ProfileEditFragment : Fragment() {
     private var _binding: FragmentProfileEditBinding? = null
@@ -90,36 +90,36 @@ class ProfileEditFragment : Fragment() {
     }
 
     private fun deleteAccountBottomSheet() {
-        val dialog = BottomSheetDialog(requireContext())
-        val bottomSheet = layoutInflater.inflate(R.layout.bottom_sheet_delete_tpo_account, null)
-        val btnNot: MaterialButton = bottomSheet.findViewById(R.id.btnNo)
-        val btnDeleteAccount: MaterialButton = bottomSheet.findViewById(R.id.btnDeleteAccount)
-        btnNot.setOnClickListener {
-            dialog.dismiss()
-        }
-        btnDeleteAccount.setOnClickListener {
-            profileViewModel.deleteAccount(args.tpo)
-            profileViewModel.deleteStatus.observe(viewLifecycleOwner) { uiState ->
-                when (uiState) {
-                    LOADING -> {
-                        loadingDialog.show()
+        val bottomSheetDialog = BottomSheetDialog(requireContext())
+        val deleteTpoAccountSheetBinding = BottomSheetDeleteTpoAccountBinding.inflate(layoutInflater)
+        bottomSheetDialog.setContentView(deleteTpoAccountSheetBinding.root)
+        with(deleteTpoAccountSheetBinding){
+            btnNo.setOnClickListener {
+                bottomSheetDialog.dismiss()
+            }
+            btnDeleteAccount.setOnClickListener {
+                profileViewModel.deleteAccount(args.tpo)
+                profileViewModel.deleteStatus.observe(viewLifecycleOwner) { uiState ->
+                    when (uiState) {
+                        LOADING -> {
+                            loadingDialog.show()
+                        }
+                        SUCCESS -> {
+                            requireActivity().finishAffinity()
+                            val loginIntent = Intent(requireContext(), AuthActivity::class.java)
+                            loginIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                            startActivity(loginIntent)
+                            loadingDialog.dismiss()
+                        }
+                        FAILURE -> {
+                            loadingDialog.dismiss()
+                        }
+                        else -> Unit
                     }
-                    SUCCESS -> {
-                        requireActivity().finishAffinity()
-                        val loginIntent = Intent(requireContext(), AuthActivity::class.java)
-                        loginIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                        startActivity(loginIntent)
-                        loadingDialog.dismiss()
-                    }
-                    FAILURE -> {
-                        loadingDialog.dismiss()
-                    }
-                    else -> Unit
                 }
             }
         }
-        dialog.setContentView(bottomSheet)
-        dialog.show()
+        bottomSheetDialog.show()
     }
 
     private fun setupObserver() {

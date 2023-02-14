@@ -11,7 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.jobspotadmin.R
+import com.example.jobspotadmin.databinding.BottomSheetDeleteStudentBinding
 import com.example.jobspotadmin.databinding.FragmentStudentBinding
 import com.example.jobspotadmin.home.fragment.studentFragment.adapter.StudentAdapter
 import com.example.jobspotadmin.home.fragment.studentFragment.viewModel.StudentViewModel
@@ -19,7 +19,6 @@ import com.example.jobspotadmin.model.Student
 import com.example.jobspotadmin.util.Constants.Companion.RESUME_PATH
 import com.example.jobspotadmin.util.LoadingDialog
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.button.MaterialButton
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
 
@@ -27,10 +26,8 @@ import kotlinx.coroutines.tasks.await
 class StudentFragment : Fragment() {
     private var _binding: FragmentStudentBinding? = null
     private val binding get() = _binding!!
-
     private var _studentAdapter: StudentAdapter? = null
     private val studentAdapter get() = _studentAdapter!!
-
     private val studentViewModel by viewModels<StudentViewModel>()
     private val students: MutableList<Student> = mutableListOf()
     private val loadingDialog by lazy { LoadingDialog(requireContext()) }
@@ -50,7 +47,7 @@ class StudentFragment : Fragment() {
 
     private fun setupUI() {
         studentViewModel.fetchStudents()
-        binding.apply {
+        with(binding) {
             ivPopOut.setOnClickListener {
                 findNavController().popBackStack()
             }
@@ -59,10 +56,8 @@ class StudentFragment : Fragment() {
                 filterStudents(text)
             }
 
-            rvStudent.apply {
-                adapter = studentAdapter
-                layoutManager = LinearLayoutManager(requireContext())
-            }
+            rvStudent.adapter = studentAdapter
+            rvStudent.layoutManager = LinearLayoutManager(requireContext())
         }
     }
 
@@ -106,19 +101,19 @@ class StudentFragment : Fragment() {
     }
 
     fun deleteStudent(student: Student) {
-        val dialog = BottomSheetDialog(requireContext())
-        val bottomSheet = layoutInflater.inflate(R.layout.bottom_sheet_delete_student, null)
-        val btnNot: MaterialButton = bottomSheet.findViewById(R.id.btnNo)
-        val btnRemove: MaterialButton = bottomSheet.findViewById(R.id.btnRemoveFile)
-        btnNot.setOnClickListener {
-            dialog.dismiss()
+        val bottomSheetDialog = BottomSheetDialog(requireContext())
+        val studentDeleteSheetBinding = BottomSheetDeleteStudentBinding.inflate(layoutInflater)
+        bottomSheetDialog.setContentView(studentDeleteSheetBinding.root)
+        with(studentDeleteSheetBinding) {
+            btnNo.setOnClickListener {
+                bottomSheetDialog.dismiss()
+            }
+            btnRemoveStudent.setOnClickListener {
+                studentViewModel.deleteStudent(student)
+                bottomSheetDialog.dismiss()
+            }
         }
-        btnRemove.setOnClickListener {
-            studentViewModel.deleteStudent(student)
-            dialog.dismiss()
-        }
-        dialog.setContentView(bottomSheet)
-        dialog.show()
+        bottomSheetDialog.show()
     }
 
     override fun onDestroyView() {

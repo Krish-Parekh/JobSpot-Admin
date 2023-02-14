@@ -15,6 +15,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -23,8 +24,8 @@ private const val TAG = "ProfileViewModel"
 class ProfileViewModel : ViewModel() {
 
     private val mFirestore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
-    private val mFirebaseStorage: FirebaseStorage by lazy { FirebaseStorage.getInstance() }
-    private val mFirebaseAuth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
+    private val mStorage: FirebaseStorage by lazy { FirebaseStorage.getInstance() }
+    private val mAuth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
     private var imageUri: Uri? = null
 
     fun setImageUri(imageUri: Uri) {
@@ -55,16 +56,16 @@ class ProfileViewModel : ViewModel() {
 
     fun updateUser(tpo: Tpo) {
        try {
-           viewModelScope.launch {
+           viewModelScope.launch(IO) {
                _updateStatus.postValue(UiState.LOADING)
                if (!tpo.imageUri.startsWith("https://firebasestorage.googleapis.com/")) {
                    val editUserRef =
-                       mFirebaseStorage.getReference(TPO_IMAGE_STORAGE_PATH).child(tpo.uid)
+                       mStorage.getReference(TPO_IMAGE_STORAGE_PATH).child(tpo.uid)
                    editUserRef.putFile(Uri.parse(tpo.imageUri)).await()
                    tpo.imageUri = editUserRef.downloadUrl.await().toString()
                }
 
-               val currentUser = mFirebaseAuth.currentUser!!
+               val currentUser = mAuth.currentUser!!
                if (
                    tpo.username != currentUser.displayName ||
                    tpo.email != currentUser.email ||
@@ -88,15 +89,15 @@ class ProfileViewModel : ViewModel() {
     }
 
     fun deleteAccount(tpo: Tpo){
-        viewModelScope.launch {
+        viewModelScope.launch(IO) {
             try {
                 _deleteStatus.postValue(UiState.LOADING)
                 val tpoId = tpo.uid
                 val tpoImagePath = "$TPO_IMAGE_STORAGE_PATH/$tpoId"
-                mFirebaseAuth.currentUser?.delete()?.await()
+                mAuth.currentUser?.delete()?.await()
                 mFirestore.collection(COLLECTION_PATH_TPO).document(tpoId).delete().await()
                 mFirestore.collection(Constants.COLLECTION_PATH_ROLE).document(tpoId).delete().await()
-                mFirebaseStorage.reference.child(tpoImagePath).delete().await()
+                mStorage.reference.child(tpoImagePath).delete().await()
                 _deleteStatus.postValue(UiState.SUCCESS)
             } catch (error : Exception){
                 Log.d(TAG, "deleteAccount Error: ${error.message}")

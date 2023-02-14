@@ -13,6 +13,8 @@ import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_COMPANY
 import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_NOTIFICATION
 import com.google.firebase.database.*
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -20,7 +22,7 @@ private const val TAG = "StudentJobViewModelTAG"
 
 class StudentJobViewModel : ViewModel() {
     private val mFirestore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
-    private val mRealtimeDatabase: DatabaseReference by lazy { FirebaseDatabase.getInstance().reference }
+    private val mRealtimeDb: DatabaseReference by lazy { FirebaseDatabase.getInstance().reference }
     private var studentListener: ValueEventListener? = null
 
     private val _pendingApplications: MutableLiveData<MutableList<JobStatus>> =
@@ -33,48 +35,50 @@ class StudentJobViewModel : ViewModel() {
 
 
     fun fetchStudents(jobId: String) {
-        val tempPendingList = mutableListOf<JobStatus>()
-        val tempEvaluatedList = mutableListOf<JobStatus>()
-        try {
-            val companiesRef = mRealtimeDatabase.child(COLLECTION_PATH_COMPANY).child(jobId)
-            studentListener = companiesRef.addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val applicationList = snapshot.children.map { application ->
-                        application.getValue(JobApplication::class.java)!!
-                    }
-                    tempPendingList.clear()
-                    tempEvaluatedList.clear()
-                    viewModelScope.launch {
-                        applicationList.forEach { applicant ->
-                            val jobStatus = JobStatus()
-                            val student = getStudent(applicant.studentId)
-                            jobStatus.jobApplication = applicant
-                            jobStatus.student = student
-                            if (applicant.isEvaluated) {
-                                tempEvaluatedList.add(jobStatus)
-                            } else {
-                                tempPendingList.add(jobStatus)
-                            }
+        viewModelScope.launch(IO) {
+            val tempPendingList = mutableListOf<JobStatus>()
+            val tempEvaluatedList = mutableListOf<JobStatus>()
+            try {
+                val companiesRef = mRealtimeDb.child(COLLECTION_PATH_COMPANY).child(jobId)
+                studentListener = companiesRef.addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val applicationList = snapshot.children.map { application ->
+                            application.getValue(JobApplication::class.java)!!
                         }
-                        _pendingApplications.postValue(tempPendingList)
-                        _evaluatedApplications.postValue(tempEvaluatedList)
+                        tempPendingList.clear()
+                        tempEvaluatedList.clear()
+                        viewModelScope.launch {
+                            applicationList.forEach { applicant ->
+                                val jobStatus = JobStatus()
+                                val student = getStudent(applicant.studentId)
+                                jobStatus.jobApplication = applicant
+                                jobStatus.student = student
+                                if (applicant.isEvaluated) {
+                                    tempEvaluatedList.add(jobStatus)
+                                } else {
+                                    tempPendingList.add(jobStatus)
+                                }
+                            }
+                            _pendingApplications.postValue(tempPendingList)
+                            _evaluatedApplications.postValue(tempEvaluatedList)
+                        }
                     }
-                }
 
-                override fun onCancelled(error: DatabaseError) {
-                    Log.d(TAG, "Error: ${error.message}")
-                }
+                    override fun onCancelled(error: DatabaseError) {
+                        Log.d(TAG, "Error: ${error.message}")
+                    }
 
-            })
-        } catch (error: Exception) {
-            Log.d(TAG, "Error: ${error.message}")
-        } finally {
-            tempPendingList.clear()
-            tempEvaluatedList.clear()
-            if (studentListener != null) {
-                mRealtimeDatabase.removeEventListener(studentListener!!)
-                studentListener = null
-                Log.d(TAG, "We are inside fetchStudent Function")
+                })
+            } catch (error: Exception) {
+                Log.d(TAG, "Error: ${error.message}")
+            } finally {
+                tempPendingList.clear()
+                tempEvaluatedList.clear()
+                if (studentListener != null) {
+                    mRealtimeDb.removeEventListener(studentListener!!)
+                    studentListener = null
+                    Log.d(TAG, "We are inside fetchStudent Function")
+                }
             }
         }
     }
@@ -93,7 +97,7 @@ class StudentJobViewModel : ViewModel() {
             val jobId = jobApplication.jobId
             val studentId = jobApplication.studentId
             val companiesRef =
-                mRealtimeDatabase.child(COLLECTION_PATH_COMPANY).child(jobId).child(studentId)
+                mRealtimeDb.child(COLLECTION_PATH_COMPANY).child(jobId).child(studentId)
             val companyName =
                 mFirestore.collection(COLLECTION_PATH_COMPANY).document(jobId).get().await()
                     .get("name") as String
@@ -123,7 +127,7 @@ class StudentJobViewModel : ViewModel() {
     override fun onCleared() {
         if (studentListener != null) {
             Log.d(TAG, "Called and listener is removed")
-            mRealtimeDatabase.removeEventListener(studentListener!!)
+            mRealtimeDb.removeEventListener(studentListener!!)
             studentListener = null
         }
         super.onCleared()

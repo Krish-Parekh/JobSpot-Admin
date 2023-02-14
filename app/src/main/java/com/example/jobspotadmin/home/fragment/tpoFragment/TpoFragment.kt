@@ -10,25 +10,22 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.jobspotadmin.R
+import com.example.jobspotadmin.databinding.BottomSheetDeleteTpoBinding
 import com.example.jobspotadmin.databinding.FragmentTpoBinding
 import com.example.jobspotadmin.home.fragment.tpoFragment.adapter.TpoAdapter
 import com.example.jobspotadmin.home.fragment.tpoFragment.viewmodel.TpoViewModel
-import com.example.jobspotadmin.model.Job
 import com.example.jobspotadmin.model.Tpo
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.button.MaterialButton
 
 
 class TpoFragment : Fragment() {
     private var _binding: FragmentTpoBinding? = null
     private val binding get() = _binding!!
-
-    private var _tpoAdapter : TpoAdapter? = null
+    private var _tpoAdapter: TpoAdapter? = null
     private val tpoAdapter get() = _tpoAdapter!!
-
     private val tpoViewModel by viewModels<TpoViewModel>()
     private val tpos: MutableList<Tpo> by lazy { mutableListOf() }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -38,12 +35,13 @@ class TpoFragment : Fragment() {
 
         setupUI()
         setupObserver()
+
         return binding.root
     }
 
     private fun setupUI() {
+        tpoViewModel.fetchTpo()
         with(binding) {
-            tpoViewModel.fetchTpo()
             ivPopOut.setOnClickListener {
                 findNavController().popBackStack()
             }
@@ -71,27 +69,27 @@ class TpoFragment : Fragment() {
     }
 
     private fun setupObserver() {
-        tpoViewModel.tpoList.observe(viewLifecycleOwner){
-            tpoAdapter.setData(it)
+        tpoViewModel.tpoList.observe(viewLifecycleOwner) { tpoList ->
+            tpoAdapter.setData(tpoList)
             tpos.clear()
-            tpos.addAll(it)
+            tpos.addAll(tpoList)
         }
     }
 
-    fun deleteTpo(tpo: Tpo){
-        val dialog = BottomSheetDialog(requireContext())
-        val bottomSheet = layoutInflater.inflate(R.layout.bottom_sheet_delete_tpo, null)
-        val btnNot: MaterialButton = bottomSheet.findViewById(R.id.btnNo)
-        val btnRemove: MaterialButton = bottomSheet.findViewById(R.id.btnRemoveTpo)
-        btnNot.setOnClickListener {
-            dialog.dismiss()
+    fun deleteTpo(tpo: Tpo) {
+        val bottomSheetDialog = BottomSheetDialog(requireContext())
+        val tpoDeleteSheetBinding = BottomSheetDeleteTpoBinding.inflate(layoutInflater)
+        bottomSheetDialog.setContentView(tpoDeleteSheetBinding.root)
+        with(tpoDeleteSheetBinding) {
+            btnNo.setOnClickListener {
+                bottomSheetDialog.dismiss()
+            }
+            btnRemoveTpo.setOnClickListener {
+                tpoViewModel.deleteTpo(tpo)
+                bottomSheetDialog.dismiss()
+            }
         }
-        btnRemove.setOnClickListener {
-            tpoViewModel.deleteTpo(tpo)
-            dialog.dismiss()
-        }
-        dialog.setContentView(bottomSheet)
-        dialog.show()
+        bottomSheetDialog.show()
     }
 
     fun navigateToTpoView(tpo: Tpo) {
@@ -101,6 +99,7 @@ class TpoFragment : Fragment() {
 
     override fun onDestroyView() {
         _binding = null
+        _tpoAdapter = null
         super.onDestroyView()
     }
 

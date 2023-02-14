@@ -16,6 +16,7 @@ import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.auth.User
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
@@ -24,7 +25,7 @@ class HomeViewModel : ViewModel() {
 
     private val _metaCounts: MutableLiveData<Resource<Counts>> = MutableLiveData()
     val metaCounts: LiveData<Resource<Counts>> = _metaCounts
-    private var notificationCountListener: ListenerRegistration? = null
+
     private var countListener: ListenerRegistration? = null
 
     fun fetchCounts() {
@@ -47,9 +48,8 @@ class HomeViewModel : ViewModel() {
 
     private suspend fun getNotificationCount(): Int {
         val countDeffered = CompletableDeferred<Int>()
-        val notificationRef =
-            mFirestore.collection(COLLECTION_PATH_NOTIFICATION).whereEqualTo("type", "BROADCAST")
-        notificationCountListener = notificationRef.addSnapshotListener { value, error ->
+        val notificationRef = mFirestore.collection(COLLECTION_PATH_NOTIFICATION).whereEqualTo("type", "BROADCAST")
+        countListener = notificationRef.addSnapshotListener { value, error ->
             if (error != null) {
                 countDeffered.completeExceptionally(error)
                 return@addSnapshotListener
@@ -76,7 +76,6 @@ class HomeViewModel : ViewModel() {
     }
 
     override fun onCleared() {
-        notificationCountListener?.remove()
         countListener?.remove()
         super.onCleared()
     }

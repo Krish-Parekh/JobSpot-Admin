@@ -76,20 +76,13 @@ class LoginFragment : Fragment() {
                 SUCCESS -> {
                     loadingDialog.dismiss()
                     val user = resource.data!!
-                    Log.d(TAG, "User: $user ")
                     if (user.roleType == args.roleType) {
                         if (user.userInfoExist.not() && user.roleType == ROLE_TYPE_TPO) {
                             navigateToUserDetail(username = user.username, email = user.email)
                         } else if (user.userInfoExist && user.roleType == ROLE_TYPE_TPO) {
-                            navigateToHomeActivity(
-                                roleType = user.roleType,
-                                username = user.username
-                            )
+                            navigateToHomeActivity(roleType = user.roleType,)
                         } else if (user.roleType == ROLE_TYPE_ADMIN) {
-                            navigateToHomeActivity(
-                                roleType = user.roleType,
-                                username = user.username
-                            )
+                            navigateToHomeActivity(roleType = user.roleType)
                         }
                     } else {
                         showToast(requireContext(), "Account doesn't exist")
@@ -118,7 +111,7 @@ class LoginFragment : Fragment() {
         binding.etPassword.clearText()
     }
 
-    private fun navigateToHomeActivity(roleType: String, username: String) {
+    private fun navigateToHomeActivity(roleType: String) {
         val homeActivity = Intent(requireContext(), HomeActivity::class.java)
         homeActivity.putExtra("ROLE_TYPE", roleType)
         requireActivity().startActivity(homeActivity)

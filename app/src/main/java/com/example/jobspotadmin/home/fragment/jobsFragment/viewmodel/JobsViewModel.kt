@@ -13,6 +13,7 @@ import com.example.jobspotadmin.util.Resource
 import com.google.firebase.database.*
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers.IO
@@ -71,7 +72,7 @@ class JobsViewModel : ViewModel() {
         viewModelScope.launch(IO) {
             try {
                 _jobs.postValue(Resource.loading())
-                val companyRef = mFirestore.collection(COLLECTION_PATH_COMPANY)
+                val companyRef = mFirestore.collection(COLLECTION_PATH_COMPANY).orderBy("uid", Query.Direction.DESCENDING)
                 companyListener = companyRef.addSnapshotListener { value, error ->
                     if (error != null) {
                         val errorMessage = error.message!!

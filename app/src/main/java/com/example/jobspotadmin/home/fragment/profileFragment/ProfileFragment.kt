@@ -10,16 +10,16 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import coil.load
-import com.example.jobspotadmin.R
 import com.example.jobspotadmin.auth.AuthActivity
+import com.example.jobspotadmin.databinding.BottomSheetLogoutBinding
 import com.example.jobspotadmin.databinding.FragmentProfileBinding
 import com.example.jobspotadmin.home.fragment.profileFragment.viewmodel.ProfileViewModel
 import com.example.jobspotadmin.model.Tpo
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
 
 private const val TAG = "ProfileFragmentTAG"
+
 class ProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
@@ -31,11 +31,11 @@ class ProfileFragment : Fragment() {
     ): View? {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
 
-        setupView()
+        setupUI()
         return binding.root
     }
 
-    private fun setupView() {
+    private fun setupUI() {
         with(binding) {
             val currentUser = mFirebaseAuth.currentUser!!
             val image = currentUser.photoUrl
@@ -71,29 +71,30 @@ class ProfileFragment : Fragment() {
     }
 
     private fun navigateToUserEdit(tpo: Tpo) {
-        val direction = ProfileFragmentDirections.actionProfileFragmentToProfileEditFragment(tpo = tpo)
+        val direction =
+            ProfileFragmentDirections.actionProfileFragmentToProfileEditFragment(tpo = tpo)
         Log.d(TAG, "navigateToUserEdit: $direction")
         findNavController().navigate(direction)
     }
 
-    private fun logoutBottomSheet(){
-        val dialog = BottomSheetDialog(requireContext())
-        val bottomSheet = layoutInflater.inflate(R.layout.bottom_sheet_logout, null)
-        val btnNot: MaterialButton = bottomSheet.findViewById(R.id.btnNo)
-        val btnRemove: MaterialButton = bottomSheet.findViewById(R.id.btnLogout)
-        btnNot.setOnClickListener {
-            dialog.dismiss()
+    private fun logoutBottomSheet() {
+        val bottomSheetDialog = BottomSheetDialog(requireContext())
+        val logoutSheetBinding = BottomSheetLogoutBinding.inflate(layoutInflater)
+        bottomSheetDialog.setContentView(logoutSheetBinding.root)
+        with(logoutSheetBinding) {
+            btnNo.setOnClickListener {
+                bottomSheetDialog.dismiss()
+            }
+            btnLogout.setOnClickListener {
+                bottomSheetDialog.dismiss()
+                FirebaseAuth.getInstance().signOut()
+                requireActivity().finishAffinity()
+                val loginIntent = Intent(requireContext(), AuthActivity::class.java)
+                loginIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                startActivity(loginIntent)
+            }
         }
-        btnRemove.setOnClickListener {
-            dialog.dismiss()
-            FirebaseAuth.getInstance().signOut()
-            requireActivity().finishAffinity()
-            val loginIntent = Intent(requireContext(), AuthActivity::class.java)
-            loginIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-            startActivity(loginIntent)
-        }
-        dialog.setContentView(bottomSheet)
-        dialog.show()
+        bottomSheetDialog.show()
     }
 
     override fun onDestroy() {

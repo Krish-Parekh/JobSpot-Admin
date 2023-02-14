@@ -8,15 +8,16 @@ import com.example.jobspotadmin.databinding.TpoCardLayoutBinding
 import com.example.jobspotadmin.home.fragment.tpoFragment.TpoFragment
 import com.example.jobspotadmin.model.Tpo
 
-class TpoAdapter(private val listener : TpoFragment) : RecyclerView.Adapter<TpoAdapter.TpoViewHolder>() {
+class TpoAdapter(
+    private val listener: TpoFragment
+) : RecyclerView.Adapter<TpoAdapter.TpoViewHolder>() {
 
-    private val tpoList : MutableList<Tpo> = mutableListOf()
+    private val tpoList: MutableList<Tpo> = mutableListOf()
 
     inner class TpoViewHolder(
-        private val binding : TpoCardLayoutBinding
-    ) : RecyclerView.ViewHolder(binding.root){
-
-        fun bind(tpo : Tpo){
+        private val binding: TpoCardLayoutBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(tpo: Tpo) {
             binding.tvTpoName.text = tpo.username
             binding.tvTpoEmail.text = tpo.email
             binding.ivTpoProfile.load(tpo.imageUri)
@@ -24,7 +25,7 @@ class TpoAdapter(private val listener : TpoFragment) : RecyclerView.Adapter<TpoA
                 listener.navigateToTpoView(tpo)
             }
             binding.ivDeleteTpo.setOnClickListener {
-                listener.deleteTpo(tpo = tpo)
+                listener.deleteTpo(tpo)
             }
         }
     }
@@ -44,7 +45,7 @@ class TpoAdapter(private val listener : TpoFragment) : RecyclerView.Adapter<TpoA
 
     override fun getItemCount(): Int = tpoList.size
 
-    fun setData(newTpo : List<Tpo>){
+    fun setData(newTpo: List<Tpo>) {
         tpoList.clear()
         tpoList.addAll(newTpo)
         notifyDataSetChanged()

@@ -10,8 +10,9 @@ import com.example.jobspotadmin.home.fragment.quizFragment.QuizFragment
 import com.example.jobspotadmin.home.fragment.quizFragment.adapter.diff_util.MockDetailDiffCallBack
 import com.example.jobspotadmin.model.MockDetail
 
-class MockTestAdapter(private val listener: QuizFragment) :
-    RecyclerView.Adapter<MockTestAdapter.MockTestViewHolder>() {
+class MockTestAdapter(
+    private val listener: QuizFragment
+) : RecyclerView.Adapter<MockTestAdapter.MockTestViewHolder>() {
 
     private val mockDetail: MutableList<MockDetail> = mutableListOf()
 
@@ -19,15 +20,13 @@ class MockTestAdapter(private val listener: QuizFragment) :
         private val binding: MockTestCardLayoutBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(mockDetail: MockDetail) {
-            binding.apply {
-                tvQuizName.text = mockDetail.mockName
-                tvQuizStudentCount.text = itemView.context.getString(
-                    R.string.field_quiz_student_count,
-                    mockDetail.studentIds.size
-                )
-                ivDeleteQuiz.setOnClickListener {
-                    listener.showDeleteDialog(mockDetail = mockDetail)
-                }
+            binding.tvQuizName.text = mockDetail.mockName
+            binding.tvQuizStudentCount.text = itemView.context.getString(
+                R.string.field_quiz_student_count,
+                mockDetail.studentIds.size
+            )
+            binding.ivDeleteQuiz.setOnClickListener {
+                listener.showDeleteDialog(mockDetail = mockDetail)
             }
         }
     }

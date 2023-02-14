@@ -1,6 +1,5 @@
 package com.example.jobspotadmin.home.fragment.notification.viewmodel
 
-import android.app.Notification
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,9 +8,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.jobspotadmin.model.BroadcastNotification
 import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_NOTIFICATION
 import com.example.jobspotadmin.util.Resource
-import com.example.jobspotadmin.util.UiState
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -20,6 +20,7 @@ private const val TAG = "NotificationViewModelTAG"
 class NotificationViewModel : ViewModel() {
 
     private val mFirestore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
+    private var notificationListener: ListenerRegistration? = null
 
     private val _uploadStatus: MutableLiveData<Resource<String>> = MutableLiveData()
     val uploadStatus: LiveData<Resource<String>> = _uploadStatus
@@ -29,11 +30,12 @@ class NotificationViewModel : ViewModel() {
     val notification: LiveData<List<BroadcastNotification>> = _notification
 
     fun fetchNotifications() {
-        try {
-            viewModelScope.launch {
-                mFirestore.collection(COLLECTION_PATH_NOTIFICATION)
+        viewModelScope.launch(IO) {
+            try {
+                val notificationRef = mFirestore.collection(COLLECTION_PATH_NOTIFICATION)
                     .whereEqualTo("type", "BROADCAST")
                     .orderBy("timestamp", Query.Direction.DESCENDING)
+                notificationListener = notificationRef
                     .addSnapshotListener { value, error ->
                         if (error != null) {
                             return@addSnapshotListener
@@ -44,9 +46,10 @@ class NotificationViewModel : ViewModel() {
                         }
                         _notification.postValue(notificationList)
                     }
+
+            } catch (error: Exception) {
+                Log.d(TAG, "Error: ${error.message}")
             }
-        } catch (e: Exception) {
-            Log.d(TAG, "Error: ${e.message}")
         }
     }
 
@@ -70,7 +73,13 @@ class NotificationViewModel : ViewModel() {
     fun deleteNotification(notification: BroadcastNotification) {
         viewModelScope.launch {
             val notificationId = notification.id
-            mFirestore.collection(COLLECTION_PATH_NOTIFICATION).document(notificationId).delete().await()
+            mFirestore.collection(COLLECTION_PATH_NOTIFICATION).document(notificationId).delete()
+                .await()
         }
+    }
+
+    override fun onCleared() {
+        notificationListener?.remove()
+        super.onCleared()
     }
 }

@@ -64,6 +64,7 @@ class AddNotificationFragment : Fragment() {
                 }
                 SUCCESS -> {
                     loadingDialog.dismiss()
+                    findNavController().popBackStack()
                     val successMessage = resource.data!!
                     showToast(requireContext(), successMessage)
                 }

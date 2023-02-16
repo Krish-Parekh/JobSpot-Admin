@@ -29,6 +29,9 @@ class NotificationViewModel : ViewModel() {
         MutableLiveData(mutableListOf())
     val notification: LiveData<List<BroadcastNotification>> = _notification
 
+    private val _deleteStatus: MutableLiveData<Resource<String>> = MutableLiveData()
+    val deleteStatus: LiveData<Resource<String>> = _deleteStatus
+
     fun fetchNotifications() {
         viewModelScope.launch(IO) {
             try {
@@ -71,10 +74,16 @@ class NotificationViewModel : ViewModel() {
     }
 
     fun deleteNotification(notification: BroadcastNotification) {
-        viewModelScope.launch {
-            val notificationId = notification.id
-            mFirestore.collection(COLLECTION_PATH_NOTIFICATION).document(notificationId).delete()
-                .await()
+        viewModelScope.launch(IO) {
+            try {
+                _deleteStatus.postValue(Resource.loading())
+                val notificationId = notification.id
+                val notificationRef = mFirestore.collection(COLLECTION_PATH_NOTIFICATION).document(notificationId)
+                notificationRef.delete().await()
+                _deleteStatus.postValue(Resource.success("Notification delete success."))
+            } catch (error: Exception) {
+                _deleteStatus.postValue(Resource.error("Error: ${error.message}"))
+            }
         }
     }
 

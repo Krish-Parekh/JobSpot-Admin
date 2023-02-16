@@ -1,10 +1,10 @@
 package com.example.jobspotadmin.home.fragment.notification
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -16,18 +16,22 @@ import com.example.jobspotadmin.databinding.FragmentNotificationBinding
 import com.example.jobspotadmin.home.fragment.notification.adapter.NotificationAdapter
 import com.example.jobspotadmin.home.fragment.notification.viewmodel.NotificationViewModel
 import com.example.jobspotadmin.model.BroadcastNotification
+import com.example.jobspotadmin.util.LoadingDialog
+import com.example.jobspotadmin.util.Status
+import com.example.jobspotadmin.util.Status.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 
 
 class NotificationFragment : Fragment() {
-    private var _binding : FragmentNotificationBinding? = null
+    private var _binding: FragmentNotificationBinding? = null
     private val binding get() = _binding!!
 
-    private var _notificationAdapter : NotificationAdapter? = null
+    private var _notificationAdapter: NotificationAdapter? = null
     private val notificationAdapter get() = _notificationAdapter!!
 
     private val notificationViewModel by viewModels<NotificationViewModel>()
+    private val loadingDialog by lazy { LoadingDialog(requireContext()) }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -65,12 +69,26 @@ class NotificationFragment : Fragment() {
     }
 
     private fun setupObserver() {
-        notificationViewModel.notification.observe(viewLifecycleOwner){
+        notificationViewModel.notification.observe(viewLifecycleOwner) {
             notificationAdapter.setData(it)
+        }
+
+        notificationViewModel.deleteStatus.observe(viewLifecycleOwner) { resource ->
+            when (resource.status) {
+                LOADING -> {
+                    loadingDialog.show()
+                }
+                SUCCESS -> {
+                    loadingDialog.dismiss()
+                }
+                ERROR -> {
+                    loadingDialog.dismiss() 
+                }
+            }
         }
     }
 
-    fun deleteNotification(notification : BroadcastNotification){
+    fun deleteNotification(notification: BroadcastNotification) {
         val dialog = BottomSheetDialog(requireContext())
         val bottomSheet = layoutInflater.inflate(R.layout.bottom_sheet_delete_notification, null)
         val btnNot: MaterialButton = bottomSheet.findViewById(R.id.btnNo)

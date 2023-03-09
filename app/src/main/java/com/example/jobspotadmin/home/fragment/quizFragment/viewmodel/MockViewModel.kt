@@ -63,7 +63,7 @@ class MockViewModel : ViewModel() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val mockDetailList = snapshot.children.map { quizDetail ->
                     quizDetail.getValue(MockDetail::class.java)!!
-                }
+                }.sortedByDescending { it.mockId }
                 _mockDetails.postValue(mockDetailList)
             }
 

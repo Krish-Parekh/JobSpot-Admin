@@ -78,7 +78,8 @@ class NotificationViewModel : ViewModel() {
             try {
                 _deleteStatus.postValue(Resource.loading())
                 val notificationId = notification.id
-                val notificationRef = mFirestore.collection(COLLECTION_PATH_NOTIFICATION).document(notificationId)
+                val notificationRef =
+                    mFirestore.collection(COLLECTION_PATH_NOTIFICATION).document(notificationId)
                 notificationRef.delete().await()
                 _deleteStatus.postValue(Resource.success("Notification delete success."))
             } catch (error: Exception) {

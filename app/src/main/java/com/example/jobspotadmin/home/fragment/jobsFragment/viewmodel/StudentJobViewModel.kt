@@ -14,7 +14,6 @@ import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_NOTIFIC
 import com.google.firebase.database.*
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 

@@ -10,13 +10,11 @@ import android.text.style.UnderlineSpan
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.jobspotadmin.auth.AuthActivity
 import com.example.jobspotadmin.databinding.ActivityMainBinding
-import com.example.jobspotadmin.home.HomeActivity
 import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity() {
     private var _binding : ActivityMainBinding? = null
     private val binding get() = _binding!!
-    private val mAuth by lazy { FirebaseAuth.getInstance() }
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
@@ -34,13 +32,8 @@ class MainActivity : AppCompatActivity() {
         binding.onBoardingHeading.text = headingText
 
         binding.ivFab.setOnClickListener {
-            if(mAuth.currentUser != null ){
-                val homeActivity = Intent(this, HomeActivity::class.java)
-                startActivity(homeActivity)
-            } else {
-                val authActivity = Intent(this, AuthActivity::class.java)
-                startActivity(authActivity)
-            }
+            val authActivity = Intent(this, AuthActivity::class.java)
+            startActivity(authActivity)
             finish()
         }
     }

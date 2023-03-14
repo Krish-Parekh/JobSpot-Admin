@@ -41,9 +41,9 @@ class StudentViewFragment : Fragment() {
             profileImage.load(args.student.details?.imageUrl)
             tvSapId.text = args.student.details?.sapId
             tvMobile.text = args.student.details?.mobile
-            tvDob.text = args.student.details?.mobile
+            tvDob.text = args.student.details?.dob
             tvAvgSGPI.text = args.student.academic?.avgScore
-            tvAddress.text = args.student.address?.address
+            tvAddress.text = getString(R.string.student_address, args.student.address?.address, args.student.address?.city, args.student.address?.zipCode)
             layoutUploadedPdf.tvFileName.text = args.fileName
             layoutUploadedPdf.tvFileMetaData.text = args.fileMetaData
 

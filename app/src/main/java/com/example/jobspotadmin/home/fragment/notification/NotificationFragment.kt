@@ -1,9 +1,11 @@
 package com.example.jobspotadmin.home.fragment.notification
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.OvershootInterpolator
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -21,7 +23,12 @@ import com.example.jobspotadmin.util.Status
 import com.example.jobspotadmin.util.Status.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
+import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter
+import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter
+import jp.wasabeef.recyclerview.adapters.SlideInLeftAnimationAdapter
+import jp.wasabeef.recyclerview.adapters.SlideInRightAnimationAdapter
 
+private const val TAG = "SOME_VALUE"
 
 class NotificationFragment : Fragment() {
     private var _binding: FragmentNotificationBinding? = null
@@ -62,7 +69,13 @@ class NotificationFragment : Fragment() {
                 findNavController().navigate(R.id.action_notificationFragment_to_addNotificationFragment)
             }
 
-            rvNotification.adapter = notificationAdapter
+            val alphaAdapter = AlphaInAnimationAdapter(notificationAdapter)
+            rvNotification.adapter = ScaleInAnimationAdapter(alphaAdapter).apply {
+                setDuration(1000)
+                setHasStableIds(false)
+                setFirstOnly(false)
+                setInterpolator(OvershootInterpolator(.100f))
+            }
             rvNotification.layoutManager = LinearLayoutManager(requireContext())
 
         }
@@ -79,6 +92,7 @@ class NotificationFragment : Fragment() {
                     loadingDialog.show()
                 }
                 SUCCESS -> {
+                    notificationViewModel.fetchNotifications()
                     loadingDialog.dismiss()
                 }
                 ERROR -> {

@@ -111,6 +111,8 @@
     <string name="network_error">A network error occurred</string>
     <string name="email_exists">"Email already exists"</string>
 
+    <string name="student_address"> %s, %s:%s </string>
+
 
     <string name="loading">Loading</string>
     <string name="completed">Done</string>

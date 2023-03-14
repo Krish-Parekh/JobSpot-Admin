@@ -9,6 +9,7 @@ buildscript{
         lifecycle_version = "2.5.1"
         lottie_version = "3.4.0"
         coil_version = "2.2.2"
+        recycler_view_animation="4.0.2"
     }
     dependencies {
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"

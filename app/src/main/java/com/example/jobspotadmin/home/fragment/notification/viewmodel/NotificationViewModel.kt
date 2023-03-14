@@ -43,6 +43,7 @@ class NotificationViewModel : ViewModel() {
                         if (error != null) {
                             return@addSnapshotListener
                         }
+                        Log.d(TAG, "BroadCast Notification is called...")
                         val documents = value?.documents!!
                         val notificationList = documents.map {
                             it.toObject(BroadcastNotification::class.java)!!

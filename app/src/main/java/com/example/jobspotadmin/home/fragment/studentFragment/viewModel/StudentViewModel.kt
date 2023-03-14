@@ -44,7 +44,7 @@ class StudentViewModel : ViewModel() {
                 val documents = value?.documents!!
                 val studentList = documents.map {
                     it.toObject(Student::class.java)!!
-                }.sortedByDescending { it.details?.sapId }
+                }.sortedBy { it.details?.sapId }
                 _students.postValue(studentList)
             }
         }

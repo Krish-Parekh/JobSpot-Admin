@@ -92,7 +92,6 @@ class NotificationFragment : Fragment() {
                     loadingDialog.show()
                 }
                 SUCCESS -> {
-                    notificationViewModel.fetchNotifications()
                     loadingDialog.dismiss()
                 }
                 ERROR -> {

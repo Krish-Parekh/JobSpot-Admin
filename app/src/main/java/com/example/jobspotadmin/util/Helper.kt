@@ -3,6 +3,7 @@ package com.example.jobspotadmin.util
 import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
@@ -11,6 +12,7 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import java.time.LocalTime
 import java.util.*
 
 fun TextInputLayout.addTextWatcher() {
@@ -99,4 +101,15 @@ fun convertTimeStamp(timestamp: Date): String {
         elapsedTimeString = "$elapsedSeconds seconds ago"
     }
     return elapsedTimeString
+}
+
+fun getGreeting(): String {
+    val currentTime = LocalTime.now() // get the current time in the local timezone
+    val hour = currentTime.hour // get the current hour
+    return when(hour) {
+        in 0..11 -> "Good Morning!" // if the current hour is between midnight and 11am
+        in 12..16 -> "Good Afternoon!" // if the current hour is between noon and 4pm
+        in 17..23 -> "Good Evening!" // if the current hour is between 5pm and midnight
+        else -> "Hello!" // if the current hour is invalid (e.g. negative or greater than 23)
+    }
 }

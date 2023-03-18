@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.jobspotadmin.model.BroadcastNotification
 import com.example.jobspotadmin.util.Constants.Companion.COLLECTION_PATH_NOTIFICATION
 import com.example.jobspotadmin.util.Resource
+import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
@@ -35,15 +36,17 @@ class NotificationViewModel : ViewModel() {
     fun fetchNotifications() {
         viewModelScope.launch(IO) {
             try {
-                val notificationRef = mFirestore.collection(COLLECTION_PATH_NOTIFICATION)
+                val notificationRef = mFirestore
+                    .collection(COLLECTION_PATH_NOTIFICATION)
                     .whereEqualTo("type", "BROADCAST")
                     .orderBy("timestamp", Query.Direction.DESCENDING)
+
                 notificationListener = notificationRef
                     .addSnapshotListener { value, error ->
                         if (error != null) {
                             return@addSnapshotListener
                         }
-                        Log.d(TAG, "BroadCast Notification is called...")
+
                         val documents = value?.documents!!
                         val notificationList = documents.map {
                             it.toObject(BroadcastNotification::class.java)!!
@@ -79,8 +82,7 @@ class NotificationViewModel : ViewModel() {
             try {
                 _deleteStatus.postValue(Resource.loading())
                 val notificationId = notification.id
-                val notificationRef =
-                    mFirestore.collection(COLLECTION_PATH_NOTIFICATION).document(notificationId)
+                val notificationRef = mFirestore.collection(COLLECTION_PATH_NOTIFICATION).document(notificationId)
                 notificationRef.delete().await()
                 _deleteStatus.postValue(Resource.success("Notification delete success."))
             } catch (error: Exception) {

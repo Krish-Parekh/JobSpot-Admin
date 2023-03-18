@@ -3,11 +3,15 @@ package com.example.jobspotadmin.home.fragment.homeFragment
 import android.animation.ValueAnimator
 import android.content.Intent
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -20,6 +24,7 @@ import com.example.jobspotadmin.home.fragment.homeFragment.viewmodel.HomeViewMod
 import com.example.jobspotadmin.util.Constants.Companion.ROLE_TYPE_ADMIN
 import com.example.jobspotadmin.util.LoadingDialog
 import com.example.jobspotadmin.util.Status.*
+import com.example.jobspotadmin.util.getGreeting
 import com.example.jobspotadmin.util.showToast
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseUser
@@ -64,8 +69,7 @@ class HomeFragment : Fragment() {
                     ivProfileImage.load(user?.photoUrl)
                     cvPlacementOfficer.visibility = View.GONE
                 }
-                binding.tvWelcomeHeading.text =
-                    getString(R.string.field_welcome_heading, user?.displayName)
+                binding.tvWelcomeHeading.text = createGreetingText(user?.displayName!!)
             }
 
             if (ivLogout.visibility == View.VISIBLE) {
@@ -163,6 +167,18 @@ class HomeFragment : Fragment() {
         val loginIntent = Intent(requireContext(), AuthActivity::class.java)
         loginIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
         startActivity(loginIntent)
+    }
+
+    private fun createGreetingText(username: String): SpannableString {
+        val greeting = getGreeting()
+        val greetingWithUsername = "$greeting\n$username"
+        val color = ContextCompat.getColor(requireActivity(), R.color.on_boarding_span_text_color)
+        val greetingColor = ForegroundColorSpan(color)
+        val greetingText = SpannableString(greetingWithUsername)
+        val userNameStart = greetingWithUsername.indexOf(username)
+        val userNameEnd = userNameStart + username.length
+        greetingText.setSpan(greetingColor, userNameStart, userNameEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        return greetingText
     }
 
     override fun onDestroyView() {

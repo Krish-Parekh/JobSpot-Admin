@@ -60,7 +60,7 @@
     <string name="button_submit_text">Yes</string>
     <string name="field_role">%s</string>
     <string name="field_company_and_location">\u2022 %s \u2022 %s \u2022</string>
-    <string name="field_welcome_heading">Hello \n%s</string>
+    <string name="field_welcome_heading">%s \n%s</string>
     <string name="field_administer_heading">Administer</string>
     <string name="field_student_card_title">Students</string>
     <string name="field_jobs_card_title">Jobs</string>

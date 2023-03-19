@@ -14,7 +14,7 @@
         android:paddingVertical="@dimen/small_padding"
         android:text="Delete Question"
         android:textColor="@color/loading_dialog_text_color"
-        android:textSize="26sp"
+        android:textSize="16sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -27,7 +27,7 @@
         android:paddingVertical="@dimen/small_padding"
         android:text="Are you sure you want to remove this Question"
         android:textColor="@color/loading_dialog_text_color"
-        android:textSize="16sp"
+        android:textSize="14sp"
         app:layout_constraintLeft_toLeftOf="@id/tvDeleteQuestionHeading"
         app:layout_constraintTop_toBottomOf="@+id/tvDeleteQuestionHeading" />
 
@@ -40,7 +40,7 @@
         android:padding="@dimen/small_padding"
         android:text="Delete"
         android:textColor="@color/orange"
-        android:textSize="18sp"
+        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvDeleteQuestionSubHeading" />
@@ -54,7 +54,7 @@
         android:padding="@dimen/small_padding"
         android:text="No"
         android:textColor="@color/kimberly"
-        android:textSize="18sp"
+        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/tvDelete" />
 

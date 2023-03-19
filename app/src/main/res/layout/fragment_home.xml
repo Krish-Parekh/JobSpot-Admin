@@ -24,23 +24,25 @@
                 android:id="@+id/tvWelcomeHeading"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/medium_margin"
+                android:layout_marginStart="@dimen/medium_margin"
+                android:layout_marginTop="@dimen/medium_margin"
                 android:ellipsize="end"
                 android:fontFamily="@font/dm_sans_bold"
                 android:maxWidth="250dp"
                 android:maxLines="2"
-                tools:text="Hello \nKrish Parekh"
                 android:textColor="@color/text_color"
                 android:textSize="22sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Hello \nKrish Parekh" />
 
             <ImageView
                 android:id="@+id/ivLogout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/medium_margin"
+                android:layout_marginTop="@dimen/medium_margin"
+                android:layout_marginEnd="@dimen/medium_margin"
                 android:src="@drawable/ic_logout"
                 android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -51,7 +53,8 @@
                 android:id="@+id/ivProfileImage"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_margin="@dimen/medium_margin"
+                android:layout_marginTop="@dimen/medium_margin"
+                android:layout_marginEnd="@dimen/medium_margin"
                 android:src="@drawable/ic_image_picker"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -118,7 +121,7 @@
                     android:orientation="vertical"
                     android:padding="@dimen/medium_padding">
 
-                     <ImageView
+                    <ImageView
                         android:id="@+id/ivStudent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -135,7 +138,7 @@
                         android:fontFamily="@font/dm_sans_bold"
                         android:textAlignment="center"
                         android:textColor="@color/text_color"
-                        android:textSize="22sp"
+                        android:textSize="20sp"
                         tools:text="50" />
 
                     <TextView
@@ -190,7 +193,7 @@
                         android:fontFamily="@font/dm_sans_bold"
                         android:textAlignment="center"
                         android:textColor="@color/text_color"
-                        android:textSize="22sp"
+                        android:textSize="20sp"
                         tools:text="50" />
 
                     <TextView
@@ -245,7 +248,7 @@
                         android:fontFamily="@font/dm_sans_bold"
                         android:textAlignment="center"
                         android:textColor="@color/text_color"
-                        android:textSize="22sp"
+                        android:textSize="20sp"
                         tools:text="50" />
 
                     <TextView
@@ -300,7 +303,7 @@
                         android:fontFamily="@font/dm_sans_bold"
                         android:textAlignment="center"
                         android:textColor="@color/text_color"
-                        android:textSize="22sp"
+                        android:textSize="20sp"
                         tools:text="50" />
 
                     <TextView
@@ -355,7 +358,7 @@
                         android:fontFamily="@font/dm_sans_bold"
                         android:textAlignment="center"
                         android:textColor="@color/text_color"
-                        android:textSize="22sp"
+                        android:textSize="20sp"
                         tools:text="50" />
 
                     <TextView

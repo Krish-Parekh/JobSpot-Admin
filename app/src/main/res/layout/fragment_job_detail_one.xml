@@ -48,8 +48,8 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/ivCompany"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_jobs" />
 

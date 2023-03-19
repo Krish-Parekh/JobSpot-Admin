@@ -30,8 +30,8 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profileImage"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:src="@drawable/ic_image_picker" />
 
         <TextView
@@ -43,7 +43,7 @@
             android:paddingVertical="@dimen/small_padding"
             android:textAlignment="center"
             android:textColor="@color/text_color"
-            android:textSize="22sp"
+            android:textSize="20sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Krish Parekh" />
@@ -55,7 +55,7 @@
             android:fontFamily="@font/dm_sans_regular"
             android:textAlignment="center"
             android:textColor="@color/text_color"
-            android:textSize="18sp"
+            android:textSize="16sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="krish@gmail.com" />
@@ -109,7 +109,7 @@
                     android:fontFamily="@font/dm_sans_bold"
                     android:text="Manage Account"
                     android:textColor="@color/text_color"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     app:layout_constraintLeft_toRightOf="@+id/ivManageAccountLogo"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -177,7 +177,7 @@
                     android:fontFamily="@font/dm_sans_bold"
                     android:text="Logout"
                     android:textColor="@color/text_color"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     app:layout_constraintLeft_toRightOf="@+id/ivLogout"
                     app:layout_constraintTop_toTopOf="parent" />
 

@@ -76,7 +76,7 @@
             android:paddingVertical="@dimen/small_padding"
             android:text="Applicants"
             android:textColor="@color/text_color"
-            android:textSize="20sp"
+            android:textSize="18sp"
             app:layout_constraintLeft_toLeftOf="@id/etSearchContainer"
             app:layout_constraintTop_toBottomOf="@+id/etSearchContainer" />
 
@@ -101,7 +101,7 @@
             android:paddingVertical="@dimen/small_padding"
             android:text="Records"
             android:textColor="@color/text_color"
-            android:textSize="20sp"
+            android:textSize="18sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/rvApplicants" />
 
